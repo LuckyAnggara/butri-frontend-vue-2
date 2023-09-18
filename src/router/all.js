@@ -7,7 +7,7 @@ export const all = [
     },
     path: "/kegiatan/list",
     name: "list-kegiatan",
-    component: () => import("@/views/All/DataKegiatan.vue"),
+    component: () => import("@/views/All/Kegiatan/DataKegiatan.vue"),
   },
   {
     meta: {
@@ -15,8 +15,28 @@ export const all = [
       layout: "layout-authenticated",
       requiresAuth: false,
     },
-    path: "/kegiatan/pengembangan/new",
+    path: "/kegiatan/new",
     name: "new-kegiatan",
-    component: () => import("@/views/All/NewKegiatan.vue"),
+    component: () => import("@/views/All/Kegiatan/NewKegiatan.vue"),
+  },
+  {
+    meta: {
+      title: "Program Unggulan",
+      layout: "layout-authenticated",
+      requiresAuth: true,
+    },
+    path: "/program-unggulan/list",
+    name: "list-program-unggulan",
+    component: () => import("@/views/All/Programunggulan/Data.vue"),
+  },
+  {
+    meta: {
+      title: "Program Unggulan",
+      layout: "layout-authenticated",
+      requiresAuth: false,
+    },
+    path: "/program-unggulan/new",
+    name: "new-program-unggulan",
+    component: () => import("@/views/All/Programunggulan/New.vue"),
   },
 ];

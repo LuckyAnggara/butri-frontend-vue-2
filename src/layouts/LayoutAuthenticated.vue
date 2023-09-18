@@ -51,12 +51,13 @@ const menuClick = async (event, item) => {
   }
 };
 const menu = computed(() => {
-  if (authStore.user.user?.role.name == "kepegawaian") return kepegawaian;
-  if (authStore.user.user?.role.name == "program dan pelaporan") return program;
-  if (authStore.user.user?.role.name == "humas dan sip") return sip;
-  if (authStore.user.user?.role.name == "umum") return umum;
-  if (authStore.user.user?.role.name == "keuangan") return keuangan;
-  if (authStore.user.user?.role.name == "inspektorat wilayah") return wilayah;
+  if (authStore.user.user?.role?.name == "kepegawaian") return kepegawaian;
+  if (authStore.user.user?.role?.name == "program dan pelaporan")
+    return program;
+  if (authStore.user.user?.role?.name == "humas dan sip") return sip;
+  if (authStore.user.user?.role?.name == "umum") return umum;
+  if (authStore.user.user?.role?.name == "keuangan") return keuangan;
+  if (authStore.user.user?.role?.name == "inspektorat wilayah") return wilayah;
 });
 </script>
 

@@ -5,7 +5,7 @@ import { useAuthStore } from "../auth";
 import { useToast } from "vue-toastification";
 const toast = useToast();
 const authStore = useAuthStore();
-export const useKegiatanStore = defineStore("kegiatan", {
+export const useProgramUnggulanStore = defineStore("programUnggulan", {
   state: () => ({
     responses: null,
     singleResponses: null,
@@ -15,7 +15,6 @@ export const useKegiatanStore = defineStore("kegiatan", {
     isStoreLoading: false,
     isUpdateLoading: false,
     isDestroyLoading: false,
-    userData: null,
     form: {
       waktu: {
         startDate: null,
@@ -27,11 +26,11 @@ export const useKegiatanStore = defineStore("kegiatan", {
       created_by: authStore.user.user.id,
     },
     filter: {
-      date: [],
+      date: new Date().getFullYear(),
       searchQuery: "",
       unit: authStore.user.user.unit_id,
     },
-    currentLimit: 50,
+    currentLimit: new Date().getFullYear(),
   }),
   getters: {
     items(state) {
@@ -78,7 +77,7 @@ export const useKegiatanStore = defineStore("kegiatan", {
       this.isLoading = true;
       try {
         const response = await axiosIns.get(
-          `/kegiatan?limit=${this.currentLimit}&unit=${this.filter.unit}${this.searchQuery}${page}${this.dateQuery}`
+          `/program-unggulan?date=${this.currentLimit}${this.searchQuery}${page}`
         );
         this.responses = response.data.data;
       } catch (error) {
@@ -91,7 +90,7 @@ export const useKegiatanStore = defineStore("kegiatan", {
     async store() {
       this.isStoreLoading = true;
       try {
-        const response = await axiosIns.post(`/kegiatan`, this.form);
+        const response = await axiosIns.post(`/program-unggulan`, this.form);
         if (response.status == 200) {
           toast.success("Data berhasil dibuat", {
             timeout: 3000,
@@ -113,7 +112,7 @@ export const useKegiatanStore = defineStore("kegiatan", {
       this.isDestroyLoading = true;
       setTimeout(() => {}, 500);
       try {
-        await axiosIns.delete(`/kegiatan/${id}`);
+        await axiosIns.delete(`/program-unggulan/${id}`);
         toast.success("Data berhasil di hapus", {
           timeout: 2000,
         });

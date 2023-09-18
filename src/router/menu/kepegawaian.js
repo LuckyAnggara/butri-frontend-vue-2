@@ -9,6 +9,7 @@ import {
   mdiShieldAccount,
   mdiViewDashboard,
 } from "@mdi/js";
+import all from "./all";
 
 export default [
   {
@@ -46,22 +47,5 @@ export default [
       },
     ],
   },
-  {
-    to: "/kegiatan/list",
-    label: "Kegiatan",
-    icon: mdiBriefcaseOutline,
-  },
-  {
-    label: "Realisasi Kinerja",
-    icon: mdiPoll,
-    menu: [
-      {
-        to: "/pegawai/kgb/list",
-        label: "Capaian Tarja",
-      },
-      {
-        label: "Program Unggulan",
-      },
-    ],
-  },
+  ...all,
 ];

@@ -13,20 +13,19 @@ import { useDebounceFn } from "@vueuse/core";
 import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue";
 import {
   EllipsisVerticalIcon,
-  DocumentTextIcon,
   TrashIcon,
-  ArchiveBoxIcon,
   ArrowPathIcon,
 } from "@heroicons/vue/24/outline";
 import { useMainStore } from "@/stores/main";
 import BaseButton from "@/components/BaseButton.vue";
+import { useProgramUnggulanStore } from "@/stores/all/programunggulan";
 
 const search = useDebounceFn(() => {
-  kegiatanStore.getData();
+  programUnggulanStore.getData();
 }, 500);
 const route = useRoute();
 const router = useRouter();
-const kegiatanStore = useKegiatanStore();
+const programUnggulanStore = useProgramUnggulanStore();
 const mainStore = useMainStore();
 
 const indexDestroy = ref(0);
@@ -44,33 +43,33 @@ const itemMenu = [
 ];
 
 const previousPage = computed(() => {
-  return "&page=" + (kegiatanStore.currentPage - 1);
+  return "&page=" + (programUnggulanStore.currentPage - 1);
 });
 
 const nextPage = computed(() => {
-  return "&page=" + (kegiatanStore.currentPage + 1);
+  return "&page=" + (programUnggulanStore.currentPage + 1);
 });
 
 function toNew() {
-  router.push({ name: "new-kegiatan" });
+  router.push({ name: "new-program-unggulan" });
 }
 
 function destroy(item) {
-  kegiatanStore.destroy(item.id);
+  programUnggulanStore.destroy(item.id);
   indexDestroy.value = item.id;
 }
 
-kegiatanStore.$subscribe((mutation, state) => {
+programUnggulanStore.$subscribe((mutation, state) => {
   if (mutation.events.key == "currentLimit") {
-    kegiatanStore.getData();
+    programUnggulanStore.getData();
   }
   if (mutation.events.key == "date") {
-    kegiatanStore.getData();
+    programUnggulanStore.getData();
   }
 });
 
 onMounted(() => {
-  kegiatanStore.getData();
+  programUnggulanStore.getData();
 });
 </script>
 
@@ -80,37 +79,23 @@ onMounted(() => {
 
     <CardBox class="mb-4 px-4" has-table>
       <div class="w-full my-4 flex flex-row space-x-4">
-        <div class="w-1/12">
-          <FormField label="Show">
-            <FormControl
-              v-model="kegiatanStore.currentLimit"
-              :options="mainStore.limitDataOptions"
-            />
+        <div class="w-3/12">
+          <FormField label="Tahun Anggaran">
+            <select
+              :disabled="programUnggulanStore.isStoreLoading"
+              v-model="programUnggulanStore.currentLimit"
+              class="h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
+            >
+              <option value="2021">2021</option>
+              <option value="2022">2022</option>
+              <option value="2023">2023</option>
+              <option value="2024">2024</option>
+              <option value="2025">2025</option>
+            </select>
           </FormField>
         </div>
-        <div class="w-5/12">
-          <FormField label="Search">
-            <FormControl
-              @keyup="search"
-              v-model="kegiatanStore.filter.searchQuery"
-              type="tel"
-              placeholder="Cari berdasarkan nama / nip / nomor sk"
-            />
-          </FormField>
-        </div>
-        <div class="w-4/12">
-          <FormField label="Tanggal">
-            <vue-tailwind-datepicker
-              :disabled="kegiatanStore.isStoreLoading"
-              required
-              separator=" s/d "
-              placeholder="Tanggal Data"
-              v-model="kegiatanStore.filter.date"
-              :formatter="formatter"
-              input-classes="h-12 border  px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
-            />
-          </FormField>
-        </div>
+        <div class="w-7/12"></div>
+
         <div class="w-2/12 flex justify-end">
           <BaseButton
             @click="toNew()"
@@ -127,16 +112,15 @@ onMounted(() => {
         <thead>
           <tr>
             <th>No</th>
-            <th>Kegiatan</th>
-            <th>Jenis</th>
-            <th>Waktu Pelaksanaan</th>
-            <th>Tempat</th>
+            <th>Tahun Anggaran</th>
+            <th>Nama Program</th>
+            <!-- <th>Jumlah Kegiatan</th> -->
             <th />
           </tr>
         </thead>
         <tbody>
-          <tr v-if="kegiatanStore.isLoading">
-            <td colspan="6" class="text-center">
+          <tr v-if="programUnggulanStore.isLoading">
+            <td colspan="4" class="text-center">
               <div
                 class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
                 role="status"
@@ -149,38 +133,39 @@ onMounted(() => {
             </td>
           </tr>
           <template v-else>
-            <tr v-if="kegiatanStore.items.length == 0">
-              <td colspan="6" class="text-center">
+            <tr v-if="programUnggulanStore.items.length == 0">
+              <td colspan="4" class="text-center">
                 <span>Tidak ada data</span>
               </td>
             </tr>
             <tr
               v-else
-              v-for="(item, index) in kegiatanStore.items"
+              v-for="(item, index) in programUnggulanStore.items"
               :key="item.id"
             >
               <td class="text-center">
-                {{ kegiatanStore.from + index }}
+                {{ programUnggulanStore.from + index }}
+              </td>
+              <td>
+                {{ item.tahun }}
               </td>
               <td>
                 {{ item.name }}
               </td>
-              <td>{{ item.jenis_kegiatan }}</td>
-              <td>{{ item.start_at }} s/d {{ item.end_at }}</td>
-              <td>
-                {{ item.tempat }}
-              </td>
+              <!-- <td>
+                {{ item.name }}
+              </td> -->
               <td class="before:hidden lg:w-1 whitespace-nowrap">
                 <div>
                   <Menu as="div" class="relative inline-block text-left">
                     <div>
                       <MenuButton
                         :disabled="
-                          kegiatanStore.isDestroyLoading &&
+                          programUnggulanStore.isDestroyLoading &&
                           indexDestroy == item.id
                         "
                         :class="
-                          kegiatanStore.isDestroyLoading &&
+                          programUnggulanStore.isDestroyLoading &&
                           indexDestroy == item.id
                             ? ''
                             : 'hover:scale-125 ease-in-out duration-300'
@@ -189,7 +174,7 @@ onMounted(() => {
                       >
                         <ArrowPathIcon
                           v-if="
-                            kegiatanStore.isDestroyLoading &&
+                            programUnggulanStore.isDestroyLoading &&
                             indexDestroy == item.id
                           "
                           class="animate-spin h-5 w-5 text-black dark:text-white"
@@ -249,13 +234,13 @@ onMounted(() => {
           <li>
             <a
               @click="
-                kegiatanStore.currentPage == 1
+                programUnggulanStore.currentPage == 1
                   ? ''
-                  : kegiatanStore.getData(previousPage)
+                  : programUnggulanStore.getData(previousPage)
               "
-              :disabled="kegiatanStore.currentPage == 1 ? true : false"
+              :disabled="programUnggulanStore.currentPage == 1 ? true : false"
               :class="
-                kegiatanStore.currentPage == 1
+                programUnggulanStore.currentPage == 1
                   ? 'cursor-not-allowed'
                   : 'cursor-pointer dark:hover:bg-blue-700 dark:hover:text-white hover:bg-blue-100 hover:text-gray-700'
               "
@@ -267,12 +252,14 @@ onMounted(() => {
           <li>
             <a
               @click="
-                kegiatanStore.lastPage == kegiatanStore.currentPage
+                programUnggulanStore.lastPage ==
+                programUnggulanStore.currentPage
                   ? ''
-                  : kegiatanStore.getData(nextPage)
+                  : programUnggulanStore.getData(nextPage)
               "
               :class="
-                kegiatanStore.lastPage == kegiatanStore.currentPage
+                programUnggulanStore.lastPage ==
+                programUnggulanStore.currentPage
                   ? 'cursor-not-allowed'
                   : 'cursor-pointer dark:hover:bg-blue-700 dark:hover:text-white hover:bg-blue-100 hover:text-gray-700'
               "
