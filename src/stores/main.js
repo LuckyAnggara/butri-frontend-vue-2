@@ -14,6 +14,15 @@ export const useMainStore = defineStore("main", {
     /* Sample data (commonly used) */
     clients: [],
     history: [],
+
+    limitDataOptions: [5, 50, 100, 100000],
+    jenisKegiatanOptions: [
+      "RAPAT INTERNAL",
+      "RAPAT EKSTERNAL",
+      "DINAS LUAR",
+      "KOORDINASI",
+      "KONSINYERING",
+    ],
   }),
   actions: {
     setUser(payload) {

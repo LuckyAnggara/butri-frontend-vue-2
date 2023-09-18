@@ -1,23 +1,15 @@
 import { createRouter, createWebHashHistory } from "vue-router";
 import UserDashboard from "@/views/Dashboard/UserDashboard.vue";
 import { useAuthStore } from "@/stores/auth";
+import { kepegawaian } from "./kepegawaian";
+import { all } from "./all";
 
 const routes = [
   {
     meta: {
-      title: "Dashboard",
-      layout: "layout-authenticated",
-      requiresAuth: false,
-    },
-    path: "/",
-    name: "dashboard",
-    component: UserDashboard,
-  },
-  {
-    meta: {
       title: "Login",
       layout: "layout-guest",
-      requiresAuth: true,
+      requiresAuth: false,
     },
     path: "/login",
     name: "login",
@@ -25,7 +17,6 @@ const routes = [
   },
   {
     // Document title tag
-    // We combine it with defaultDocumentTitle set in `src/main.js` on router.afterEach hook
     meta: {
       title: "Dashboard",
       requiresAuth: true,
@@ -33,14 +24,6 @@ const routes = [
     path: "/dashboard",
     name: "asd",
     component: UserDashboard,
-  },
-  {
-    meta: {
-      title: "Tables",
-    },
-    path: "/tables",
-    name: "tables",
-    component: () => import("@/views/TablesView.vue"),
   },
   {
     meta: {
@@ -74,7 +57,6 @@ const routes = [
     name: "responsive",
     component: () => import("@/views/ResponsiveView.vue"),
   },
-
   {
     meta: {
       title: "Error",
@@ -83,6 +65,8 @@ const routes = [
     name: "error",
     component: () => import("@/views/ErrorView.vue"),
   },
+  ...kepegawaian,
+  ...all,
 ];
 
 const router = createRouter({
@@ -95,7 +79,7 @@ const router = createRouter({
 
 router.beforeResolve(async (to, _, next) => {
   const auth = useAuthStore();
-  if (to.meta.requiresAuth == false && auth.isLoggedIn() == false)
+  if (to.meta.requiresAuth == true && auth.isLoggedIn() == false)
     return next("/login");
   if (to.name == "login" && auth.isLoggedIn() == true) return next("/");
   return next();
