@@ -1,11 +1,10 @@
 <script setup>
-import { computed, onMounted, onUnmounted, ref } from "vue";
+import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 import SectionMain from "@/components/SectionMain.vue";
 import CardBox from "@/components/CardBox.vue";
 import SectionTitleLineWithButton from "@/components/SectionTitleLineWithButton.vue";
 import { useRoute, useRouter } from "vue-router";
 import { useDebounceFn } from "@vueuse/core";
-import { ArrowPathIcon, TrashIcon } from "@heroicons/vue/24/outline";
 import Select2 from "@/components/Select2.vue";
 import FormField from "@/components/FormField.vue";
 import FormControl from "@/components/FormControl.vue";
@@ -14,12 +13,15 @@ import BaseButton from "@/components/BaseButton.vue";
 import { useKegiatanStore } from "@/stores/all/kegiatan";
 import { useToast } from "vue-toastification";
 
-const route = useRoute();
 import { useMainStore } from "@/stores/main";
 import { useProgramUnggulanStore } from "@/stores/all/programunggulan";
+import { useCapaianProgramUnggulan } from "@/stores/all/capaianProgramUnggulan";
+
+const route = useRoute();
 const router = useRouter();
 const toast = useToast();
 const programUnggalanStore = useProgramUnggulanStore();
+const capaianProgramUnggulanStore = useCapaianProgramUnggulan();
 const kegiatanStore = useKegiatanStore();
 const mainStore = useMainStore();
 
@@ -29,17 +31,20 @@ const formatter = ref({
   date: "DD MMMM YYYY",
 });
 
+const dariKegiatan = ref(false);
+
 async function submit() {
   if (
-    programUnggalanStore.form.name ||
-    programUnggalanStore.form.tempat ||
-    programUnggalanStore.form.jenis_kegiatan ||
-    programUnggalanStore.form.waktu.startDate ||
-    programUnggalanStore.form.waktu.endDate
+    capaianProgramUnggulanStore.form.program_unggulan_id ||
+    capaianProgramUnggulanStore.form.name ||
+    capaianProgramUnggulanStore.form.tempat ||
+    capaianProgramUnggulanStore.form.jenis_kegiatan ||
+    capaianProgramUnggulanStore.form.waktu.startDate ||
+    capaianProgramUnggulanStore.form.waktu.endDate
   ) {
-    const result = await programUnggalanStore.store();
+    const result = await capaianProgramUnggulanStore.store();
     if (result) {
-      router.push({ name: "list-kegiatan" });
+      router.push({ name: "list-program-unggulan" });
     }
   } else {
     toast.error("Data belum lengkap", { timeout: 2000 });
@@ -47,24 +52,20 @@ async function submit() {
   }
 }
 
-function destroy(index) {
-  programUnggalanStore.form.list.splice(index, 1);
-}
-
 const find = useDebounceFn((x) => {
-  programUnggalanStore.searchName = search.value;
-  programUnggalanStore.getData();
+  kegiatanStore.searchName = search.value;
+  kegiatanStore.getData();
 }, 500);
 
-const allFill = computed(() => {
-  return programUnggalanStore.form.list.every((item) => {
-    return item.pangkat !== "";
-  });
-});
-
 function handleChosen(payload) {
-  programUnggalanStore.addFormData(payload);
+  capaianProgramUnggulanStore.addFromKegiatan(payload);
 }
+watch(dariKegiatan, (newX) => {
+  if (!newX) {
+    capaianProgramUnggulanStore.resetFromKegiatan();
+    search.value = "";
+  }
+});
 
 onMounted(() => {
   if (programUnggalanStore.items.length <= 0) {
@@ -72,7 +73,7 @@ onMounted(() => {
   }
 });
 onUnmounted(() => {
-  programUnggalanStore.$reset();
+  capaianProgramUnggulanStore.$reset();
 });
 </script>
 
@@ -84,9 +85,9 @@ onUnmounted(() => {
         <form @submit.prevent="submit()">
           <FormField label="Program Unggulan">
             <select
-              :disabled="programUnggalanStore.isStoreLoading"
+              :disabled="capaianProgramUnggulanStore.isStoreLoading"
               required
-              v-model="programUnggalanStore.form.jenis_kegiatan"
+              v-model="capaianProgramUnggulanStore.form.program_unggulan_id"
               class="border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
             >
               <option
@@ -101,6 +102,7 @@ onUnmounted(() => {
 
           <div class="flex items-center mb-4">
             <input
+              v-model="dariKegiatan"
               id="checkbox-3"
               type="checkbox"
               value=""
@@ -113,14 +115,14 @@ onUnmounted(() => {
             >
           </div>
 
-          <div class="relative mb-6">
+          <div class="relative mb-6" v-if="dariKegiatan">
             <label class="block font-bold mb-2"
               >Cari dari Kegiatan Existing</label
             >
             <Select2
               :use-SSR="true"
               @ssr="find"
-              :is-loading="programUnggalanStore.isStoreLoading"
+              :is-loading="capaianProgramUnggulanStore.isStoreLoading"
               :use-loader="true"
               :data="kegiatanStore.items"
               v-model="search"
@@ -131,18 +133,62 @@ onUnmounted(() => {
 
           <FormField label="Nama Kegiatan">
             <FormControl
-              :disabled="programUnggalanStore.isStoreLoading"
-              v-model="programUnggalanStore.form.tempat"
+              :disabled="
+                capaianProgramUnggulanStore.isStoreLoading || dariKegiatan
+              "
+              v-model="capaianProgramUnggulanStore.form.name"
               required
             />
           </FormField>
 
-          <FormField label="Tanggal Kegiatan">
+          <FormField label="Jenis Kegiatan">
+            <select
+              :disabled="
+                capaianProgramUnggulanStore.isStoreLoading || dariKegiatan
+              "
+              required
+              v-model="capaianProgramUnggulanStore.form.jenis_kegiatan"
+              class="border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
+            >
+              <option
+                v-for="option in mainStore.jenisKegiatanOptions"
+                :key="option"
+                :value="option"
+              >
+                {{ option }}
+              </option>
+            </select>
+          </FormField>
+
+          <FormField label="Tempat Kegiatan">
+            <FormControl
+              :disabled="
+                capaianProgramUnggulanStore.isStoreLoading || dariKegiatan
+              "
+              v-model="capaianProgramUnggulanStore.form.tempat"
+              required
+            />
+          </FormField>
+
+          <FormField label="Tanggal Kegiatan" v-if="dariKegiatan">
+            <input
+              :value="capaianProgramUnggulanStore.waktu"
+              type="text"
+              class="h-12 px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full bg-white dark:bg-slate-800 border"
+              :disabled="
+                capaianProgramUnggulanStore.isStoreLoading || dariKegiatan
+              "
+            />
+          </FormField>
+
+          <FormField label="Tanggal Kegiatan" v-else>
             <vue-tailwind-datepicker
-              :disabled="programUnggalanStore.isStoreLoading"
+              :disabled="
+                capaianProgramUnggulanStore.isStoreLoading || dariKegiatan
+              "
               required
               placeholder="Tanggal dari mulai s/d berakhir"
-              v-model="programUnggalanStore.form.waktu"
+              v-model="capaianProgramUnggulanStore.form.waktu"
               :formatter="formatter"
               input-classes="h-12 border  px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
             />
@@ -151,26 +197,30 @@ onUnmounted(() => {
           <FormField label="Output">
             <FormControl
               :type="'textarea'"
-              :disabled="programUnggalanStore.isStoreLoading"
-              v-model="programUnggalanStore.form.output"
+              :disabled="
+                capaianProgramUnggulanStore.isStoreLoading || dariKegiatan
+              "
+              v-model="capaianProgramUnggulanStore.form.output"
             />
           </FormField>
 
           <FormField label="Catatan">
             <FormControl
               :type="'textarea'"
-              :disabled="programUnggalanStore.isStoreLoading"
-              v-model="programUnggalanStore.form.notes"
+              :disabled="
+                capaianProgramUnggulanStore.isStoreLoading || dariKegiatan
+              "
+              v-model="capaianProgramUnggulanStore.form.notes"
             />
           </FormField>
-
           <div class="flex flex-col space-y-4">
             <BaseButton
               class="w-fit"
               type="submit"
-              :disabled="programUnggalanStore.isStoreLoading"
+              :disabled="capaianProgramUnggulanStore.isStoreLoading"
               color="info"
-              ><span v-if="!programUnggalanStore.isStoreLoading">Submit</span
+              ><span v-if="!capaianProgramUnggulanStore.isStoreLoading"
+                >Submit</span
               ><span class="flex flex-row items-center px-3" v-else>
                 <ArrowPathIcon class="h-5 w-5 animate-spin mr-3" />
                 Processing</span

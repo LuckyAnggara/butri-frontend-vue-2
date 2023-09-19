@@ -11,7 +11,10 @@ import Toast from "vue-toastification";
 import "vue-toastification/dist/index.css";
 import vClickOutside from "v-click-outside";
 import VueTailwindDatepicker from "vue-tailwind-datepicker";
+import VueSweetalert2 from "vue-sweetalert2";
 import moment from "moment";
+import "sweetalert2/dist/sweetalert2.min.css";
+
 import "./css/main.css";
 
 /* Init Pinia */
@@ -26,6 +29,7 @@ app.config.globalProperties = {
 
 app.use(router);
 app.use(pinia);
+app.use(VueSweetalert2);
 app.use(vClickOutside);
 app.use(VueTailwindDatepicker);
 app.use(Toast, {

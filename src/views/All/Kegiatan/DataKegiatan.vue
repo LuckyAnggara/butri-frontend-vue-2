@@ -6,7 +6,7 @@ import SectionTitleLineWithButton from "@/components/SectionTitleLineWithButton.
 
 import { useRoute, useRouter } from "vue-router";
 import { useKegiatanStore } from "@/stores/all/kegiatan";
-import { computed, onMounted, ref } from "vue";
+import { computed, inject, onMounted, ref } from "vue";
 import FormField from "@/components/FormField.vue";
 import FormControl from "@/components/FormControl.vue";
 import { useDebounceFn } from "@vueuse/core";
@@ -26,6 +26,7 @@ const route = useRoute();
 const router = useRouter();
 const kegiatanStore = useKegiatanStore();
 const mainStore = useMainStore();
+const swal = inject("$swal");
 
 const indexDestroy = ref(0);
 
@@ -54,8 +55,27 @@ function toNew() {
 }
 
 function destroy(item) {
-  kegiatanStore.destroy(item.id);
-  indexDestroy.value = item.id;
+  if (item.capaian > 0) {
+    swal.fire({
+      title: "Hapus data?",
+      text: "Data kegitan ini berkaitan dengan program unggulan!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Ya, hapus!",
+      cancelButtonText: "Cancel!",
+      showLoaderOnConfirm: true,
+      reverseButtons: true,
+      preConfirm: async () => {
+        await kegiatanStore.destroy(item.id);
+        indexDestroy.value = item.id;
+      },
+      allowOutsideClick: () => !kegiatanStore.isDestroyLoading,
+      backdrop: true,
+    });
+  } else {
+    kegiatanStore.destroy(item.id);
+    indexDestroy.value = item.id;
+  }
 }
 
 kegiatanStore.$subscribe((mutation, state) => {
@@ -80,10 +100,19 @@ onMounted(() => {
       <div class="w-full my-4 flex flex-row space-x-4">
         <div class="w-1/12">
           <FormField label="Show">
-            <FormControl
+            <select
+              :disabled="kegiatanStore.isStoreLoading"
               v-model="kegiatanStore.currentLimit"
-              :options="mainStore.limitDataOptions"
-            />
+              class="border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
+            >
+              <option
+                v-for="option in mainStore.limitDataOptions"
+                :key="option"
+                :value="option"
+              >
+                {{ option == 100000 ? "SEMUA" : option }}
+              </option>
+            </select>
           </FormField>
         </div>
         <div class="w-5/12">

@@ -5,7 +5,7 @@ import { useAuthStore } from "../auth";
 import { useToast } from "vue-toastification";
 const toast = useToast();
 const authStore = useAuthStore();
-export const useProgramUnggulanStore = defineStore("programUnggulan", {
+export const useCapaianProgramUnggulan = defineStore("capaianProgramUnggulan", {
   state: () => ({
     responses: null,
     singleResponses: null,
@@ -16,6 +16,7 @@ export const useProgramUnggulanStore = defineStore("programUnggulan", {
     isUpdateLoading: false,
     isDestroyLoading: false,
     form: {
+      program_unggulan_id: 0,
       waktu: {
         startDate: null,
         endDate: null,
@@ -26,11 +27,11 @@ export const useProgramUnggulanStore = defineStore("programUnggulan", {
       created_by: authStore.user.user.id,
     },
     filter: {
-      date: new Date().getFullYear(),
+      date: [],
       searchQuery: "",
       unit: authStore.user.user.unit_id,
     },
-    currentLimit: new Date().getFullYear(),
+    currentLimit: 5,
   }),
   getters: {
     items(state) {
@@ -71,13 +72,16 @@ export const useProgramUnggulanStore = defineStore("programUnggulan", {
       }
       return "&query=" + state.filter.searchQuery;
     },
+    waktu(state) {
+      return state.form.waktu.startDate + " s/d " + state.form.waktu.endDate;
+    },
   },
   actions: {
     async getData(page = "") {
       this.isLoading = true;
       try {
         const response = await axiosIns.get(
-          `/program-unggulan?date=${this.currentLimit}${this.searchQuery}${page}`
+          `/capaian-program-unggulan?limit=${this.currentLimit}&unit=${this.filter.unit}${this.searchQuery}${page}${this.dateQuery}`
         );
         this.responses = response.data.data;
       } catch (error) {
@@ -154,6 +158,30 @@ export const useProgramUnggulanStore = defineStore("programUnggulan", {
       } finally {
         this.isUpdateLoading = false;
       }
+    },
+    addFromKegiatan(payload) {
+      this.form.id = payload.id;
+      this.form.name = payload.name;
+      this.form.jenis_kegiatan = payload.jenis_kegiatan;
+      this.form.tempat = payload.tempat;
+      this.form.waktu = payload.waktu;
+      this.form.notes = payload.notes;
+      this.form.output = payload.output;
+    },
+    resetFromKegiatan() {
+      this.form = {
+        name: null,
+        jenis_kegiatan: null,
+        tempat: null,
+        waktu: {
+          startDate: null,
+          endDate: null,
+        },
+        output: "",
+        notes: "",
+        unit_id: authStore.user.user.unit_id,
+        created_by: authStore.user.user.id,
+      };
     },
   },
 });
