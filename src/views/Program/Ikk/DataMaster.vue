@@ -4,8 +4,8 @@ import SectionMain from "@/components/SectionMain.vue";
 import CardBox from "@/components/CardBox.vue";
 import SectionTitleLineWithButton from "@/components/SectionTitleLineWithButton.vue";
 
-import { useRoute, useRouter } from "vue-router";
-import { computed, onMounted, ref } from "vue";
+import { useRoute } from "vue-router";
+import { computed, defineAsyncComponent, onMounted, ref } from "vue";
 import FormField from "@/components/FormField.vue";
 import FormControl from "@/components/FormControl.vue";
 import { useDebounceFn } from "@vueuse/core";
@@ -14,32 +14,31 @@ import {
   EllipsisVerticalIcon,
   TrashIcon,
   ArrowPathIcon,
-  UsersIcon,
-  DocumentTextIcon,
+  PencilSquareIcon,
 } from "@heroicons/vue/24/outline";
 import { useMainStore } from "@/stores/main";
 import BaseButton from "@/components/BaseButton.vue";
-import { usePengembanganStore } from "@/stores/pegawai/pengembangan";
+import { useIKKStore } from "@/stores/program/ikk";
+import { useUnitGroupStore } from "@/stores/unitGroup";
 
 const search = useDebounceFn(() => {
-  pengembanganStore.getData();
+  ikkStore.getData();
 }, 500);
 const route = useRoute();
-const router = useRouter();
-const pengembanganStore = usePengembanganStore();
+const ikkStore = useIKKStore();
 const mainStore = useMainStore();
+const unitGroupStore = useUnitGroupStore();
+
+const showNewModal = ref(false);
+const updateData = ref(false);
 
 const indexDestroy = ref(0);
-
-const formatter = ref({
-  date: "DD MMMM YYYY",
-});
 
 const itemMenu = [
   {
     function: edit,
     label: "Edit",
-    icon: DocumentTextIcon,
+    icon: PencilSquareIcon,
   },
   {
     function: destroy,
@@ -48,56 +47,103 @@ const itemMenu = [
   },
 ];
 
-async function edit(item) {
-  router.push({ name: "edit-pengembangan-pegawai", params: { id: item.id } });
-}
-
 const previousPage = computed(() => {
-  return "&page=" + (pengembanganStore.currentPage - 1);
+  return "&page=" + (ikkStore.currentPage - 1);
 });
 
 const nextPage = computed(() => {
-  return "&page=" + (pengembanganStore.currentPage + 1);
+  return "&page=" + (ikkStore.currentPage + 1);
 });
 
+function toNew() {
+  showNewModal.value = true;
+}
+
+const NewMasterModal = defineAsyncComponent(() =>
+  import("@/views/Program/Ikk/NewMasterModal.vue")
+);
+
 function destroy(item) {
-  pengembanganStore.destroy(item.id);
+  ikkStore.destroy(item.id);
   indexDestroy.value = item.id;
 }
 
-pengembanganStore.$subscribe((mutation, state) => {
-  if (mutation.events.key == "currentLimit") {
-    pengembanganStore.getData();
+function edit(item) {
+  showNewModal.value = true;
+  updateData.value = true;
+  ikkStore.readyEdit(item);
+}
+
+async function submit() {
+  const result = await ikkStore.store();
+  if (result) {
+    showNewModal.value = false;
+    ikkStore.getData();
   }
-  if (mutation.events.key == "date") {
-    pengembanganStore.getData();
+}
+
+async function update() {
+  const result = await ikkStore.update();
+  if (result) {
+    showNewModal.value = false;
+    ikkStore.getData();
+  }
+}
+
+ikkStore.$subscribe((mutation, state) => {
+  if (mutation.events.key == "currentYear") {
+    ikkStore.getData();
+  }
+  if (mutation.events.key == "unit") {
+    ikkStore.getData();
   }
 });
 
 onMounted(() => {
-  pengembanganStore.getData();
+  ikkStore.getData();
+  if (unitGroupStore.items.length <= 0) {
+    unitGroupStore.getData();
+  }
 });
 </script>
 
 <template>
-  <SectionMain>
+  <SectionMain :max-w="false">
     <SectionTitleLineWithButton :title="route.meta.title" main />
 
     <CardBox class="mb-4 px-4" has-table>
       <div class="w-full my-4 flex flex-row space-x-4">
-        <div class="w-1/12">
-          <FormField label="Show">
+        <div class="w-3/12">
+          <FormField label="Tahun">
             <select
-              :disabled="pengembanganStore.isStoreLoading"
-              v-model="pengembanganStore.currentLimit"
-              class="border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
+              :disabled="ikkStore.isLoading"
+              v-model="ikkStore.currentYear"
+              class="h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
             >
               <option
-                v-for="option in mainStore.limitDataOptions"
+                v-for="option in mainStore.tahunOptions"
                 :key="option"
                 :value="option"
               >
-                {{ option == 100000 ? "SEMUA" : option }}
+                {{ option }}
+              </option>
+            </select>
+          </FormField>
+        </div>
+        <div class="w-4/12">
+          <FormField label="Unit">
+            <select
+              :disabled="ikkStore.isLoading"
+              v-model="ikkStore.filter.unit"
+              class="h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
+            >
+              <option :value="0">SEMUA</option>
+              <option
+                v-for="option in unitGroupStore.items"
+                :key="option.id"
+                :value="option.id"
+              >
+                {{ option.name.toUpperCase() }}
               </option>
             </select>
           </FormField>
@@ -106,30 +152,17 @@ onMounted(() => {
           <FormField label="Search">
             <FormControl
               @keyup="search"
-              v-model="pengembanganStore.filter.searchQuery"
+              v-model="ikkStore.filter.searchQuery"
               type="tel"
-              placeholder="Cari berdasarkan kegiatan / tempat"
+              placeholder="Cari berdasarkan indikator"
             />
           </FormField>
         </div>
-        <div class="w-4/12">
-          <FormField label="Tanggal">
-            <vue-tailwind-datepicker
-              :disabled="pengembanganStore.isStoreLoading"
-              required
-              separator=" s/d "
-              placeholder="Tanggal Data"
-              v-model="pengembanganStore.filter.date"
-              :formatter="formatter"
-              input-classes="h-12 border  px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
-            />
-          </FormField>
-        </div>
+
         <div class="w-2/12 flex justify-end">
           <BaseButton
-            @click="router.push({ name: 'new-pengembangan-pegawai' })"
+            @click="toNew()"
             class="mt-8"
-            type="submit"
             color="info"
             label="Tambah"
           />
@@ -141,16 +174,15 @@ onMounted(() => {
         <thead>
           <tr>
             <th>No</th>
-            <th>Kegiatan</th>
-            <th>Jumlah Peserta</th>
-            <th>Waktu Penyelenggaraan</th>
-            <th>Tempat</th>
+            <th>Indikator</th>
+            <th>Target</th>
+            <th>Unit</th>
             <th />
           </tr>
         </thead>
         <tbody>
-          <tr v-if="pengembanganStore.isLoading">
-            <td colspan="6" class="text-center">
+          <tr v-if="ikkStore.isLoading">
+            <td colspan="5" class="text-center">
               <div
                 class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
                 role="status"
@@ -163,26 +195,23 @@ onMounted(() => {
             </td>
           </tr>
           <template v-else>
-            <tr v-if="pengembanganStore.items.length == 0">
-              <td colspan="6" class="text-center">
+            <tr v-if="ikkStore.items.length == 0">
+              <td colspan="5" class="text-center">
                 <span>Tidak ada data</span>
               </td>
             </tr>
-            <tr
-              v-else
-              v-for="(item, index) in pengembanganStore.items"
-              :key="item.id"
-            >
+            <tr v-else v-for="(item, index) in ikkStore.items" :key="item.id">
               <td class="text-center">
-                {{ pengembanganStore.from + index }}
+                {{ ikkStore.from + index }}
               </td>
               <td>
-                {{ item.kegiatan }}
+                {{ item.name }}
               </td>
-              <td>{{ item.jumlah_peserta }} Pegawai</td>
-              <td>{{ item.start_at }} s/d {{ item.end_at }}</td>
               <td>
-                {{ item.tempat }}
+                {{ item.target }}
+              </td>
+              <td>
+                {{ item.group.name }}
               </td>
               <td class="before:hidden lg:w-1 whitespace-nowrap">
                 <div>
@@ -190,12 +219,10 @@ onMounted(() => {
                     <div>
                       <MenuButton
                         :disabled="
-                          pengembanganStore.isDestroyLoading &&
-                          indexDestroy == item.id
+                          ikkStore.isDestroyLoading && indexDestroy == item.id
                         "
                         :class="
-                          pengembanganStore.isDestroyLoading &&
-                          indexDestroy == item.id
+                          ikkStore.isDestroyLoading && indexDestroy == item.id
                             ? ''
                             : 'hover:scale-125 ease-in-out duration-300'
                         "
@@ -203,8 +230,7 @@ onMounted(() => {
                       >
                         <ArrowPathIcon
                           v-if="
-                            pengembanganStore.isDestroyLoading &&
-                            indexDestroy == item.id
+                            ikkStore.isDestroyLoading && indexDestroy == item.id
                           "
                           class="animate-spin h-5 w-5 text-black dark:text-white"
                           aria-hidden="true"
@@ -231,6 +257,7 @@ onMounted(() => {
                         <div class="px-2 py-1">
                           <MenuItem
                             v-for="menu in itemMenu"
+                            :key="menu.label"
                             v-slot="{ active }"
                           >
                             <button
@@ -263,13 +290,11 @@ onMounted(() => {
           <li>
             <a
               @click="
-                pengembanganStore.currentPage == 1
-                  ? ''
-                  : pengembanganStore.getData(previousPage)
+                ikkStore.currentPage == 1 ? '' : ikkStore.getData(previousPage)
               "
-              :disabled="pengembanganStore.currentPage == 1 ? true : false"
+              :disabled="ikkStore.currentPage == 1 ? true : false"
               :class="
-                pengembanganStore.currentPage == 1
+                ikkStore.currentPage == 1
                   ? 'cursor-not-allowed'
                   : 'cursor-pointer dark:hover:bg-blue-700 dark:hover:text-white hover:bg-blue-100 hover:text-gray-700'
               "
@@ -281,12 +306,12 @@ onMounted(() => {
           <li>
             <a
               @click="
-                pengembanganStore.lastPage == pengembanganStore.currentPage
+                ikkStore.lastPage == ikkStore.currentPage
                   ? ''
-                  : pengembanganStore.getData(nextPage)
+                  : ikkStore.getData(nextPage)
               "
               :class="
-                pengembanganStore.lastPage == pengembanganStore.currentPage
+                ikkStore.lastPage == ikkStore.currentPage
                   ? 'cursor-not-allowed'
                   : 'cursor-pointer dark:hover:bg-blue-700 dark:hover:text-white hover:bg-blue-100 hover:text-gray-700'
               "
@@ -297,5 +322,18 @@ onMounted(() => {
         </ul>
       </div>
     </CardBox>
+
+    <!-- Modal -->
+    <Teleport to="body">
+      <!-- use the modal component, pass in the prop -->
+      <NewMasterModal
+        :updateData="updateData"
+        :show="showNewModal"
+        @close="showNewModal = false"
+        @submitStore="submit()"
+        @submitUpdate="update()"
+      >
+      </NewMasterModal>
+    </Teleport>
   </SectionMain>
 </template>

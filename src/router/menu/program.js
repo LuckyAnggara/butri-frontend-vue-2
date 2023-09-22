@@ -1,12 +1,5 @@
-import {
-  mdiAccountArrowLeftOutline,
-  mdiAccountGroupOutline,
-  mdiAccountMultipleOutline,
-  mdiBriefcaseAccountOutline,
-  mdiCashMultiple,
-  mdiShieldAccount,
-  mdiViewDashboard,
-} from "@mdi/js";
+import { mdiChartLine, mdiViewDashboard, mdiChartBoxOutline } from "@mdi/js";
+import all from "./all";
 
 export default [
   {
@@ -15,33 +8,24 @@ export default [
     icon: mdiViewDashboard,
   },
   {
-    to: "/pegawai/list",
-    label: "Pegawai",
-    icon: mdiAccountGroupOutline,
+    label: "IKU",
+    icon: mdiChartLine,
+    menu: [
+      {
+        to: "/iku/list",
+        label: "Master",
+      },
+    ],
   },
   {
-    to: "/pegawai/mutasi/list",
-    label: "Mutasi",
-    icon: mdiAccountArrowLeftOutline,
+    label: "IKK",
+    icon: mdiChartBoxOutline,
+    menu: [
+      {
+        to: "/ikk/list",
+        label: "Master",
+      },
+    ],
   },
-  {
-    to: "/pegawai/pengembangan/list",
-    label: "Pengembangan",
-    icon: mdiAccountMultipleOutline,
-  },
-  {
-    to: "/pegawai/kepangkatan/list",
-    label: "Kepangkatan",
-    icon: mdiBriefcaseAccountOutline,
-  },
-  {
-    to: "/pegawai/pensiun/list",
-    label: "Pensiun",
-    icon: mdiShieldAccount,
-  },
-  {
-    to: "/pegawai/kgb/list",
-    label: "KGB",
-    icon: mdiCashMultiple,
-  },
+  ...all,
 ];

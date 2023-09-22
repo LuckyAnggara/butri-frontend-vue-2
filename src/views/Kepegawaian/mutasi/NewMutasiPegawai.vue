@@ -16,7 +16,7 @@ import BaseButton from "@/components/BaseButton.vue";
 import { useToast } from "vue-toastification";
 import { useMutasiStore } from "@/stores/pegawai/mutasi";
 import { useJabatanStore } from "@/stores/pegawai/jabatan";
-import { useUnitStore } from "@/stores/pegawai/unit";
+import { useUnitStore } from "@/stores/unit";
 import TableCheckboxCell from "@/components/TableCheckboxCell.vue";
 
 const route = useRoute();
@@ -239,3 +239,4 @@ onUnmounted(() => {
     </CardBox>
   </SectionMain>
 </template>
+@/stores/unit

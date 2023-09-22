@@ -11,7 +11,16 @@ export default [
     icon: mdiPoll,
     menu: [
       {
-        label: "Capaian Tarja",
+        to: "/capaian/iku/list",
+        label: "Capaian IKU",
+      },
+      {
+        to: "/capaian/ikk/list",
+        label: "Capaian IKK",
+      },
+      {
+        to: "/capaian/lainnya/list",
+        label: "Capaian lainnya",
       },
       {
         to: "/program-unggulan/list",

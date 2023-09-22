@@ -18,7 +18,7 @@ import VueTailwindDatepicker from "vue-tailwind-datepicker";
 import { useJabatanStore } from "@/stores/pegawai/jabatan";
 import { usePangkatStore } from "@/stores/pegawai/pangkat";
 import { usePegawaiStore } from "@/stores/pegawai/pegawai";
-import { useUnitStore } from "@/stores/pegawai/unit";
+import { useUnitStore } from "@/stores/unit";
 
 const route = useRoute();
 const router = useRouter();
@@ -212,3 +212,4 @@ onMounted(() => {
     </CardBox>
   </SectionMain>
 </template>
+@/stores/unit

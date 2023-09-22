@@ -3,6 +3,7 @@ import UserDashboard from "@/views/Dashboard/UserDashboard.vue";
 import { useAuthStore } from "@/stores/auth";
 import { kepegawaian } from "./kepegawaian";
 import { all } from "./all";
+import { program } from "./program";
 
 const routes = [
   {
@@ -66,6 +67,7 @@ const routes = [
     component: () => import("@/views/ErrorView.vue"),
   },
   ...kepegawaian,
+  ...program,
   ...all,
 ];
 

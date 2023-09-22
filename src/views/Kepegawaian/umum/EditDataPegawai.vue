@@ -12,7 +12,7 @@ import VueTailwindDatepicker from "vue-tailwind-datepicker";
 import { useJabatanStore } from "@/stores/pegawai/jabatan";
 import { usePangkatStore } from "@/stores/pegawai/pangkat";
 import { usePegawaiStore } from "@/stores/pegawai/pegawai";
-import { useUnitStore } from "@/stores/pegawai/unit";
+import { useUnitStore } from "@/stores/unit";
 import NotificationBar from "@/components/NotificationBar.vue";
 import { ArrowPathIcon } from "@heroicons/vue/24/outline";
 
@@ -231,3 +231,4 @@ onMounted(async () => {
     </template>
   </SectionMain>
 </template>
+@/stores/unit

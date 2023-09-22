@@ -13,8 +13,9 @@ import vClickOutside from "v-click-outside";
 import VueTailwindDatepicker from "vue-tailwind-datepicker";
 import VueSweetalert2 from "vue-sweetalert2";
 import moment from "moment";
+import { QuillEditor } from "@vueup/vue-quill";
+import "@vueup/vue-quill/dist/vue-quill.snow.css";
 import "sweetalert2/dist/sweetalert2.min.css";
-
 import "./css/main.css";
 
 /* Init Pinia */
@@ -37,6 +38,7 @@ app.use(Toast, {
   maxToasts: 20,
   newestOnTop: true,
 });
+app.component("QuillEditor", QuillEditor);
 app.mount("#app");
 
 /* Init Pinia stores */

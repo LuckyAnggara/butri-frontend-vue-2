@@ -14,32 +14,30 @@ import {
   EllipsisVerticalIcon,
   TrashIcon,
   ArrowPathIcon,
-  UsersIcon,
-  DocumentTextIcon,
+  PencilSquareIcon,
 } from "@heroicons/vue/24/outline";
 import { useMainStore } from "@/stores/main";
 import BaseButton from "@/components/BaseButton.vue";
-import { usePengembanganStore } from "@/stores/pegawai/pengembangan";
+import { useAuthStore } from "@/stores/auth";
+import { useCapaianIKU } from "@/stores/all/capaianIku";
 
 const search = useDebounceFn(() => {
-  pengembanganStore.getData();
+  capaianIKUStore.getData();
 }, 500);
 const route = useRoute();
 const router = useRouter();
-const pengembanganStore = usePengembanganStore();
+
+const capaianIKUStore = useCapaianIKU();
 const mainStore = useMainStore();
+const authStore = useAuthStore();
 
 const indexDestroy = ref(0);
-
-const formatter = ref({
-  date: "DD MMMM YYYY",
-});
 
 const itemMenu = [
   {
     function: edit,
-    label: "Edit",
-    icon: DocumentTextIcon,
+    label: "Detail",
+    icon: PencilSquareIcon,
   },
   {
     function: destroy,
@@ -48,56 +46,65 @@ const itemMenu = [
   },
 ];
 
-async function edit(item) {
-  router.push({ name: "edit-pengembangan-pegawai", params: { id: item.id } });
+function edit(item) {
+  router.push({ name: "edit-capaian-iku", params: { id: item.id } });
+}
+function toNew() {
+  router.push({ name: "new-capaian-iku" });
 }
 
 const previousPage = computed(() => {
-  return "&page=" + (pengembanganStore.currentPage - 1);
+  return "&page=" + (capaianIKUStore.currentPage - 1);
 });
 
 const nextPage = computed(() => {
-  return "&page=" + (pengembanganStore.currentPage + 1);
+  return "&page=" + (capaianIKUStore.currentPage + 1);
 });
 
 function destroy(item) {
-  pengembanganStore.destroy(item.id);
+  capaianIKUStore.destroy(item.id);
   indexDestroy.value = item.id;
 }
 
-pengembanganStore.$subscribe((mutation, state) => {
-  if (mutation.events.key == "currentLimit") {
-    pengembanganStore.getData();
+capaianIKUStore.$subscribe((mutation, state) => {
+  if (mutation.events.key == "currentYear") {
+    capaianIKUStore.getData();
   }
-  if (mutation.events.key == "date") {
-    pengembanganStore.getData();
+  if (mutation.events.key == "currentMonth") {
+    capaianIKUStore.getData();
+  }
+  if (mutation.events.key == "unit") {
+    capaianIKUStore.getData();
   }
 });
 
 onMounted(() => {
-  pengembanganStore.getData();
+  capaianIKUStore.$patch((state) => {
+    state.filter.unit = authStore.user.user.unit.group_id;
+  });
+  capaianIKUStore.getData();
 });
 </script>
 
 <template>
-  <SectionMain>
+  <SectionMain :max-w="false">
     <SectionTitleLineWithButton :title="route.meta.title" main />
 
     <CardBox class="mb-4 px-4" has-table>
       <div class="w-full my-4 flex flex-row space-x-4">
-        <div class="w-1/12">
-          <FormField label="Show">
+        <div class="w-2/12">
+          <FormField label="Tahun">
             <select
-              :disabled="pengembanganStore.isStoreLoading"
-              v-model="pengembanganStore.currentLimit"
-              class="border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
+              :disabled="capaianIKUStore.isLoading"
+              v-model="capaianIKUStore.currentYear"
+              class="h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
             >
               <option
-                v-for="option in mainStore.limitDataOptions"
+                v-for="option in mainStore.tahunOptions"
                 :key="option"
                 :value="option"
               >
-                {{ option == 100000 ? "SEMUA" : option }}
+                {{ option }}
               </option>
             </select>
           </FormField>
@@ -106,30 +113,18 @@ onMounted(() => {
           <FormField label="Search">
             <FormControl
               @keyup="search"
-              v-model="pengembanganStore.filter.searchQuery"
+              v-model="capaianIKUStore.filter.searchQuery"
               type="tel"
-              placeholder="Cari berdasarkan kegiatan / tempat"
+              placeholder="Cari berdasarkan indikator"
             />
           </FormField>
         </div>
-        <div class="w-4/12">
-          <FormField label="Tanggal">
-            <vue-tailwind-datepicker
-              :disabled="pengembanganStore.isStoreLoading"
-              required
-              separator=" s/d "
-              placeholder="Tanggal Data"
-              v-model="pengembanganStore.filter.date"
-              :formatter="formatter"
-              input-classes="h-12 border  px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
-            />
-          </FormField>
-        </div>
+        <div class="w-3/12"></div>
+
         <div class="w-2/12 flex justify-end">
           <BaseButton
-            @click="router.push({ name: 'new-pengembangan-pegawai' })"
+            @click="toNew()"
             class="mt-8"
-            type="submit"
             color="info"
             label="Tambah"
           />
@@ -141,16 +136,16 @@ onMounted(() => {
         <thead>
           <tr>
             <th>No</th>
-            <th>Kegiatan</th>
-            <th>Jumlah Peserta</th>
-            <th>Waktu Penyelenggaraan</th>
-            <th>Tempat</th>
+            <th>Indikator</th>
+            <th>Target</th>
+            <th>Realisasi</th>
+            <th>Dibuat Tanggal</th>
             <th />
           </tr>
         </thead>
         <tbody>
-          <tr v-if="pengembanganStore.isLoading">
-            <td colspan="6" class="text-center">
+          <tr v-if="capaianIKUStore.isLoading">
+            <td colspan="5" class="text-center">
               <div
                 class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
                 role="status"
@@ -163,26 +158,30 @@ onMounted(() => {
             </td>
           </tr>
           <template v-else>
-            <tr v-if="pengembanganStore.items.length == 0">
-              <td colspan="6" class="text-center">
+            <tr v-if="capaianIKUStore.items.length == 0">
+              <td colspan="5" class="text-center">
                 <span>Tidak ada data</span>
               </td>
             </tr>
             <tr
               v-else
-              v-for="(item, index) in pengembanganStore.items"
+              v-for="(item, index) in capaianIKUStore.items"
               :key="item.id"
             >
               <td class="text-center">
-                {{ pengembanganStore.from + index }}
+                {{ capaianIKUStore.from + index }}
               </td>
               <td>
-                {{ item.kegiatan }}
+                {{ item.iku.name }}
               </td>
-              <td>{{ item.jumlah_peserta }} Pegawai</td>
-              <td>{{ item.start_at }} s/d {{ item.end_at }}</td>
               <td>
-                {{ item.tempat }}
+                {{ item.iku.target }}
+              </td>
+              <td>
+                {{ item.realisasi }}
+              </td>
+              <td>
+                {{ item.created_at }}
               </td>
               <td class="before:hidden lg:w-1 whitespace-nowrap">
                 <div>
@@ -190,11 +189,11 @@ onMounted(() => {
                     <div>
                       <MenuButton
                         :disabled="
-                          pengembanganStore.isDestroyLoading &&
+                          capaianIKUStore.isDestroyLoading &&
                           indexDestroy == item.id
                         "
                         :class="
-                          pengembanganStore.isDestroyLoading &&
+                          capaianIKUStore.isDestroyLoading &&
                           indexDestroy == item.id
                             ? ''
                             : 'hover:scale-125 ease-in-out duration-300'
@@ -203,7 +202,7 @@ onMounted(() => {
                       >
                         <ArrowPathIcon
                           v-if="
-                            pengembanganStore.isDestroyLoading &&
+                            capaianIKUStore.isDestroyLoading &&
                             indexDestroy == item.id
                           "
                           class="animate-spin h-5 w-5 text-black dark:text-white"
@@ -231,6 +230,7 @@ onMounted(() => {
                         <div class="px-2 py-1">
                           <MenuItem
                             v-for="menu in itemMenu"
+                            :key="menu.label"
                             v-slot="{ active }"
                           >
                             <button
@@ -263,13 +263,13 @@ onMounted(() => {
           <li>
             <a
               @click="
-                pengembanganStore.currentPage == 1
+                capaianIKUStore.currentPage == 1
                   ? ''
-                  : pengembanganStore.getData(previousPage)
+                  : capaianIKUStore.getData(previousPage)
               "
-              :disabled="pengembanganStore.currentPage == 1 ? true : false"
+              :disabled="capaianIKUStore.currentPage == 1 ? true : false"
               :class="
-                pengembanganStore.currentPage == 1
+                capaianIKUStore.currentPage == 1
                   ? 'cursor-not-allowed'
                   : 'cursor-pointer dark:hover:bg-blue-700 dark:hover:text-white hover:bg-blue-100 hover:text-gray-700'
               "
@@ -281,12 +281,12 @@ onMounted(() => {
           <li>
             <a
               @click="
-                pengembanganStore.lastPage == pengembanganStore.currentPage
+                capaianIKUStore.lastPage == capaianIKUStore.currentPage
                   ? ''
-                  : pengembanganStore.getData(nextPage)
+                  : capaianIKUStore.getData(nextPage)
               "
               :class="
-                pengembanganStore.lastPage == pengembanganStore.currentPage
+                capaianIKUStore.lastPage == capaianIKUStore.currentPage
                   ? 'cursor-not-allowed'
                   : 'cursor-pointer dark:hover:bg-blue-700 dark:hover:text-white hover:bg-blue-100 hover:text-gray-700'
               "
