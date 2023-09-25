@@ -4,10 +4,9 @@ import SectionMain from "@/components/SectionMain.vue";
 import CardBox from "@/components/CardBox.vue";
 import SectionTitleLineWithButton from "@/components/SectionTitleLineWithButton.vue";
 
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { computed, defineAsyncComponent, onMounted, ref } from "vue";
 import FormField from "@/components/FormField.vue";
-import FormControl from "@/components/FormControl.vue";
 import { useDebounceFn } from "@vueuse/core";
 import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue";
 import {
@@ -18,15 +17,14 @@ import {
 } from "@heroicons/vue/24/outline";
 import { useMainStore } from "@/stores/main";
 import BaseButton from "@/components/BaseButton.vue";
-import { useIKKStore } from "@/stores/program/ikk";
+import { usePersuratanStore } from "@/stores/umum/persuratan";
+import { useAuthStore } from "@/stores/auth";
 import { useUnitGroupStore } from "@/stores/unitGroup";
 
-const search = useDebounceFn(() => {
-  ikkStore.getData();
-}, 500);
 const route = useRoute();
-const ikkStore = useIKKStore();
+const persuratanStore = usePersuratanStore();
 const mainStore = useMainStore();
+const authStore = useAuthStore();
 const unitGroupStore = useUnitGroupStore();
 
 const showNewModal = ref(false);
@@ -48,67 +46,72 @@ const itemMenu = [
 ];
 
 const previousPage = computed(() => {
-  return "&page=" + (ikkStore.currentPage - 1);
+  return "&page=" + (persuratanStore.currentPage - 1);
 });
 
 const nextPage = computed(() => {
-  return "&page=" + (ikkStore.currentPage + 1);
+  return "&page=" + (persuratanStore.currentPage + 1);
 });
 
 function toNew() {
   showNewModal.value = true;
 }
 
-const NewMasterModal = defineAsyncComponent(() =>
-  import("@/views/Program/Ikk/NewMasterModal.vue")
-);
+const NewMasterModal = defineAsyncComponent(() => import("./NewModal.vue"));
 
 function destroy(item) {
-  ikkStore.destroy(item.id);
+  persuratanStore.destroy(item.id);
   indexDestroy.value = item.id;
 }
 
 function edit(item) {
   showNewModal.value = true;
   updateData.value = true;
-  ikkStore.readyEdit(item);
+  persuratanStore.readyEdit(item);
 }
 
 async function submit() {
-  const result = await ikkStore.store();
+  const result = await persuratanStore.store();
   if (result) {
     showNewModal.value = false;
-    ikkStore.getData();
+    persuratanStore.getData();
   }
 }
 
 async function update() {
-  const result = await ikkStore.update();
+  const result = await persuratanStore.update();
   if (result) {
     showNewModal.value = false;
-    ikkStore.getData();
+    persuratanStore.getData();
   }
 }
 
-ikkStore.$subscribe((mutation, state) => {
+persuratanStore.$subscribe((mutation, state) => {
   if (mutation.events.key == "currentYear") {
-    ikkStore.getData();
+    persuratanStore.getData();
   }
-  if (mutation.events.key == "unit") {
-    ikkStore.getData();
+  if (mutation.events.key == "currentMonth") {
+    persuratanStore.getData();
+  }
+  if (mutation.events.key == "group") {
+    persuratanStore.getData();
   }
 });
 
 onMounted(() => {
-  ikkStore.getData();
-  if (unitGroupStore.items.length <= 0) {
-    unitGroupStore.getData();
+  if (authStore.user.user.role.id == 2) {
+    persuratanStore.$patch((state) => {
+      state.filter.group = 0;
+      state.filter.currentMonth = 0;
+    });
   }
+  persuratanStore.getData();
+  unitGroupStore.getData();
 });
 </script>
 
 <template>
-  <SectionMain :max-w="false">
+  <SectionMain>
     <SectionTitleLineWithButton :title="route.meta.title" main />
 
     <CardBox class="mb-4 px-4" has-table>
@@ -116,8 +119,8 @@ onMounted(() => {
         <div class="w-3/12">
           <FormField label="Tahun">
             <select
-              :disabled="ikkStore.isLoading"
-              v-model="ikkStore.currentYear"
+              :disabled="persuratanStore.isLoading"
+              v-model="persuratanStore.filter.currentYear"
               class="h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
             >
               <option
@@ -130,11 +133,30 @@ onMounted(() => {
             </select>
           </FormField>
         </div>
-        <div class="w-4/12">
-          <FormField label="Unit">
+        <div class="w-2/12">
+          <FormField v-if="authStore.isAdmin" label="Bulan">
             <select
-              :disabled="ikkStore.isLoading"
-              v-model="ikkStore.filter.unit"
+              :disabled="persuratanStore.isLoading"
+              v-model="persuratanStore.filter.currentMonth"
+              class="h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
+            >
+              <option :value="0">SEMUA</option>
+              <option
+                v-for="option in mainStore.bulanOptions"
+                :key="option.id"
+                :value="option.id"
+              >
+                {{ option.label }}
+              </option>
+            </select>
+          </FormField>
+        </div>
+
+        <div class="w-4/12">
+          <FormField v-if="authStore.isAdmin" label="Unit">
+            <select
+              :disabled="persuratanStore.isLoading"
+              v-model="persuratanStore.filter.group"
               class="h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
             >
               <option :value="0">SEMUA</option>
@@ -148,16 +170,7 @@ onMounted(() => {
             </select>
           </FormField>
         </div>
-        <div class="w-5/12">
-          <FormField label="Search">
-            <FormControl
-              @keyup="search"
-              v-model="ikkStore.filter.searchQuery"
-              type="tel"
-              placeholder="Cari berdasarkan indikator"
-            />
-          </FormField>
-        </div>
+        <div class="w-1/12"></div>
 
         <div class="w-2/12 flex justify-end">
           <BaseButton
@@ -173,15 +186,15 @@ onMounted(() => {
       <table>
         <thead>
           <tr>
-            <th>No</th>
-            <th>Indikator</th>
-            <th>Target</th>
+            <th>Bulan</th>
+            <th>Surat Masuk</th>
+            <th>Surat Keluar</th>
             <th>Unit</th>
             <th />
           </tr>
         </thead>
         <tbody>
-          <tr v-if="ikkStore.isLoading">
+          <tr v-if="persuratanStore.isLoading">
             <td colspan="5" class="text-center">
               <div
                 class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
@@ -195,20 +208,20 @@ onMounted(() => {
             </td>
           </tr>
           <template v-else>
-            <tr v-if="ikkStore.items.length == 0">
+            <tr v-if="persuratanStore.items.length == 0">
               <td colspan="5" class="text-center">
                 <span>Tidak ada data</span>
               </td>
             </tr>
-            <tr v-else v-for="(item, index) in ikkStore.items" :key="item.id">
+            <tr v-else v-for="item in persuratanStore.items" :key="item.id">
               <td class="text-center">
-                {{ ikkStore.from + index }}
+                {{ item.bulan_name }}
               </td>
               <td>
-                {{ item.name }}
+                {{ item.surat_masuk }}
               </td>
               <td>
-                {{ item.target }}
+                {{ item.surat_keluar }}
               </td>
               <td>
                 {{ item.group.name }}
@@ -219,10 +232,12 @@ onMounted(() => {
                     <div>
                       <MenuButton
                         :disabled="
-                          ikkStore.isDestroyLoading && indexDestroy == item.id
+                          persuratanStore.isDestroyLoading &&
+                          indexDestroy == item.id
                         "
                         :class="
-                          ikkStore.isDestroyLoading && indexDestroy == item.id
+                          persuratanStore.isDestroyLoading &&
+                          indexDestroy == item.id
                             ? ''
                             : 'hover:scale-125 ease-in-out duration-300'
                         "
@@ -230,7 +245,8 @@ onMounted(() => {
                       >
                         <ArrowPathIcon
                           v-if="
-                            ikkStore.isDestroyLoading && indexDestroy == item.id
+                            persuratanStore.isDestroyLoading &&
+                            indexDestroy == item.id
                           "
                           class="animate-spin h-5 w-5 text-black dark:text-white"
                           aria-hidden="true"
@@ -257,7 +273,6 @@ onMounted(() => {
                         <div class="px-2 py-1">
                           <MenuItem
                             v-for="menu in itemMenu"
-                            :key="menu.label"
                             v-slot="{ active }"
                           >
                             <button
@@ -290,11 +305,13 @@ onMounted(() => {
           <li>
             <a
               @click="
-                ikkStore.currentPage == 1 ? '' : ikkStore.getData(previousPage)
+                persuratanStore.currentPage == 1
+                  ? ''
+                  : persuratanStore.getData(previousPage)
               "
-              :disabled="ikkStore.currentPage == 1 ? true : false"
+              :disabled="persuratanStore.currentPage == 1 ? true : false"
               :class="
-                ikkStore.currentPage == 1
+                persuratanStore.currentPage == 1
                   ? 'cursor-not-allowed'
                   : 'cursor-pointer dark:hover:bg-blue-700 dark:hover:text-white hover:bg-blue-100 hover:text-gray-700'
               "
@@ -306,12 +323,12 @@ onMounted(() => {
           <li>
             <a
               @click="
-                ikkStore.lastPage == ikkStore.currentPage
+                persuratanStore.lastPage == persuratanStore.currentPage
                   ? ''
-                  : ikkStore.getData(nextPage)
+                  : persuratanStore.getData(nextPage)
               "
               :class="
-                ikkStore.lastPage == ikkStore.currentPage
+                persuratanStore.lastPage == persuratanStore.currentPage
                   ? 'cursor-not-allowed'
                   : 'cursor-pointer dark:hover:bg-blue-700 dark:hover:text-white hover:bg-blue-100 hover:text-gray-700'
               "

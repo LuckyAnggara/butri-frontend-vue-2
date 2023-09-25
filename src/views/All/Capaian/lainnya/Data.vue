@@ -145,7 +145,7 @@ onMounted(() => {
         </thead>
         <tbody>
           <tr v-if="capaianIKUStore.isLoading">
-            <td colspan="5" class="text-center">
+            <td colspan="6" class="text-center">
               <div
                 class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
                 role="status"
@@ -159,7 +159,7 @@ onMounted(() => {
           </tr>
           <template v-else>
             <tr v-if="capaianIKUStore.items.length == 0">
-              <td colspan="5" class="text-center">
+              <td colspan="6" class="text-center">
                 <span>Tidak ada data</span>
               </td>
             </tr>

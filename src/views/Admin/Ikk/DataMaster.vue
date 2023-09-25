@@ -4,8 +4,8 @@ import SectionMain from "@/components/SectionMain.vue";
 import CardBox from "@/components/CardBox.vue";
 import SectionTitleLineWithButton from "@/components/SectionTitleLineWithButton.vue";
 
-import { useRoute, useRouter } from "vue-router";
-import { computed, onMounted, ref } from "vue";
+import { useRoute } from "vue-router";
+import { computed, defineAsyncComponent, onMounted, ref } from "vue";
 import FormField from "@/components/FormField.vue";
 import FormControl from "@/components/FormControl.vue";
 import { useDebounceFn } from "@vueuse/core";
@@ -18,25 +18,26 @@ import {
 } from "@heroicons/vue/24/outline";
 import { useMainStore } from "@/stores/main";
 import BaseButton from "@/components/BaseButton.vue";
-import { useAuthStore } from "@/stores/auth";
-import { useCapaianIKU } from "@/stores/all/capaianIku";
+import { useIKKStore } from "@/stores/program/ikk";
+import { useUnitGroupStore } from "@/stores/unitGroup";
 
 const search = useDebounceFn(() => {
-  capaianIKUStore.getData();
+  ikkStore.getData();
 }, 500);
 const route = useRoute();
-const router = useRouter();
-
-const capaianIKUStore = useCapaianIKU();
+const ikkStore = useIKKStore();
 const mainStore = useMainStore();
-const authStore = useAuthStore();
+const unitGroupStore = useUnitGroupStore();
+
+const showNewModal = ref(false);
+const updateData = ref(false);
 
 const indexDestroy = ref(0);
 
 const itemMenu = [
   {
     function: edit,
-    label: "Detail",
+    label: "Edit",
     icon: PencilSquareIcon,
   },
   {
@@ -46,43 +47,66 @@ const itemMenu = [
   },
 ];
 
-function edit(item) {
-  router.push({ name: "edit-capaian-iku", params: { id: item.id } });
-}
-function toNew() {
-  router.push({ name: "new-capaian-iku" });
-}
-
 const previousPage = computed(() => {
-  return "&page=" + (capaianIKUStore.currentPage - 1);
+  return "&page=" + (ikkStore.currentPage - 1);
 });
 
 const nextPage = computed(() => {
-  return "&page=" + (capaianIKUStore.currentPage + 1);
+  return "&page=" + (ikkStore.currentPage + 1);
 });
 
+function toNew() {
+  showNewModal.value = true;
+}
+
+const NewMasterModal = defineAsyncComponent(() =>
+  import("@/views/Program/Ikk/NewMasterModal.vue")
+);
+
 function destroy(item) {
-  capaianIKUStore.destroy(item.id);
+  ikkStore.destroy(item.id);
   indexDestroy.value = item.id;
 }
 
-capaianIKUStore.$subscribe((mutation, state) => {
-  if (mutation.events.key == "currentYear") {
-    capaianIKUStore.getData();
+function edit(item) {
+  showNewModal.value = true;
+  updateData.value = true;
+  ikkStore.readyEdit(item);
+}
+
+async function submit() {
+  const result = await ikkStore.store();
+  if (result) {
+    showNewModal.value = false;
+    ikkStore.getData();
   }
-  if (mutation.events.key == "currentMonth") {
-    capaianIKUStore.getData();
+}
+
+async function update() {
+  const result = await ikkStore.update();
+  if (result) {
+    showNewModal.value = false;
+    ikkStore.getData();
+  }
+}
+
+ikkStore.$subscribe((mutation, state) => {
+  if (mutation.events.key == "currentYear") {
+    ikkStore.getData();
   }
   if (mutation.events.key == "unit") {
-    capaianIKUStore.getData();
+    ikkStore.getData();
   }
 });
 
 onMounted(() => {
-  capaianIKUStore.$patch((state) => {
-    state.filter.unit = authStore.user.user.unit.group_id;
+  ikkStore.$patch((state) => {
+    state.filter.unit = 0;
   });
-  capaianIKUStore.getData();
+  ikkStore.getData();
+  if (unitGroupStore.items.length <= 0) {
+    unitGroupStore.getData();
+  }
 });
 </script>
 
@@ -92,11 +116,11 @@ onMounted(() => {
 
     <CardBox class="mb-4 px-4" has-table>
       <div class="w-full my-4 flex flex-row space-x-4">
-        <div class="w-2/12">
+        <div class="w-3/12">
           <FormField label="Tahun">
             <select
-              :disabled="capaianIKUStore.isLoading"
-              v-model="capaianIKUStore.currentYear"
+              :disabled="ikkStore.isLoading"
+              v-model="ikkStore.currentYear"
               class="h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
             >
               <option
@@ -109,17 +133,34 @@ onMounted(() => {
             </select>
           </FormField>
         </div>
+        <div class="w-4/12">
+          <FormField label="Unit">
+            <select
+              :disabled="ikkStore.isLoading"
+              v-model="ikkStore.filter.unit"
+              class="h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
+            >
+              <option :value="0">SEMUA</option>
+              <option
+                v-for="option in unitGroupStore.items"
+                :key="option.id"
+                :value="option.id"
+              >
+                {{ option.name.toUpperCase() }}
+              </option>
+            </select>
+          </FormField>
+        </div>
         <div class="w-5/12">
           <FormField label="Search">
             <FormControl
               @keyup="search"
-              v-model="capaianIKUStore.filter.searchQuery"
+              v-model="ikkStore.filter.searchQuery"
               type="tel"
               placeholder="Cari berdasarkan indikator"
             />
           </FormField>
         </div>
-        <div class="w-3/12"></div>
 
         <div class="w-2/12 flex justify-end">
           <BaseButton
@@ -138,14 +179,13 @@ onMounted(() => {
             <th>No</th>
             <th>Indikator</th>
             <th>Target</th>
-            <th>Realisasi</th>
-            <th>Dibuat Tanggal</th>
+            <th>Unit</th>
             <th />
           </tr>
         </thead>
         <tbody>
-          <tr v-if="capaianIKUStore.isLoading">
-            <td colspan="6" class="text-center">
+          <tr v-if="ikkStore.isLoading">
+            <td colspan="5" class="text-center">
               <div
                 class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
                 role="status"
@@ -158,30 +198,23 @@ onMounted(() => {
             </td>
           </tr>
           <template v-else>
-            <tr v-if="capaianIKUStore.items.length == 0">
-              <td colspan="6" class="text-center">
+            <tr v-if="ikkStore.items.length == 0">
+              <td colspan="5" class="text-center">
                 <span>Tidak ada data</span>
               </td>
             </tr>
-            <tr
-              v-else
-              v-for="(item, index) in capaianIKUStore.items"
-              :key="item.id"
-            >
+            <tr v-else v-for="(item, index) in ikkStore.items" :key="item.id">
               <td class="text-center">
-                {{ capaianIKUStore.from + index }}
+                {{ ikkStore.from + index }}
               </td>
               <td>
-                {{ item.iku.name }}
+                {{ item.name }}
               </td>
               <td>
-                {{ item.iku.target }}
+                {{ item.target }}
               </td>
               <td>
-                {{ item.realisasi }}
-              </td>
-              <td>
-                {{ item.created_at }}
+                {{ item.group.name }}
               </td>
               <td class="before:hidden lg:w-1 whitespace-nowrap">
                 <div>
@@ -189,12 +222,10 @@ onMounted(() => {
                     <div>
                       <MenuButton
                         :disabled="
-                          capaianIKUStore.isDestroyLoading &&
-                          indexDestroy == item.id
+                          ikkStore.isDestroyLoading && indexDestroy == item.id
                         "
                         :class="
-                          capaianIKUStore.isDestroyLoading &&
-                          indexDestroy == item.id
+                          ikkStore.isDestroyLoading && indexDestroy == item.id
                             ? ''
                             : 'hover:scale-125 ease-in-out duration-300'
                         "
@@ -202,8 +233,7 @@ onMounted(() => {
                       >
                         <ArrowPathIcon
                           v-if="
-                            capaianIKUStore.isDestroyLoading &&
-                            indexDestroy == item.id
+                            ikkStore.isDestroyLoading && indexDestroy == item.id
                           "
                           class="animate-spin h-5 w-5 text-black dark:text-white"
                           aria-hidden="true"
@@ -263,13 +293,11 @@ onMounted(() => {
           <li>
             <a
               @click="
-                capaianIKUStore.currentPage == 1
-                  ? ''
-                  : capaianIKUStore.getData(previousPage)
+                ikkStore.currentPage == 1 ? '' : ikkStore.getData(previousPage)
               "
-              :disabled="capaianIKUStore.currentPage == 1 ? true : false"
+              :disabled="ikkStore.currentPage == 1 ? true : false"
               :class="
-                capaianIKUStore.currentPage == 1
+                ikkStore.currentPage == 1
                   ? 'cursor-not-allowed'
                   : 'cursor-pointer dark:hover:bg-blue-700 dark:hover:text-white hover:bg-blue-100 hover:text-gray-700'
               "
@@ -281,12 +309,12 @@ onMounted(() => {
           <li>
             <a
               @click="
-                capaianIKUStore.lastPage == capaianIKUStore.currentPage
+                ikkStore.lastPage == ikkStore.currentPage
                   ? ''
-                  : capaianIKUStore.getData(nextPage)
+                  : ikkStore.getData(nextPage)
               "
               :class="
-                capaianIKUStore.lastPage == capaianIKUStore.currentPage
+                ikkStore.lastPage == ikkStore.currentPage
                   ? 'cursor-not-allowed'
                   : 'cursor-pointer dark:hover:bg-blue-700 dark:hover:text-white hover:bg-blue-100 hover:text-gray-700'
               "
@@ -297,5 +325,18 @@ onMounted(() => {
         </ul>
       </div>
     </CardBox>
+
+    <!-- Modal -->
+    <Teleport to="body">
+      <!-- use the modal component, pass in the prop -->
+      <NewMasterModal
+        :updateData="updateData"
+        :show="showNewModal"
+        @close="showNewModal = false"
+        @submitStore="submit()"
+        @submitUpdate="update()"
+      >
+      </NewMasterModal>
+    </Teleport>
   </SectionMain>
 </template>

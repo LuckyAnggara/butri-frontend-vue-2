@@ -4,6 +4,8 @@ import { useAuthStore } from "@/stores/auth";
 import { kepegawaian } from "./kepegawaian";
 import { all } from "./all";
 import { program } from "./program";
+import { umum } from "./umum";
+import { admin } from "./admin";
 
 const routes = [
   {
@@ -68,6 +70,8 @@ const routes = [
   },
   ...kepegawaian,
   ...program,
+  ...admin,
+  ...umum,
   ...all,
 ];
 

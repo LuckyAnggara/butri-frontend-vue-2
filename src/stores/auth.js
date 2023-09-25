@@ -16,6 +16,12 @@ export const useAuthStore = defineStore("auth", {
     user() {
       return JSON.parse(localStorage.getItem("userDataLawas")) ?? {};
     },
+    isAdmin(state) {
+      if (state.userData.user.role.id == 2) {
+        return true;
+      }
+      return false;
+    },
   },
   actions: {
     async login() {

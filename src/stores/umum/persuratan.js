@@ -5,7 +5,7 @@ import { useAuthStore } from "../auth";
 import { useToast } from "vue-toastification";
 const toast = useToast();
 const authStore = useAuthStore();
-export const useIKUStore = defineStore("indikatorKinerjaUtama", {
+export const usePersuratanStore = defineStore("persuratan", {
   state: () => ({
     responses: null,
     singleResponses: null,
@@ -17,54 +17,34 @@ export const useIKUStore = defineStore("indikatorKinerjaUtama", {
     isDestroyLoading: false,
     form: {
       tahun: new Date().getFullYear(),
-      name: "",
-      target: "",
+      bulan: new Date().getMonth() + 1,
+      surat_masuk: "",
+      surat_keluar: "",
+      group_id: authStore.user.user.unit.group_id,
       created_by: authStore.user.user.id,
     },
     filter: {
-      date: new Date().getFullYear(),
+      currentYear: new Date().getFullYear(),
       searchQuery: "",
+      group: 0,
+      currentMonth: new Date().getMonth() + 1,
     },
-    currentYear: new Date().getFullYear(),
   }),
   getters: {
     items(state) {
-      return state.responses?.data ?? [];
+      return state.responses ?? [];
     },
-    currentPage(state) {
-      return state.responses?.current_page;
-    },
-    pageLength(state) {
-      return Math.round(state.responses?.total / state.responses?.per_page);
-    },
-    lastPage(state) {
-      return state.responses?.last_page;
-    },
-    from(state) {
-      return state.responses?.from;
-    },
-    to(state) {
-      return state.responses?.to;
-    },
-    total(state) {
-      return state.responses?.total;
-    },
-    dateQuery(state) {
-      if (state.filter.date.length == 0 || state.filter.date.length == null) {
+    unitQuery(state) {
+      if (state.filter.group == 0) {
         return "";
       }
-      return (
-        "&start-date=" +
-        state.filter.date[0] +
-        "&end-date=" +
-        state.filter.date[1]
-      );
+      return "&unit=" + state.filter.group;
     },
-    searchQuery(state) {
-      if (state.filter.searchQuery == "" || state.filter.searchQuery == null) {
+    monthQuery(state) {
+      if (state.filter.currentMonth == 0) {
         return "";
       }
-      return "&query=" + state.filter.searchQuery;
+      return "&bulan=" + state.filter.currentMonth;
     },
   },
   actions: {
@@ -72,7 +52,7 @@ export const useIKUStore = defineStore("indikatorKinerjaUtama", {
       this.isLoading = true;
       try {
         const response = await axiosIns.get(
-          `/indikator-kinerja-utama?tahun=${this.currentYear}${this.searchQuery}${page}`
+          `/pengelolaan-persuratan?tahun=${this.filter.currentYear}${this.unitQuery}${this.monthQuery}`
         );
         this.responses = response.data.data;
       } catch (error) {
@@ -86,15 +66,24 @@ export const useIKUStore = defineStore("indikatorKinerjaUtama", {
       this.isStoreLoading = true;
       try {
         const response = await axiosIns.post(
-          `/indikator-kinerja-utama`,
+          `/pengelolaan-persuratan`,
           this.form
         );
+
         if (response.status == 200) {
           toast.success("Data berhasil dibuat", {
             timeout: 3000,
           });
           this.clearForm();
           return true;
+        } else if (response.status == 202) {
+          toast.error(
+            `Data bulan ${this.form.bulan} tahun ${this.form.tahun} sudah ada`,
+            {
+              timeout: 3000,
+            }
+          );
+          return false;
         } else {
           return false;
         }
@@ -111,7 +100,7 @@ export const useIKUStore = defineStore("indikatorKinerjaUtama", {
       this.isDestroyLoading = true;
       setTimeout(() => {}, 500);
       try {
-        await axiosIns.delete(`/indikator-kinerja-utama/${id}`);
+        await axiosIns.delete(`/pengelolaan-persuratan/${id}`);
         toast.success("Data berhasil di hapus", {
           timeout: 2000,
         });
@@ -129,7 +118,7 @@ export const useIKUStore = defineStore("indikatorKinerjaUtama", {
       this.isUpdateLoading = true;
       try {
         const response = await axiosIns.put(
-          `/indikator-kinerja-utama/${this.singleResponses.id}`,
+          `/pengelolaan-persuratan/${this.singleResponses.id}`,
           this.singleResponses
         );
         if (response.status == 200) {

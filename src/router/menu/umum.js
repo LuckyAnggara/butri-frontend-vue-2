@@ -1,10 +1,7 @@
 import {
-  mdiAccountArrowLeftOutline,
-  mdiAccountGroupOutline,
-  mdiAccountMultipleOutline,
-  mdiBriefcaseAccountOutline,
-  mdiCashMultiple,
-  mdiShieldAccount,
+  mdiArchiveOutline,
+  mdiChairRolling,
+  mdiEmailFastOutline,
   mdiViewDashboard,
 } from "@mdi/js";
 
@@ -15,33 +12,27 @@ export default [
     icon: mdiViewDashboard,
   },
   {
-    to: "/pegawai/list",
-    label: "Pegawai",
-    icon: mdiAccountGroupOutline,
+    to: "/persuratan/list",
+    label: "Persuratan",
+    icon: mdiEmailFastOutline,
   },
   {
     to: "/pegawai/mutasi/list",
-    label: "Mutasi",
-    icon: mdiAccountArrowLeftOutline,
+    label: "Arsip",
+    icon: mdiArchiveOutline,
   },
   {
-    to: "/pegawai/pengembangan/list",
-    label: "Pengembangan",
-    icon: mdiAccountMultipleOutline,
-  },
-  {
-    to: "/pegawai/kepangkatan/list",
-    label: "Kepangkatan",
-    icon: mdiBriefcaseAccountOutline,
-  },
-  {
-    to: "/pegawai/pensiun/list",
-    label: "Pensiun",
-    icon: mdiShieldAccount,
-  },
-  {
-    to: "/pegawai/kgb/list",
-    label: "KGB",
-    icon: mdiCashMultiple,
+    label: "BMN",
+    icon: mdiChairRolling,
+    menu: [
+      {
+        to: "/iku/list",
+        label: "Inventaris",
+      },
+      {
+        to: "/iku/list",
+        label: "Mutasi",
+      },
+    ],
   },
 ];

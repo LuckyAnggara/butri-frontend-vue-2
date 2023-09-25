@@ -5,7 +5,7 @@ import { useAuthStore } from "../auth";
 import { useToast } from "vue-toastification";
 const toast = useToast();
 const authStore = useAuthStore();
-export const useIKKStore = defineStore("IndikatorKinerjaKegiatan", {
+export const useIKKStore = defineStore("indikatorKinerjaKegiatan", {
   state: () => ({
     responses: null,
     singleResponses: null,

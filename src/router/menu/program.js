@@ -1,5 +1,6 @@
-import { mdiChartLine, mdiViewDashboard, mdiChartBoxOutline } from "@mdi/js";
+import { mdiViewDashboard } from "@mdi/js";
 import all from "./all";
+import admin from "./admin";
 
 export default [
   {
@@ -7,25 +8,6 @@ export default [
     label: "Dashboard",
     icon: mdiViewDashboard,
   },
-  {
-    label: "IKU",
-    icon: mdiChartLine,
-    menu: [
-      {
-        to: "/iku/list",
-        label: "Master",
-      },
-    ],
-  },
-  {
-    label: "IKK",
-    icon: mdiChartBoxOutline,
-    menu: [
-      {
-        to: "/ikk/list",
-        label: "Master",
-      },
-    ],
-  },
+  ...admin,
   ...all,
 ];
