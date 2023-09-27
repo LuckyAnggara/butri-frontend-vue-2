@@ -38,6 +38,7 @@ export const useMainStore = defineStore("main", {
       "KOORDINASI",
       "KONSINYERING",
     ],
+    jenisKegiatanArsipOptions: ["PENGARSIPAN", "PEMUSNAHAN"],
   }),
   actions: {
     setUser(payload) {

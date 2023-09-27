@@ -7,7 +7,7 @@ export const kepegawaian = [
     },
     path: "/",
     name: "dashboard",
-    component: () => import("@/views/Kepegawaian/Dashboard.vue"),
+    component: () => import("@/views/kepegawaian/Dashboard.vue"),
   },
   {
     meta: {
@@ -17,7 +17,7 @@ export const kepegawaian = [
     },
     path: "/pegawai/list",
     name: "list-pegawai",
-    component: () => import("@/views/Kepegawaian/umum/DataPegawai.vue"),
+    component: () => import("@/views/kepegawaian/umum/DataPegawai.vue"),
   },
   {
     meta: {
@@ -27,7 +27,7 @@ export const kepegawaian = [
     },
     path: "/pegawai/new",
     name: "new-pegawai",
-    component: () => import("@/views/Kepegawaian/umum/NewPegawai.vue"),
+    component: () => import("@/views/kepegawaian/umum/NewPegawai.vue"),
   },
   {
     meta: {
@@ -37,7 +37,7 @@ export const kepegawaian = [
     },
     path: "/pegawai/:id/edit",
     name: "edit-pegawai",
-    component: () => import("@/views/Kepegawaian/umum/EditDataPegawai.vue"),
+    component: () => import("@/views/kepegawaian/umum/EditDataPegawai.vue"),
   },
   {
     meta: {
@@ -48,7 +48,7 @@ export const kepegawaian = [
     path: "/pegawai/pensiun/list",
     name: "list-pensiun-pegawai",
     component: () =>
-      import("@/views/Kepegawaian/pensiun/DataPensiunPegawai.vue"),
+      import("@/views/kepegawaian/pensiun/DataPensiunPegawai.vue"),
   },
   {
     meta: {
@@ -59,7 +59,7 @@ export const kepegawaian = [
     path: "/pegawai/pensiun/new",
     name: "new-pensiun-pegawai",
     component: () =>
-      import("@/views/Kepegawaian/pensiun/NewPensiunPegawai.vue"),
+      import("@/views/kepegawaian/pensiun/NewPensiunPegawai.vue"),
   },
   {
     meta: {
@@ -70,7 +70,7 @@ export const kepegawaian = [
     path: "/pegawai/pengembangan/list",
     name: "list-pengembangan-pegawai",
     component: () =>
-      import("@/views/Kepegawaian/pengembangan/DataPengembanganPengawai.vue"),
+      import("@/views/kepegawaian/pengembangan/DataPengembanganPengawai.vue"),
   },
   {
     meta: {
@@ -81,7 +81,7 @@ export const kepegawaian = [
     path: "/pegawai/pengembangan/new",
     name: "new-pengembangan-pegawai",
     component: () =>
-      import("@/views/Kepegawaian/pengembangan/NewPengembanganPengawai.vue"),
+      import("@/views/kepegawaian/pengembangan/NewPengembanganPengawai.vue"),
   },
   {
     meta: {
@@ -92,7 +92,7 @@ export const kepegawaian = [
     path: "/pegawai/pengembangan/:id/edit",
     name: "edit-pengembangan-pegawai",
     component: () =>
-      import("@/views/Kepegawaian/pengembangan/EditPengembanganPegawai.vue"),
+      import("@/views/kepegawaian/pengembangan/EditPengembanganPegawai.vue"),
   },
   {
     meta: {
@@ -102,7 +102,7 @@ export const kepegawaian = [
     },
     path: "/pegawai/mutasi/list",
     name: "list-mutasi-pegawai",
-    component: () => import("@/views/Kepegawaian/mutasi/DataMutasiPegawai.vue"),
+    component: () => import("@/views/kepegawaian/mutasi/DataMutasiPegawai.vue"),
   },
   {
     meta: {
@@ -112,7 +112,7 @@ export const kepegawaian = [
     },
     path: "/pegawai/mutasi/new",
     name: "new-mutasi-pegawai",
-    component: () => import("@/views/Kepegawaian/mutasi/NewMutasiPegawai.vue"),
+    component: () => import("@/views/kepegawaian/mutasi/NewMutasiPegawai.vue"),
   },
   {
     meta: {
@@ -123,7 +123,7 @@ export const kepegawaian = [
     path: "/pegawai/kepangkatan/list",
     name: "list-kepangkatan-pegawai",
     component: () =>
-      import("@/views/Kepegawaian/kepangkatan/DataKepangkatanPegawai.vue"),
+      import("@/views/kepegawaian/kepangkatan/DataKepangkatanPegawai.vue"),
   },
   {
     meta: {
@@ -134,7 +134,7 @@ export const kepegawaian = [
     path: "/pegawai/kepangkatan/new",
     name: "new-kepangkatan-pegawai",
     component: () =>
-      import("@/views/Kepegawaian/kepangkatan/NewKepangkatanPegawai.vue"),
+      import("@/views/kepegawaian/kepangkatan/NewKepangkatanPegawai.vue"),
   },
   {
     meta: {
@@ -144,7 +144,7 @@ export const kepegawaian = [
     },
     path: "/pegawai/kgb/list",
     name: "list-kgb-pegawai",
-    component: () => import("@/views/Kepegawaian/kgb/DataKGBPegawai.vue"),
+    component: () => import("@/views/kepegawaian/kgb/DataKGBPegawai.vue"),
   },
   {
     meta: {
@@ -154,6 +154,6 @@ export const kepegawaian = [
     },
     path: "/pegawai/kgb/new",
     name: "new-kgb-pegawai",
-    component: () => import("@/views/Kepegawaian/kgb/NewKGBPegawai.vue"),
+    component: () => import("@/views/kepegawaian/kgb/NewKGBPegawai.vue"),
   },
 ];

@@ -17,7 +17,7 @@ export default [
     icon: mdiEmailFastOutline,
   },
   {
-    to: "/pegawai/mutasi/list",
+    to: "/arsip/list",
     label: "Arsip",
     icon: mdiArchiveOutline,
   },

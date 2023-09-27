@@ -14,7 +14,7 @@
           class="flex justify-between items-center pb-4 mb-4 rounded-t border-b sm:mb-5 dark:border-gray-600"
         >
           <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-            Tambah Indikator Kinerja Kegiatan
+            Tambah data
           </h3>
           <button
             @click="closeModal"
@@ -38,14 +38,15 @@
           </button>
         </div>
         <form v-if="updateData" @submit.prevent="prosesUpdate()">
-          <FormField label="Tahun">
+          <FormField label="Jenis Kegiatan*">
             <select
-              :disabled="ikkStore.isUpdateLoading"
-              v-model="ikkStore.singleResponses.tahun"
+              required
+              :disabled="arsipStore.isStoreLoading"
+              v-model="arsipStore.singleResponses.jenis_kegiatan"
               class="h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
             >
               <option
-                v-for="option in mainStore.tahunOptions"
+                v-for="option in mainStore.jenisKegiatanArsipOptions"
                 :key="option"
                 :value="option"
               >
@@ -53,46 +54,51 @@
               </option>
             </select>
           </FormField>
-          <FormField label="Indikator Kegiatan">
+          <FormField label="Kegiatan*">
             <FormControl
-              v-model="ikkStore.singleResponses.name"
-              :disabled="ikkStore.isUpdateLoading"
+              type="textarea"
+              v-model="arsipStore.singleResponses.kegiatan"
+              :disabled="arsipStore.isStoreLoading"
               required
             />
           </FormField>
-          <FormField label="Target*">
+          <FormField label="Output*">
             <FormControl
-              v-model="ikkStore.singleResponses.target"
-              :disabled="ikkStore.isUpdateLoading"
+              type="textarea"
+              v-model="arsipStore.singleResponses.output"
+              :disabled="arsipStore.isStoreLoading"
               required
             />
           </FormField>
-
-          <FormField label="Unit*">
-            <select
+          <FormField label="Catatan*">
+            <FormControl
+              type="textarea"
+              v-model="arsipStore.singleResponses.notes"
+              :disabled="arsipStore.isStoreLoading"
               required
-              :disabled="ikkStore.isLoading"
-              v-model="ikkStore.singleResponses.group_id"
-              class="h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
-            >
-              <option
-                v-for="option in unitGroupStore.items"
-                :key="option.id"
-                :value="option.id"
-              >
-                {{ option.name.toUpperCase() }}
-              </option>
-            </select>
+            />
+          </FormField>
+          <FormField label="Tanggal*">
+            <vue-tailwind-datepicker
+              required
+              :disabled="arsipStore.isStoreLoading"
+              as-single
+              placeholder="Tanggal Data"
+              v-model="arsipStore.singleResponses.created_at"
+              :formatter="formatter"
+              input-classes="h-12 border  px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
+            />
           </FormField>
 
           <BaseDivider />
 
           <div class="flex justify-start space-x-3 items-center">
             <BaseButton
-              :disabled="ikkStore.isUpdateLoading"
+              :disabled="arsipStore.isUpdateLoading"
               type="submit"
               color="info"
-              ><span v-if="!ikkStore.isUpdateLoading"><span>Update</span></span
+              ><span v-if="!arsipStore.isUpdateLoading"
+                ><span>Update</span></span
               ><span class="flex flex-row items-center" v-else>
                 <ArrowPathIcon class="h-5 w-5 animate-spin mr-3" />
                 Processing</span
@@ -100,15 +106,16 @@
             >
           </div>
         </form>
-        <form v-else @submit.prevent="prosesRequest()">
-          <FormField label="Tahun">
+        <form v-else @submit.prevent="prosesStore()">
+          <FormField label="Jenis Kegiatan*">
             <select
-              :disabled="ikkStore.isStoreLoading"
-              v-model="ikkStore.form.tahun"
+              required
+              :disabled="arsipStore.isStoreLoading"
+              v-model="arsipStore.form.jenis_kegiatan"
               class="h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
             >
               <option
-                v-for="option in mainStore.tahunOptions"
+                v-for="option in mainStore.jenisKegiatanArsipOptions"
                 :key="option"
                 :value="option"
               >
@@ -116,46 +123,50 @@
               </option>
             </select>
           </FormField>
-          <FormField label="Indikator Kegiatan*">
+          <FormField label="Kegiatan*">
             <FormControl
-              v-model="ikkStore.form.name"
-              :disabled="ikkStore.isStoreLoading"
+              type="textarea"
+              v-model="arsipStore.form.kegiatan"
+              :disabled="arsipStore.isStoreLoading"
               required
             />
           </FormField>
-          <FormField label="Target*">
+          <FormField label="Output*">
             <FormControl
-              v-model="ikkStore.form.target"
-              :disabled="ikkStore.isStoreLoading"
+              type="textarea"
+              v-model="arsipStore.form.output"
+              :disabled="arsipStore.isStoreLoading"
               required
             />
           </FormField>
-
-          <FormField label="Unit*">
-            <select
+          <FormField label="Catatan*">
+            <FormControl
+              type="textarea"
+              v-model="arsipStore.form.notes"
+              :disabled="arsipStore.isStoreLoading"
               required
-              :disabled="ikkStore.isLoading"
-              v-model="ikkStore.form.unit_id"
-              class="h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
-            >
-              <option
-                v-for="option in unitGroupStore.items"
-                :key="option.id"
-                :value="option.id"
-              >
-                {{ option.name.toUpperCase() }}
-              </option>
-            </select>
+            />
+          </FormField>
+          <FormField label="Tanggal*">
+            <vue-tailwind-datepicker
+              required
+              :disabled="arsipStore.isStoreLoading"
+              as-single
+              placeholder="Tanggal Data"
+              v-model="arsipStore.form.created_at"
+              :formatter="formatter"
+              input-classes="h-12 border  px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
+            />
           </FormField>
 
           <BaseDivider />
 
           <div class="flex justify-start space-x-3 items-center">
             <BaseButton
-              :disabled="ikkStore.isStoreLoading"
+              :disabled="arsipStore.isStoreLoading"
               type="submit"
               color="info"
-              ><span v-if="!ikkStore.isStoreLoading">Submit</span
+              ><span v-if="!arsipStore.isStoreLoading">Submit</span
               ><span class="flex flex-row items-center" v-else>
                 <ArrowPathIcon class="h-5 w-5 animate-spin mr-3" />
                 Processing</span
@@ -173,10 +184,10 @@ import FormField from "@/components/FormField.vue";
 import FormControl from "@/components/FormControl.vue";
 import BaseDivider from "@/components/BaseDivider.vue";
 import BaseButton from "@/components/BaseButton.vue";
+import { useArsipStore } from "@/stores/umum/arsip";
 import { useMainStore } from "@/stores/main";
 import { ArrowPathIcon } from "@heroicons/vue/24/outline";
-import { useUnitGroupStore } from "@/stores/unitGroup";
-import { useIKKStore } from "@/stores/admin/ikk";
+import { ref } from "vue";
 
 const props = defineProps({
   show: Boolean,
@@ -185,10 +196,14 @@ const props = defineProps({
 
 const emit = defineEmits(["close", "submitStore", "submitUpdate"]);
 
-const ikkStore = useIKKStore();
+const arsipStore = useArsipStore();
 const mainStore = useMainStore();
-const unitGroupStore = useUnitGroupStore();
-async function prosesRequest() {
+
+const formatter = ref({
+  date: "DD MMMM YYYY",
+});
+
+async function prosesStore() {
   emit("submitStore");
 }
 
@@ -228,4 +243,3 @@ function closeModal() {
   transform: scale(1.1);
 }
 </style>
-@/stores/admin/ikk

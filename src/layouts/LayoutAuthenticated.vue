@@ -1,6 +1,6 @@
 <script setup>
 import { mdiForwardburger, mdiBackburger, mdiMenu } from "@mdi/js";
-import { computed, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import menuNavBar from "@/menuNavBar.js";
 import { useStyleStore } from "@/stores/style.js";
@@ -53,7 +53,7 @@ const menuClick = async (event, item) => {
   }
 };
 const menu = computed(() => {
-  if (authStore.user.user?.role.id == 1) {
+  if (authStore.user.user?.role.id == 2) {
     return admin;
   }
   if (authStore.user.user?.unit?.id == 3) return umum;
@@ -62,6 +62,10 @@ const menu = computed(() => {
   if (authStore.user.user?.unit?.id == 6) return kepegawaian;
   if (authStore.user.user?.unit?.id == 7) return sip;
   if (authStore.user.user?.unit?.id > 8) return wilayah;
+});
+
+onMounted(() => {
+  authStore.isLoggedIn;
 });
 </script>
 

@@ -13,7 +13,7 @@ import BaseButton from "@/components/BaseButton.vue";
 import { useToast } from "vue-toastification";
 import { useMainStore } from "@/stores/main";
 import { useAuthStore } from "@/stores/auth";
-import { useIKUStore } from "@/stores/program/iku";
+import { useIKUStore } from "@/stores/admin/iku";
 import { useCapaianIKU } from "@/stores/all/capaianIku";
 
 const route = useRoute();

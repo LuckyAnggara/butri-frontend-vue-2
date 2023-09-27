@@ -5,7 +5,7 @@ import { useAuthStore } from "../auth";
 import { useToast } from "vue-toastification";
 const toast = useToast();
 const authStore = useAuthStore();
-export const useIKKStore = defineStore("indikatorKinerjaKegiatan", {
+export const useDipaStore = defineStore("dipa", {
   state: () => ({
     responses: null,
     singleResponses: null,
@@ -16,18 +16,17 @@ export const useIKKStore = defineStore("indikatorKinerjaKegiatan", {
     isUpdateLoading: false,
     isDestroyLoading: false,
     form: {
+      name: null,
+      pagu: null,
+      bulan: new Date().getMonth() + 1,
       tahun: new Date().getFullYear(),
-      name: "",
-      target: "",
-      unit_id: "",
       created_by: authStore.user.user.id,
     },
     filter: {
-      currentYear: new Date().getFullYear(),
       searchQuery: "",
-      unit: 0,
+      currentMonth: new Date().getMonth() + 1,
+      currentYear: new Date().getFullYear(),
     },
-    currentYear: new Date().getFullYear(),
   }),
   getters: {
     items(state) {
@@ -57,19 +56,13 @@ export const useIKKStore = defineStore("indikatorKinerjaKegiatan", {
       }
       return "&query=" + state.filter.searchQuery;
     },
-    unitQuery(state) {
-      if (state.filter.unit == 0) {
-        return "";
-      }
-      return "&unit=" + state.filter.unit;
-    },
   },
   actions: {
     async getData(page = "") {
       this.isLoading = true;
       try {
         const response = await axiosIns.get(
-          `/indikator-kinerja-kegiatan?tahun=${this.currentYear}${this.searchQuery}${page}${this.unitQuery}`
+          `/dipa?tahun=${this.filter.currentYear}&bulan=${this.filter.currentMonth}${this.searchQuery}`
         );
         this.responses = response.data.data;
       } catch (error) {
@@ -82,16 +75,22 @@ export const useIKKStore = defineStore("indikatorKinerjaKegiatan", {
     async store() {
       this.isStoreLoading = true;
       try {
-        const response = await axiosIns.post(
-          `/indikator-kinerja-kegiatan`,
-          this.form
-        );
+        const response = await axiosIns.post(`/dipa`, this.form);
+
         if (response.status == 200) {
           toast.success("Data berhasil dibuat", {
             timeout: 3000,
           });
           this.clearForm();
           return true;
+        } else if (response.status == 202) {
+          toast.error(
+            `Data bulan ${this.form.bulan} tahun ${this.form.tahun} sudah ada`,
+            {
+              timeout: 3000,
+            }
+          );
+          return false;
         } else {
           return false;
         }
@@ -108,7 +107,7 @@ export const useIKKStore = defineStore("indikatorKinerjaKegiatan", {
       this.isDestroyLoading = true;
       setTimeout(() => {}, 500);
       try {
-        await axiosIns.delete(`/indikator-kinerja-kegiatan/${id}`);
+        await axiosIns.delete(`/dipa/${id}`);
         toast.success("Data berhasil di hapus", {
           timeout: 2000,
         });
@@ -126,7 +125,7 @@ export const useIKKStore = defineStore("indikatorKinerjaKegiatan", {
       this.isUpdateLoading = true;
       try {
         const response = await axiosIns.put(
-          `/indikator-kinerja-kegiatan/${this.singleResponses.id}`,
+          `/dipa/${this.singleResponses.id}`,
           this.singleResponses
         );
         if (response.status == 200) {

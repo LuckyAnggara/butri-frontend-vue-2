@@ -10,7 +10,7 @@ import FormControl from "@/components/FormControl.vue";
 import BaseButton from "@/components/BaseButton.vue";
 
 import { useToast } from "vue-toastification";
-import { useIKUStore } from "@/stores/program/iku";
+import { useIKUStore } from "@/stores/admin/iku";
 import { useCapaianIKU } from "@/stores/all/capaianIku";
 import NotificationBar from "@/components/NotificationBar.vue";
 import { useAuthStore } from "@/stores/auth";

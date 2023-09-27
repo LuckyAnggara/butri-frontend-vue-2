@@ -49,17 +49,7 @@ export const useIKUStore = defineStore("indikatorKinerjaUtama", {
     total(state) {
       return state.responses?.total;
     },
-    dateQuery(state) {
-      if (state.filter.date.length == 0 || state.filter.date.length == null) {
-        return "";
-      }
-      return (
-        "&start-date=" +
-        state.filter.date[0] +
-        "&end-date=" +
-        state.filter.date[1]
-      );
-    },
+
     searchQuery(state) {
       if (state.filter.searchQuery == "" || state.filter.searchQuery == null) {
         return "";
@@ -68,11 +58,11 @@ export const useIKUStore = defineStore("indikatorKinerjaUtama", {
     },
   },
   actions: {
-    async getData(page = "") {
+    async getData() {
       this.isLoading = true;
       try {
         const response = await axiosIns.get(
-          `/indikator-kinerja-utama?tahun=${this.currentYear}${this.searchQuery}${page}`
+          `/indikator-kinerja-utama?tahun=${this.currentYear}${this.searchQuery}`
         );
         this.responses = response.data.data;
       } catch (error) {

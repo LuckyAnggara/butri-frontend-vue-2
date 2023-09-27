@@ -11,7 +11,7 @@ import BaseButton from "@/components/BaseButton.vue";
 
 import { useToast } from "vue-toastification";
 import { useCapaianIkk } from "@/stores/all/capaianIkk";
-import { useIKKStore } from "@/stores/program/ikk";
+import { useIKKStore } from "@/stores/admin/ikk";
 import { useAuthStore } from "@/stores/auth";
 import NotificationBar from "@/components/NotificationBar.vue";
 
@@ -181,3 +181,4 @@ onUnmounted(() => {
     </template>
   </SectionMain>
 </template>
+@/stores/admin/ikk

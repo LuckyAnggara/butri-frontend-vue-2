@@ -6,9 +6,10 @@ export const admin = [
       requiresAuth: true,
     },
     path: "/iku/list",
-    name: "iku-list",
-    component: () => import("@/views/Admin/Iku/DataMaster.vue"),
+    name: "list-iku",
+    component: () => import("@/views/admin/iku/DataMaster.vue"),
   },
+
   {
     meta: {
       title: "Indikator Kinerja Kegiatan",
@@ -17,6 +18,6 @@ export const admin = [
     },
     path: "/ikk/list",
     name: "ikk-list",
-    component: () => import("@/views/Admin/Ikk/DataMaster.vue"),
+    component: () => import("@/views/admin/ikk/DataMaster.vue"),
   },
 ];

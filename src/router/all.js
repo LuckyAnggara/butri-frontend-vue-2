@@ -7,7 +7,7 @@ export const all = [
     },
     path: "/kegiatan/list",
     name: "list-kegiatan",
-    component: () => import("@/views/All/Kegiatan/DataKegiatan.vue"),
+    component: () => import("@/views/all/Kegiatan/DataKegiatan.vue"),
   },
   {
     meta: {
@@ -17,7 +17,7 @@ export const all = [
     },
     path: "/kegiatan/new",
     name: "new-kegiatan",
-    component: () => import("@/views/All/Kegiatan/NewKegiatan.vue"),
+    component: () => import("@/views/all/Kegiatan/NewKegiatan.vue"),
   },
   {
     meta: {
@@ -27,7 +27,7 @@ export const all = [
     },
     path: "/program-unggulan/list",
     name: "list-program-unggulan",
-    component: () => import("@/views/All/Programunggulan/Data.vue"),
+    component: () => import("@/views/all/Programunggulan/Data.vue"),
   },
   {
     meta: {
@@ -37,7 +37,7 @@ export const all = [
     },
     path: "/program-unggulan/new",
     name: "new-program-unggulan",
-    component: () => import("@/views/All/Programunggulan/New.vue"),
+    component: () => import("@/views/all/Programunggulan/New.vue"),
   },
   {
     meta: {
@@ -47,7 +47,7 @@ export const all = [
     },
     path: "/capaian/iku/list",
     name: "list-capaian-iku",
-    component: () => import("@/views/All/Capaian/Iku/Data.vue"),
+    component: () => import("@/views/all/Capaian/Iku/Data.vue"),
   },
   {
     meta: {
@@ -57,7 +57,7 @@ export const all = [
     },
     path: "/capaian/iku/new",
     name: "new-capaian-iku",
-    component: () => import("@/views/All/Capaian/Iku/New.vue"),
+    component: () => import("@/views/all/Capaian/Iku/New.vue"),
   },
   {
     meta: {
@@ -67,7 +67,7 @@ export const all = [
     },
     path: "/capaian/iku/:id/detail",
     name: "edit-capaian-iku",
-    component: () => import("@/views/All/Capaian/Iku/Edit.vue"),
+    component: () => import("@/views/all/Capaian/Iku/Edit.vue"),
   },
   {
     meta: {
@@ -77,7 +77,7 @@ export const all = [
     },
     path: "/capaian/ikk/list",
     name: "list-capaian-ikk",
-    component: () => import("@/views/All/Capaian/Ikk/Data.vue"),
+    component: () => import("@/views/all/Capaian/Ikk/Data.vue"),
   },
   {
     meta: {
@@ -87,7 +87,7 @@ export const all = [
     },
     path: "/capaian/ikk/new",
     name: "new-capaian-ikk",
-    component: () => import("@/views/All/Capaian/Ikk/New.vue"),
+    component: () => import("@/views/all/Capaian/Ikk/New.vue"),
   },
   {
     meta: {
@@ -97,7 +97,7 @@ export const all = [
     },
     path: "/capaian/ikk/:id/detail",
     name: "edit-capaian-ikk",
-    component: () => import("@/views/All/Capaian/Ikk/Edit.vue"),
+    component: () => import("@/views/all/Capaian/Ikk/Edit.vue"),
   },
   {
     meta: {
@@ -107,7 +107,7 @@ export const all = [
     },
     path: "/capaian/lainnya/list",
     name: "list-capaian-lainnya",
-    component: () => import("@/views/All/Capaian/Lainnya/Data.vue"),
+    component: () => import("@/views/all/Capaian/Lainnya/Data.vue"),
   },
   {
     meta: {
@@ -117,6 +117,6 @@ export const all = [
     },
     path: "/capaian/lainnya/new",
     name: "new-capaian-lainnya",
-    component: () => import("@/views/All/Capaian/Lainnya/New.vue"),
+    component: () => import("@/views/all/Capaian/Lainnya/New.vue"),
   },
 ];

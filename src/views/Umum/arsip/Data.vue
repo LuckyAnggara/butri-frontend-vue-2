@@ -18,24 +18,26 @@ import {
 } from "@heroicons/vue/24/outline";
 import { useMainStore } from "@/stores/main";
 import BaseButton from "@/components/BaseButton.vue";
-import { useIKUStore } from "@/stores/admin/iku";
+import { useArsipStore } from "@/stores/umum/arsip";
+import { useAuthStore } from "@/stores/auth";
 
-const search = useDebounceFn(() => {
-  ikuStore.getData();
-}, 500);
 const route = useRoute();
-const router = useRouter();
-const ikuStore = useIKUStore();
+const arsipStore = useArsipStore();
 const mainStore = useMainStore();
+const authStore = useAuthStore();
 
 const showNewModal = ref(false);
 const updateData = ref(false);
 
 const indexDestroy = ref(0);
 
-const NewMasterModal = defineAsyncComponent(() =>
-  import("@/views/admin/iku/NewModal.vue")
-);
+const formatter = ref({
+  date: "DD MMMM YYYY",
+});
+
+const search = useDebounceFn(() => {
+  arsipStore.getData();
+}, 500);
 
 const itemMenu = [
   {
@@ -51,52 +53,54 @@ const itemMenu = [
 ];
 
 const previousPage = computed(() => {
-  return "&page=" + (ikuStore.currentPage - 1);
+  return "&page=" + (arsipStore.currentPage - 1);
 });
 
 const nextPage = computed(() => {
-  return "&page=" + (ikuStore.currentPage + 1);
+  return "&page=" + (arsipStore.currentPage + 1);
 });
 
 function toNew() {
   showNewModal.value = true;
 }
 
+const NewMasterModal = defineAsyncComponent(() => import("./NewModal.vue"));
+
 function destroy(item) {
-  ikuStore.destroy(item.id);
+  arsipStore.destroy(item.id);
   indexDestroy.value = item.id;
 }
 
 function edit(item) {
   showNewModal.value = true;
   updateData.value = true;
-  ikuStore.readyEdit(item);
+  arsipStore.readyEdit(item);
 }
 
 async function submit() {
-  const result = await ikuStore.store();
+  const result = await arsipStore.store();
   if (result) {
     showNewModal.value = false;
-    ikuStore.getData();
+    arsipStore.getData();
   }
 }
 
 async function update() {
-  const result = await ikuStore.update();
+  const result = await arsipStore.update();
   if (result) {
     showNewModal.value = false;
-    ikuStore.getData();
+    arsipStore.getData();
   }
 }
 
-ikuStore.$subscribe((mutation, state) => {
+arsipStore.$subscribe((mutation, state) => {
   if (mutation.events.key == "currentYear") {
-    ikuStore.getData();
+    arsipStore.getData();
   }
 });
 
 onMounted(() => {
-  ikuStore.getData();
+  arsipStore.getData();
 });
 </script>
 
@@ -106,19 +110,19 @@ onMounted(() => {
 
     <CardBox class="mb-4 px-4" has-table>
       <div class="w-full my-4 flex flex-row space-x-4">
-        <div class="w-3/12">
-          <FormField label="Tahun">
+        <div class="w-1/12">
+          <FormField label="Show">
             <select
-              :disabled="ikuStore.isLoading"
-              v-model="ikuStore.currentYear"
+              :disabled="arsipStore.isStoreLoading"
+              v-model="arsipStore.currentLimit"
               class="h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
             >
               <option
-                v-for="option in mainStore.tahunOptions"
+                v-for="option in mainStore.limitDataOptions"
                 :key="option"
                 :value="option"
               >
-                {{ option }}
+                {{ option == 100000 ? "SEMUA" : option }}
               </option>
             </select>
           </FormField>
@@ -127,14 +131,25 @@ onMounted(() => {
           <FormField label="Search">
             <FormControl
               @keyup="search"
-              v-model="ikuStore.filter.searchQuery"
+              v-model="arsipStore.filter.searchQuery"
               type="tel"
-              placeholder="Cari berdasarkan indikator"
+              placeholder="Cari berdasarkan nama / nip "
             />
           </FormField>
         </div>
-        <div class="w-2/12"></div>
-
+        <div class="w-4/12">
+          <FormField label="Tanggal">
+            <vue-tailwind-datepicker
+              :disabled="arsipStore.isStoreLoading"
+              required
+              separator=" s/d "
+              placeholder="Tanggal Data"
+              v-model="arsipStore.filter.date"
+              :formatter="formatter"
+              input-classes="h-12 border  px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
+            />
+          </FormField>
+        </div>
         <div class="w-2/12 flex justify-end">
           <BaseButton
             @click="toNew()"
@@ -149,15 +164,15 @@ onMounted(() => {
       <table>
         <thead>
           <tr>
-            <th>No</th>
-            <th>Indikator</th>
-            <th>Target</th>
-            <th>Realisasi</th>
+            <th></th>
+            <th>Kegiatan</th>
+            <th>Jenis Kegiatan</th>
+            <th>Tanggal</th>
             <th />
           </tr>
         </thead>
         <tbody>
-          <tr v-if="ikuStore.isLoading">
+          <tr v-if="arsipStore.isLoading">
             <td colspan="5" class="text-center">
               <div
                 class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
@@ -171,23 +186,23 @@ onMounted(() => {
             </td>
           </tr>
           <template v-else>
-            <tr v-if="ikuStore.items.length == 0">
+            <tr v-if="arsipStore.items.length == 0">
               <td colspan="5" class="text-center">
                 <span>Tidak ada data</span>
               </td>
             </tr>
-            <tr v-else v-for="(item, index) in ikuStore.items" :key="item.id">
+            <tr v-else v-for="(item, index) in arsipStore.items" :key="item.id">
               <td class="text-center">
-                {{ ikuStore.from + index }}
+                {{ arsipStore.from + index }}
               </td>
               <td>
-                {{ item.name }}
+                {{ item.kegiatan }}
               </td>
               <td>
-                {{ item.target }}
+                {{ item.jenis_kegiatan }}
               </td>
               <td>
-                {{ item.capaian?.realisasi ?? "-" }}
+                {{ item.created_at }}
               </td>
               <td class="before:hidden lg:w-1 whitespace-nowrap">
                 <div>
@@ -195,10 +210,10 @@ onMounted(() => {
                     <div>
                       <MenuButton
                         :disabled="
-                          ikuStore.isDestroyLoading && indexDestroy == item.id
+                          arsipStore.isDestroyLoading && indexDestroy == item.id
                         "
                         :class="
-                          ikuStore.isDestroyLoading && indexDestroy == item.id
+                          arsipStore.isDestroyLoading && indexDestroy == item.id
                             ? ''
                             : 'hover:scale-125 ease-in-out duration-300'
                         "
@@ -206,7 +221,8 @@ onMounted(() => {
                       >
                         <ArrowPathIcon
                           v-if="
-                            ikuStore.isDestroyLoading && indexDestroy == item.id
+                            arsipStore.isDestroyLoading &&
+                            indexDestroy == item.id
                           "
                           class="animate-spin h-5 w-5 text-black dark:text-white"
                           aria-hidden="true"
@@ -266,11 +282,13 @@ onMounted(() => {
           <li>
             <a
               @click="
-                ikuStore.currentPage == 1 ? '' : ikuStore.getData(previousPage)
+                arsipStore.currentPage == 1
+                  ? ''
+                  : arsipStore.getData(previousPage)
               "
-              :disabled="ikuStore.currentPage == 1 ? true : false"
+              :disabled="arsipStore.currentPage == 1 ? true : false"
               :class="
-                ikuStore.currentPage == 1
+                arsipStore.currentPage == 1
                   ? 'cursor-not-allowed'
                   : 'cursor-pointer dark:hover:bg-blue-700 dark:hover:text-white hover:bg-blue-100 hover:text-gray-700'
               "
@@ -282,12 +300,12 @@ onMounted(() => {
           <li>
             <a
               @click="
-                ikuStore.lastPage == ikuStore.currentPage
+                arsipStore.lastPage == arsipStore.currentPage
                   ? ''
-                  : ikuStore.getData(nextPage)
+                  : arsipStore.getData(nextPage)
               "
               :class="
-                ikuStore.lastPage == ikuStore.currentPage
+                arsipStore.lastPage == arsipStore.currentPage
                   ? 'cursor-not-allowed'
                   : 'cursor-pointer dark:hover:bg-blue-700 dark:hover:text-white hover:bg-blue-100 hover:text-gray-700'
               "

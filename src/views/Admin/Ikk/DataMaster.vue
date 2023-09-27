@@ -18,7 +18,7 @@ import {
 } from "@heroicons/vue/24/outline";
 import { useMainStore } from "@/stores/main";
 import BaseButton from "@/components/BaseButton.vue";
-import { useIKKStore } from "@/stores/program/ikk";
+import { useIKKStore } from "@/stores/admin/ikk";
 import { useUnitGroupStore } from "@/stores/unitGroup";
 
 const search = useDebounceFn(() => {
@@ -60,7 +60,7 @@ function toNew() {
 }
 
 const NewMasterModal = defineAsyncComponent(() =>
-  import("@/views/Program/Ikk/NewMasterModal.vue")
+  import("@/views/admin/ikk/NewMasterModal.vue")
 );
 
 function destroy(item) {
@@ -340,3 +340,4 @@ onMounted(() => {
     </Teleport>
   </SectionMain>
 </template>
+@/stores/admin/ikk

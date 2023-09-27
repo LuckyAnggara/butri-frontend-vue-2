@@ -18,24 +18,26 @@ import {
 } from "@heroicons/vue/24/outline";
 import { useMainStore } from "@/stores/main";
 import BaseButton from "@/components/BaseButton.vue";
-import { useIKUStore } from "@/stores/admin/iku";
+import { useDipaStore } from "@/stores/keuangan/dipa";
+import { useAuthStore } from "@/stores/auth";
 
-const search = useDebounceFn(() => {
-  ikuStore.getData();
-}, 500);
 const route = useRoute();
-const router = useRouter();
-const ikuStore = useIKUStore();
+const dipaStore = useDipaStore();
 const mainStore = useMainStore();
+const authStore = useAuthStore();
 
 const showNewModal = ref(false);
 const updateData = ref(false);
 
 const indexDestroy = ref(0);
 
-const NewMasterModal = defineAsyncComponent(() =>
-  import("@/views/admin/iku/NewModal.vue")
-);
+const formatter = ref({
+  date: "DD MMMM YYYY",
+});
+
+const search = useDebounceFn(() => {
+  dipaStore.getData();
+}, 500);
 
 const itemMenu = [
   {
@@ -51,11 +53,11 @@ const itemMenu = [
 ];
 
 const previousPage = computed(() => {
-  return "&page=" + (ikuStore.currentPage - 1);
+  return "&page=" + (dipaStore.currentPage - 1);
 });
 
 const nextPage = computed(() => {
-  return "&page=" + (ikuStore.currentPage + 1);
+  return "&page=" + (dipaStore.currentPage + 1);
 });
 
 function toNew() {
@@ -63,40 +65,43 @@ function toNew() {
 }
 
 function destroy(item) {
-  ikuStore.destroy(item.id);
+  dipaStore.destroy(item.id);
   indexDestroy.value = item.id;
 }
 
 function edit(item) {
   showNewModal.value = true;
   updateData.value = true;
-  ikuStore.readyEdit(item);
+  dipaStore.readyEdit(item);
 }
 
 async function submit() {
-  const result = await ikuStore.store();
+  const result = await dipaStore.store();
   if (result) {
     showNewModal.value = false;
-    ikuStore.getData();
+    dipaStore.getData();
   }
 }
 
 async function update() {
-  const result = await ikuStore.update();
+  const result = await dipaStore.update();
   if (result) {
     showNewModal.value = false;
-    ikuStore.getData();
+    dipaStore.getData();
   }
 }
 
-ikuStore.$subscribe((mutation, state) => {
+dipaStore.$subscribe((mutation, state) => {
   if (mutation.events.key == "currentYear") {
-    ikuStore.getData();
+    dipaStore.getData();
+  }
+  if (mutation.events.key == "currentMonth") {
+    dipaStore.getData();
   }
 });
 
 onMounted(() => {
-  ikuStore.getData();
+  dipaStore.getData();
 });
 </script>
 
@@ -106,11 +111,11 @@ onMounted(() => {
 
     <CardBox class="mb-4 px-4" has-table>
       <div class="w-full my-4 flex flex-row space-x-4">
-        <div class="w-3/12">
+        <div class="w-2/12">
           <FormField label="Tahun">
             <select
-              :disabled="ikuStore.isLoading"
-              v-model="ikuStore.currentYear"
+              :disabled="dipaStore.isLoading"
+              v-model="dipaStore.filter.currentYear"
               class="h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
             >
               <option
@@ -123,18 +128,33 @@ onMounted(() => {
             </select>
           </FormField>
         </div>
+        <div class="w-2/12">
+          <FormField label="Bulan">
+            <select
+              :disabled="dipaStore.isLoading"
+              v-model="dipaStore.filter.currentMonth"
+              class="h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
+            >
+              <option
+                v-for="option in mainStore.bulanOptions"
+                :key="option.id"
+                :value="option.id"
+              >
+                {{ option.label }}
+              </option>
+            </select>
+          </FormField>
+        </div>
         <div class="w-5/12">
           <FormField label="Search">
             <FormControl
               @keyup="search"
-              v-model="ikuStore.filter.searchQuery"
+              v-model="dipaStore.filter.searchQuery"
               type="tel"
               placeholder="Cari berdasarkan indikator"
             />
           </FormField>
         </div>
-        <div class="w-2/12"></div>
-
         <div class="w-2/12 flex justify-end">
           <BaseButton
             @click="toNew()"
@@ -149,16 +169,22 @@ onMounted(() => {
       <table>
         <thead>
           <tr>
-            <th>No</th>
-            <th>Indikator</th>
-            <th>Target</th>
-            <th>Realisasi</th>
-            <th />
+            <td rowspan="2"></td>
+            <td rowspan="2">Kegiatan</td>
+            <td rowspan="2">DIPA Existing</td>
+            <td colspan="2">Realisasi</td>
+            <td rowspan="2">DP (%)</td>
+            <td rowspan="2">Selisih (+/-)</td>
+            <td rowspan="2"></td>
+          </tr>
+          <tr>
+            <td>Rp</td>
+            <td>%</td>
           </tr>
         </thead>
         <tbody>
-          <tr v-if="ikuStore.isLoading">
-            <td colspan="5" class="text-center">
+          <tr v-if="dipaStore.isLoading">
+            <td colspan="8" class="text-center">
               <div
                 class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
                 role="status"
@@ -171,34 +197,35 @@ onMounted(() => {
             </td>
           </tr>
           <template v-else>
-            <tr v-if="ikuStore.items.length == 0">
-              <td colspan="5" class="text-center">
+            <tr v-if="dipaStore.items.length == 0">
+              <td colspan="8" class="text-center">
                 <span>Tidak ada data</span>
               </td>
             </tr>
-            <tr v-else v-for="(item, index) in ikuStore.items" :key="item.id">
-              <td class="text-center">
-                {{ ikuStore.from + index }}
+            <tr v-else v-for="(item, index) in dipaStore.items" :key="item.id">
+              <td>
+                {{ item.kode }}
               </td>
               <td>
                 {{ item.name }}
               </td>
               <td>
-                {{ item.target }}
+                {{ item.pagu }}
               </td>
-              <td>
-                {{ item.capaian?.realisasi ?? "-" }}
-              </td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
               <td class="before:hidden lg:w-1 whitespace-nowrap">
                 <div>
                   <Menu as="div" class="relative inline-block text-left">
                     <div>
                       <MenuButton
                         :disabled="
-                          ikuStore.isDestroyLoading && indexDestroy == item.id
+                          dipaStore.isDestroyLoading && indexDestroy == item.id
                         "
                         :class="
-                          ikuStore.isDestroyLoading && indexDestroy == item.id
+                          dipaStore.isDestroyLoading && indexDestroy == item.id
                             ? ''
                             : 'hover:scale-125 ease-in-out duration-300'
                         "
@@ -206,7 +233,8 @@ onMounted(() => {
                       >
                         <ArrowPathIcon
                           v-if="
-                            ikuStore.isDestroyLoading && indexDestroy == item.id
+                            dipaStore.isDestroyLoading &&
+                            indexDestroy == item.id
                           "
                           class="animate-spin h-5 w-5 text-black dark:text-white"
                           aria-hidden="true"
@@ -266,11 +294,13 @@ onMounted(() => {
           <li>
             <a
               @click="
-                ikuStore.currentPage == 1 ? '' : ikuStore.getData(previousPage)
+                dipaStore.currentPage == 1
+                  ? ''
+                  : dipaStore.getData(previousPage)
               "
-              :disabled="ikuStore.currentPage == 1 ? true : false"
+              :disabled="dipaStore.currentPage == 1 ? true : false"
               :class="
-                ikuStore.currentPage == 1
+                dipaStore.currentPage == 1
                   ? 'cursor-not-allowed'
                   : 'cursor-pointer dark:hover:bg-blue-700 dark:hover:text-white hover:bg-blue-100 hover:text-gray-700'
               "
@@ -282,12 +312,12 @@ onMounted(() => {
           <li>
             <a
               @click="
-                ikuStore.lastPage == ikuStore.currentPage
+                dipaStore.lastPage == dipaStore.currentPage
                   ? ''
-                  : ikuStore.getData(nextPage)
+                  : dipaStore.getData(nextPage)
               "
               :class="
-                ikuStore.lastPage == ikuStore.currentPage
+                dipaStore.lastPage == dipaStore.currentPage
                   ? 'cursor-not-allowed'
                   : 'cursor-pointer dark:hover:bg-blue-700 dark:hover:text-white hover:bg-blue-100 hover:text-gray-700'
               "
@@ -300,16 +330,5 @@ onMounted(() => {
     </CardBox>
 
     <!-- Modal -->
-    <Teleport to="body">
-      <!-- use the modal component, pass in the prop -->
-      <NewMasterModal
-        :updateData="updateData"
-        :show="showNewModal"
-        @close="showNewModal = false"
-        @submitStore="submit()"
-        @submitUpdate="update()"
-      >
-      </NewMasterModal>
-    </Teleport>
   </SectionMain>
 </template>
