@@ -5,8 +5,8 @@ export const keuangan = [
       layout: "layout-authenticated",
       requiresAuth: true,
     },
-    path: "/anggaran/list",
-    name: "list-anggaran",
+    path: "/realisasi-anggaran/list",
+    name: "list-realisasi-anggaran",
     component: () => import("@/views/keuangan/anggaran/Data.vue"),
   },
 ];

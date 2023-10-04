@@ -16,8 +16,19 @@ export default [
     icon: mdiViewDashboard,
   },
   {
-    to: "/anggaran/list",
     label: "Anggaran",
     icon: mdiEmailFastOutline,
+    icon: mdiAccountMultipleOutline,
+    menu: [
+      {
+        to: "/realisasi-anggaran/list",
+        label: "Realisasi Anggaran",
+      },
+      {
+        to: "/dipa/list",
+        label: "DIPA",
+      },
+    ],
   },
+  {},
 ];

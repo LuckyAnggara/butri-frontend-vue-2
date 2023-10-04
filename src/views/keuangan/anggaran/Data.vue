@@ -18,95 +18,48 @@ import {
 } from "@heroicons/vue/24/outline";
 import { useMainStore } from "@/stores/main";
 import BaseButton from "@/components/BaseButton.vue";
-import { useDipaStore } from "@/stores/keuangan/dipa";
+import { useRealisasiAnggaranStore } from "@/stores/keuangan/realisasi";
 import { useAuthStore } from "@/stores/auth";
+import { IDRCurrency, getMonthName } from "@/utilities/formatter";
 
 const route = useRoute();
-const dipaStore = useDipaStore();
+const realisasiAnggaranStore = useRealisasiAnggaranStore();
 const mainStore = useMainStore();
-const authStore = useAuthStore();
 
-const showNewModal = ref(false);
-const updateData = ref(false);
-
-const indexDestroy = ref(0);
-
-const formatter = ref({
-  date: "DD MMMM YYYY",
-});
-
-const search = useDebounceFn(() => {
-  dipaStore.getData();
-}, 500);
-
-const itemMenu = [
-  {
-    function: edit,
-    label: "Edit",
-    icon: PencilSquareIcon,
-  },
-  {
-    function: destroy,
-    label: "Hapus",
-    icon: TrashIcon,
-  },
-];
-
-const previousPage = computed(() => {
-  return "&page=" + (dipaStore.currentPage - 1);
-});
-
-const nextPage = computed(() => {
-  return "&page=" + (dipaStore.currentPage + 1);
-});
-
-function toNew() {
-  showNewModal.value = true;
-}
-
-function destroy(item) {
-  dipaStore.destroy(item.id);
-  indexDestroy.value = item.id;
-}
-
-function edit(item) {
-  showNewModal.value = true;
-  updateData.value = true;
-  dipaStore.readyEdit(item);
-}
+const isInput = ref(false);
 
 async function submit() {
-  const result = await dipaStore.store();
+  const result = await realisasiAnggaranStore.store();
   if (result) {
-    showNewModal.value = false;
-    dipaStore.getData();
+    isInput.value = !isInput;
   }
 }
 
-async function update() {
-  const result = await dipaStore.update();
-  if (result) {
-    showNewModal.value = false;
-    dipaStore.getData();
+function deviasi(item) {
+  var header = item.realisasi_saat_ini - item.dp_saat_ini;
+  if (header == 0) {
+    return 0;
   }
+  0;
+  return (header / item.dp_saat_ini).toFixed(2);
 }
 
-dipaStore.$subscribe((mutation, state) => {
+realisasiAnggaranStore.$subscribe((mutation, state) => {
   if (mutation.events.key == "currentYear") {
-    dipaStore.getData();
+    realisasiAnggaranStore.getData();
   }
   if (mutation.events.key == "currentMonth") {
-    dipaStore.getData();
+    realisasiAnggaranStore.getData();
   }
 });
 
 onMounted(() => {
-  dipaStore.getData();
+  realisasiAnggaranStore.getData();
 });
 </script>
 
 <template>
-  <SectionMain>
+  <SectionMain :max-w="false">
     <SectionTitleLineWithButton :title="route.meta.title" main />
 
     <CardBox class="mb-4 px-4" has-table>
@@ -114,8 +67,8 @@ onMounted(() => {
         <div class="w-2/12">
           <FormField label="Tahun">
             <select
-              :disabled="dipaStore.isLoading"
-              v-model="dipaStore.filter.currentYear"
+              :disabled="realisasiAnggaranStore.isLoading"
+              v-model="realisasiAnggaranStore.filter.currentYear"
               class="h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
             >
               <option
@@ -131,8 +84,8 @@ onMounted(() => {
         <div class="w-2/12">
           <FormField label="Bulan">
             <select
-              :disabled="dipaStore.isLoading"
-              v-model="dipaStore.filter.currentMonth"
+              :disabled="realisasiAnggaranStore.isLoading"
+              v-model="realisasiAnggaranStore.filter.currentMonth"
               class="h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
             >
               <option
@@ -145,23 +98,27 @@ onMounted(() => {
             </select>
           </FormField>
         </div>
-        <div class="w-5/12">
-          <FormField label="Search">
-            <FormControl
-              @keyup="search"
-              v-model="dipaStore.filter.searchQuery"
-              type="tel"
-              placeholder="Cari berdasarkan indikator"
-            />
-          </FormField>
-        </div>
+        <div class="w-6/12"></div>
         <div class="w-2/12 flex justify-end">
           <BaseButton
-            @click="toNew()"
+            v-if="isInput == false"
+            @click="isInput = true"
             class="mt-8"
             color="info"
-            label="Tambah"
+            label="Input Data"
           />
+          <BaseButton
+            v-else
+            :disabled="realisasiAnggaranStore.isStoreLoading"
+            @click="submit"
+            class="mt-8"
+            color="success"
+            ><span v-if="!realisasiAnggaranStore.isStoreLoading">Submit</span
+            ><span class="flex flex-row items-center" v-else>
+              <ArrowPathIcon class="h-5 w-5 animate-spin mr-3" />
+              Processing</span
+            ></BaseButton
+          >
         </div>
       </div>
     </CardBox>
@@ -169,22 +126,29 @@ onMounted(() => {
       <table>
         <thead>
           <tr>
-            <td rowspan="2"></td>
-            <td rowspan="2">Kegiatan</td>
-            <td rowspan="2">DIPA Existing</td>
-            <td colspan="2">Realisasi</td>
-            <td rowspan="2">DP (%)</td>
-            <td rowspan="2">Selisih (+/-)</td>
-            <td rowspan="2"></td>
+            <td rowspan="2" class="text-center">Kode</td>
+            <td rowspan="2" class="text-center">Kegiatan</td>
+            <td rowspan="2" class="text-center">DIPA Existing</td>
+            <td colspan="2" class="text-center">
+              Realisasi s/d
+              {{ getMonthName(realisasiAnggaranStore.filter.currentMonth - 1) }}
+            </td>
+            <td colspan="2" class="text-center">
+              {{ getMonthName(realisasiAnggaranStore.filter.currentMonth) }}
+            </td>
+
+            <td rowspan="2" class="text-center">Deviasi (%)</td>
           </tr>
           <tr>
-            <td>Rp</td>
-            <td>%</td>
+            <td class="text-center">Rp</td>
+            <td class="text-center">%</td>
+            <td class="text-center">Realisasi</td>
+            <td class="text-center">DP</td>
           </tr>
         </thead>
         <tbody>
-          <tr v-if="dipaStore.isLoading">
-            <td colspan="8" class="text-center">
+          <tr v-if="realisasiAnggaranStore.isLoading">
+            <td colspan="9" class="text-center">
               <div
                 class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
                 role="status"
@@ -197,12 +161,16 @@ onMounted(() => {
             </td>
           </tr>
           <template v-else>
-            <tr v-if="dipaStore.items.length == 0">
-              <td colspan="8" class="text-center">
+            <tr v-if="realisasiAnggaranStore.items.length == 0">
+              <td colspan="9" class="text-center">
                 <span>Tidak ada data</span>
               </td>
             </tr>
-            <tr v-else v-for="(item, index) in dipaStore.items" :key="item.id">
+            <tr
+              v-else
+              v-for="(item, index) in realisasiAnggaranStore.items"
+              :key="item.id"
+            >
               <td>
                 {{ item.kode }}
               </td>
@@ -210,78 +178,39 @@ onMounted(() => {
                 {{ item.name }}
               </td>
               <td>
-                {{ item.pagu }}
+                {{ IDRCurrency.format(item.pagu) }}
               </td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td class="before:hidden lg:w-1 whitespace-nowrap">
-                <div>
-                  <Menu as="div" class="relative inline-block text-left">
-                    <div>
-                      <MenuButton
-                        :disabled="
-                          dipaStore.isDestroyLoading && indexDestroy == item.id
-                        "
-                        :class="
-                          dipaStore.isDestroyLoading && indexDestroy == item.id
-                            ? ''
-                            : 'hover:scale-125 ease-in-out duration-300'
-                        "
-                        class="flex w-full rounded-md font-medium text-black dark:text-white"
-                      >
-                        <ArrowPathIcon
-                          v-if="
-                            dipaStore.isDestroyLoading &&
-                            indexDestroy == item.id
-                          "
-                          class="animate-spin h-5 w-5 text-black dark:text-white"
-                          aria-hidden="true"
-                        />
-                        <EllipsisVerticalIcon
-                          v-else
-                          class="h-5 w-5 text-black dark:text-white"
-                          aria-hidden="true"
-                        />
-                      </MenuButton>
-                    </div>
-
-                    <transition
-                      enter-active-class="transition duration-100 ease-out"
-                      enter-from-class="transform scale-95 opacity-0"
-                      enter-to-class="transform scale-100 opacity-100"
-                      leave-active-class="transition duration-75 ease-in"
-                      leave-from-class="transform scale-100 opacity-100"
-                      leave-to-class="transform scale-95 opacity-0"
-                    >
-                      <MenuItems
-                        class="z-50 py-1 absolute right-0 mt-2 w-40 origin-top-right divide-y divide-gray-100 rounded-md bg-white dark:bg-gray-800 dark:text-gray-100 shadow-lg ring-1 ring-black dark:ring-gray-700 ring-opacity-5 focus:outline-none"
-                      >
-                        <div class="px-2 py-1">
-                          <MenuItem
-                            v-for="menu in itemMenu"
-                            :key="menu.label"
-                            v-slot="{ active }"
-                          >
-                            <button
-                              @click="menu.function(item)"
-                              :class="[
-                                active
-                                  ? 'bg-blue-500 text-white'
-                                  : 'text-gray-900 dark:text-white',
-                                'group flex w-full items-center rounded-md px-2 py-2 text-sm',
-                              ]"
-                            >
-                              <component :is="menu.icon" class="w-5 h-5 mr-3" />
-                              {{ menu.label }}
-                            </button>
-                          </MenuItem>
-                        </div>
-                      </MenuItems>
-                    </transition>
-                  </Menu>
-                </div>
+              <td>
+                {{ IDRCurrency.format(item.total_realisasi) }}
+              </td>
+              <td>
+                {{ ((item.total_realisasi / item.pagu) * 100).toFixed(2) }}
+                %
+              </td>
+              <td>
+                <span v-if="!isInput">
+                  {{ IDRCurrency.format(item.realisasi_saat_ini) }}</span
+                >
+                <FormControl
+                  v-else
+                  :disabled="!isInput"
+                  v-model="item.realisasi_saat_ini"
+                  type="number"
+                />
+              </td>
+              <td>
+                <span v-if="!isInput">
+                  {{ IDRCurrency.format(item.dp_saat_ini) }}</span
+                >
+                <FormControl
+                  v-else
+                  :disabled="!isInput"
+                  v-model="item.dp_saat_ini"
+                  type="number"
+                />
+              </td>
+              <td>
+                {{ deviasi(item) }}
               </td>
             </tr>
           </template>
@@ -289,46 +218,10 @@ onMounted(() => {
       </table>
       <div
         class="p-3 lg:px-6 border-t border-gray-100 dark:border-slate-800 flex justify-end"
-      >
-        <ul class="inline-flex items-stretch -space-x-px">
-          <li>
-            <a
-              @click="
-                dipaStore.currentPage == 1
-                  ? ''
-                  : dipaStore.getData(previousPage)
-              "
-              :disabled="dipaStore.currentPage == 1 ? true : false"
-              :class="
-                dipaStore.currentPage == 1
-                  ? 'cursor-not-allowed'
-                  : 'cursor-pointer dark:hover:bg-blue-700 dark:hover:text-white hover:bg-blue-100 hover:text-gray-700'
-              "
-              class="w-32 px-3 py-2 ml-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
-              >Previous</a
-            >
-          </li>
-
-          <li>
-            <a
-              @click="
-                dipaStore.lastPage == dipaStore.currentPage
-                  ? ''
-                  : dipaStore.getData(nextPage)
-              "
-              :class="
-                dipaStore.lastPage == dipaStore.currentPage
-                  ? 'cursor-not-allowed'
-                  : 'cursor-pointer dark:hover:bg-blue-700 dark:hover:text-white hover:bg-blue-100 hover:text-gray-700'
-              "
-              class="w-32 px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
-              >Next {{
-            }}</a>
-          </li>
-        </ul>
-      </div>
+      ></div>
     </CardBox>
 
     <!-- Modal -->
   </SectionMain>
 </template>
+@/stores/keuangan/realisasi

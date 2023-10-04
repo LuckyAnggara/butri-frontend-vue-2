@@ -5,7 +5,7 @@ import { useAuthStore } from "../auth";
 import { useToast } from "vue-toastification";
 const toast = useToast();
 const authStore = useAuthStore();
-export const useDipaStore = defineStore("dipa", {
+export const useRealisasiAnggaranStore = defineStore("realisasiAnggaran", {
   state: () => ({
     responses: null,
     singleResponses: null,
@@ -15,13 +15,7 @@ export const useDipaStore = defineStore("dipa", {
     isStoreLoading: false,
     isUpdateLoading: false,
     isDestroyLoading: false,
-    form: {
-      name: null,
-      pagu: null,
-      bulan: new Date().getMonth() + 1,
-      tahun: new Date().getFullYear(),
-      created_by: authStore.user.user.id,
-    },
+    created_by: authStore.user.user.id,
     filter: {
       searchQuery: "",
       currentMonth: new Date().getMonth() + 1,
@@ -30,25 +24,7 @@ export const useDipaStore = defineStore("dipa", {
   }),
   getters: {
     items(state) {
-      return state.responses?.data ?? [];
-    },
-    currentPage(state) {
-      return state.responses?.current_page;
-    },
-    pageLength(state) {
-      return Math.round(state.responses?.total / state.responses?.per_page);
-    },
-    lastPage(state) {
-      return state.responses?.last_page;
-    },
-    from(state) {
-      return state.responses?.from;
-    },
-    to(state) {
-      return state.responses?.to;
-    },
-    total(state) {
-      return state.responses?.total;
+      return state.responses ?? [];
     },
     searchQuery(state) {
       if (state.filter.searchQuery == "" || state.filter.searchQuery == null) {
@@ -62,7 +38,7 @@ export const useDipaStore = defineStore("dipa", {
       this.isLoading = true;
       try {
         const response = await axiosIns.get(
-          `/dipa?tahun=${this.filter.currentYear}&bulan=${this.filter.currentMonth}${this.searchQuery}`
+          `/realisasi-anggaran?tahun=${this.filter.currentYear}&bulan=${this.filter.currentMonth}${this.searchQuery}`
         );
         this.responses = response.data.data;
       } catch (error) {
@@ -75,10 +51,14 @@ export const useDipaStore = defineStore("dipa", {
     async store() {
       this.isStoreLoading = true;
       try {
-        const response = await axiosIns.post(`/dipa`, this.form);
+        const response = await axiosIns.post(`/realisasi-anggaran`, {
+          head: this.filter,
+          detail: this.items,
+          created_by: this.created_by,
+        });
 
         if (response.status == 200) {
-          toast.success("Data berhasil dibuat", {
+          toast.success("Data berhasil disimpan", {
             timeout: 3000,
           });
           this.clearForm();
@@ -107,7 +87,7 @@ export const useDipaStore = defineStore("dipa", {
       this.isDestroyLoading = true;
       setTimeout(() => {}, 500);
       try {
-        await axiosIns.delete(`/dipa/${id}`);
+        await axiosIns.delete(`/realisasi-anggaran/${id}`);
         toast.success("Data berhasil di hapus", {
           timeout: 2000,
         });
@@ -125,7 +105,7 @@ export const useDipaStore = defineStore("dipa", {
       this.isUpdateLoading = true;
       try {
         const response = await axiosIns.put(
-          `/dipa/${this.singleResponses.id}`,
+          `/realisasi-anggaran/${this.singleResponses.id}`,
           this.singleResponses
         );
         if (response.status == 200) {
