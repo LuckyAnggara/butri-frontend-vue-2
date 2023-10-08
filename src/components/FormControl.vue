@@ -48,6 +48,10 @@ const props = defineProps({
     type: [String, Number, Boolean, Array, Object],
     default: "",
   },
+  allowStep: {
+    type: Boolean,
+    default: false,
+  },
   required: Boolean,
   borderless: Boolean,
   transparent: Boolean,
@@ -172,6 +176,7 @@ if (props.ctrlKFocus) {
       :placeholder="placeholder"
       :type="computedType"
       :class="inputElClass"
+      :step="allowStep ? 'any' : 0"
     />
     <FormControlIcon v-if="icon" :icon="icon" :h="controlIconH" />
   </div>

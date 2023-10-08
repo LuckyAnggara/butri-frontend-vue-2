@@ -14,7 +14,7 @@
           class="flex justify-between items-center pb-4 mb-4 rounded-t border-b sm:mb-5 dark:border-gray-600"
         >
           <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-            Tambah data Persuratan
+            Tambah data
           </h3>
           <button
             @click="closeModal"
@@ -40,8 +40,8 @@
         <form v-if="updateData" @submit.prevent="prosesUpdate()">
           <FormField label="Tahun">
             <select
-              :disabled="persuratanStore.isUpdateLoading"
-              v-model="persuratanStore.singleResponses.tahun"
+              :disabled="dipaStore.isStoreLoading"
+              v-model="dipaStore.singleResponses.tahun"
               class="h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
             >
               <option
@@ -53,34 +53,41 @@
               </option>
             </select>
           </FormField>
-          <FormField label="Bulan">
-            <select
-              :disabled="persuratanStore.isUpdateLoading"
-              v-model="persuratanStore.singleResponses.bulan"
-              class="h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
-            >
-              <option
-                v-for="option in mainStore.bulanOptions"
-                :key="option.id"
-                :value="option.id"
-              >
-                {{ option.label }}
-              </option>
-            </select>
-          </FormField>
-          <FormField label="Surat Masuk*">
+          <FormField label="Kode*">
             <FormControl
-              type="number"
-              v-model="persuratanStore.singleResponses.surat_masuk"
-              :disabled="persuratanStore.isUpdateLoading"
+              v-model="dipaStore.singleResponses.kode"
+              :disabled="dipaStore.isStoreLoading"
               required
             />
           </FormField>
-          <FormField label="Surat Keluar*">
+          <FormField label="Kegiatan*">
+            <FormControl
+              v-model="dipaStore.singleResponses.name"
+              :disabled="dipaStore.isStoreLoading"
+              required
+            />
+          </FormField>
+          <FormField label="Unit">
+            <select
+              :disabled="dipaStore.isStoreLoading"
+              v-model="dipaStore.singleResponses.group_id"
+              required
+              class="h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
+            >
+              <option
+                v-for="option in groupStore.items"
+                :key="option.id"
+                :value="option.id"
+              >
+                {{ option.name }}
+              </option>
+            </select>
+          </FormField>
+          <FormField label="Pagu*">
             <FormControl
               type="number"
-              v-model="persuratanStore.singleResponses.surat_keluar"
-              :disabled="persuratanStore.isUpdateLoading"
+              v-model="dipaStore.singleResponses.pagu"
+              :disabled="dipaStore.isStoreLoading"
               required
             />
           </FormField>
@@ -89,11 +96,10 @@
 
           <div class="flex justify-start space-x-3 items-center">
             <BaseButton
-              :disabled="persuratanStore.isUpdateLoading"
+              :disabled="dipaStore.isUpdateLoading"
               type="submit"
               color="info"
-              ><span v-if="!persuratanStore.isUpdateLoading"
-                ><span>Update</span></span
+              ><span v-if="!dipaStore.isUpdateLoading"><span>Update</span></span
               ><span class="flex flex-row items-center" v-else>
                 <ArrowPathIcon class="h-5 w-5 animate-spin mr-3" />
                 Processing</span
@@ -101,11 +107,11 @@
             >
           </div>
         </form>
-        <form v-else @submit.prevent="prosesRequest()">
+        <form v-else @submit.prevent="prosesStore()">
           <FormField label="Tahun">
             <select
-              :disabled="persuratanStore.isStoreLoading"
-              v-model="persuratanStore.form.tahun"
+              :disabled="dipaStore.isStoreLoading"
+              v-model="dipaStore.form.tahun"
               class="h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
             >
               <option
@@ -117,34 +123,41 @@
               </option>
             </select>
           </FormField>
-          <FormField label="Bulan">
-            <select
-              :disabled="persuratanStore.isStoreLoading"
-              v-model="persuratanStore.form.bulan"
-              class="h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
-            >
-              <option
-                v-for="option in mainStore.bulanOptions"
-                :key="option.id"
-                :value="option.id"
-              >
-                {{ option.label }}
-              </option>
-            </select>
-          </FormField>
-          <FormField label="Surat Masuk*">
+          <FormField label="Kode*">
             <FormControl
-              type="number"
-              v-model="persuratanStore.form.surat_masuk"
-              :disabled="persuratanStore.isStoreLoading"
+              v-model="dipaStore.form.kode"
+              :disabled="dipaStore.isStoreLoading"
               required
             />
           </FormField>
-          <FormField label="Surat Keluar*">
+          <FormField label="Kegiatan*">
+            <FormControl
+              v-model="dipaStore.form.name"
+              :disabled="dipaStore.isStoreLoading"
+              required
+            />
+          </FormField>
+          <FormField label="Unit">
+            <select
+              :disabled="dipaStore.isStoreLoading"
+              v-model="dipaStore.form.group_id"
+              required
+              class="h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
+            >
+              <option
+                v-for="option in groupStore.items"
+                :key="option.id"
+                :value="option.id"
+              >
+                {{ option.name }}
+              </option>
+            </select>
+          </FormField>
+          <FormField label="Pagu*">
             <FormControl
               type="number"
-              v-model="persuratanStore.form.surat_keluar"
-              :disabled="persuratanStore.isStoreLoading"
+              v-model="dipaStore.form.pagu"
+              :disabled="dipaStore.isStoreLoading"
               required
             />
           </FormField>
@@ -153,10 +166,10 @@
 
           <div class="flex justify-start space-x-3 items-center">
             <BaseButton
-              :disabled="persuratanStore.isStoreLoading"
+              :disabled="dipaStore.isStoreLoading"
               type="submit"
               color="info"
-              ><span v-if="!persuratanStore.isStoreLoading">Submit</span
+              ><span v-if="!dipaStore.isStoreLoading">Submit</span
               ><span class="flex flex-row items-center" v-else>
                 <ArrowPathIcon class="h-5 w-5 animate-spin mr-3" />
                 Processing</span
@@ -174,9 +187,11 @@ import FormField from "@/components/FormField.vue";
 import FormControl from "@/components/FormControl.vue";
 import BaseDivider from "@/components/BaseDivider.vue";
 import BaseButton from "@/components/BaseButton.vue";
-import { usePersuratanStore } from "@/stores/umum/persuratan";
+import { useDipaStore } from "@/stores/admin/dipa";
 import { useMainStore } from "@/stores/main";
+import { useUnitGroupStore } from "@/stores/unitGroup";
 import { ArrowPathIcon } from "@heroicons/vue/24/outline";
+import { ref } from "vue";
 
 const props = defineProps({
   show: Boolean,
@@ -185,10 +200,15 @@ const props = defineProps({
 
 const emit = defineEmits(["close", "submitStore", "submitUpdate"]);
 
-const persuratanStore = usePersuratanStore();
+const dipaStore = useDipaStore();
 const mainStore = useMainStore();
+const groupStore = useUnitGroupStore();
 
-async function prosesRequest() {
+const formatter = ref({
+  date: "DD MMMM YYYY",
+});
+
+async function prosesStore() {
   emit("submitStore");
 }
 
@@ -197,6 +217,7 @@ async function prosesUpdate() {
 }
 
 function closeModal() {
+  dipaStore.clearForm();
   emit("close");
 }
 </script>

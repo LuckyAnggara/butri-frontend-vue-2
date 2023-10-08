@@ -1,13 +1,5 @@
-import {
-  mdiAccountArrowLeftOutline,
-  mdiAccountGroupOutline,
-  mdiAccountMultipleOutline,
-  mdiBriefcaseAccountOutline,
-  mdiCashMultiple,
-  mdiEmailFastOutline,
-  mdiShieldAccount,
-  mdiViewDashboard,
-} from "@mdi/js";
+import { mdiAdjust, mdiCash, mdiViewDashboard } from "@mdi/js";
+import all from "./all";
 
 export default [
   {
@@ -16,19 +8,23 @@ export default [
     icon: mdiViewDashboard,
   },
   {
-    label: "Anggaran",
-    icon: mdiEmailFastOutline,
-    icon: mdiAccountMultipleOutline,
+    label: "Realisasi",
+    icon: mdiCash,
     menu: [
       {
         to: "/realisasi-anggaran/list",
         label: "Realisasi Anggaran",
       },
       {
-        to: "/dipa/list",
-        label: "DIPA",
+        to: "/kinerja-keuangan/list",
+        label: "Kinerja Keuangan",
       },
     ],
   },
-  {},
+  {
+    to: "/ikpa/list",
+    label: "IKPA",
+    icon: mdiAdjust,
+  },
+  ...all,
 ];

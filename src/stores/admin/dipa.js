@@ -5,7 +5,7 @@ import { useAuthStore } from "../auth";
 import { useToast } from "vue-toastification";
 const toast = useToast();
 const authStore = useAuthStore();
-export const useRealisasiAnggaranStore = defineStore("realisasiAnggaran", {
+export const useDipaStore = defineStore("dipa", {
   state: () => ({
     responses: null,
     singleResponses: null,
@@ -15,8 +15,16 @@ export const useRealisasiAnggaranStore = defineStore("realisasiAnggaran", {
     isStoreLoading: false,
     isUpdateLoading: false,
     isDestroyLoading: false,
-    created_by: authStore.user.user.id,
+    form: {
+      kode: null,
+      name: null,
+      pagu: null,
+      group_id: null,
+      tahun: new Date().getFullYear(),
+      created_by: authStore.user.user.id,
+    },
     filter: {
+      unit: 0,
       searchQuery: "",
       currentMonth: new Date().getMonth() + 1,
       currentYear: new Date().getFullYear(),
@@ -30,32 +38,17 @@ export const useRealisasiAnggaranStore = defineStore("realisasiAnggaran", {
       const totalPagu = state.items.reduce((acc, item) => acc + item.pagu, 0);
       return totalPagu;
     },
-    totalRealisasi(state) {
-      const totalRealisasi = state.items.reduce(
-        (acc, item) => acc + item.total_realisasi,
-        0
-      );
-      return totalRealisasi;
-    },
-    totalRealisasiSaatIni(state) {
-      const totalRealisasi = state.items.reduce(
-        (acc, item) => acc + item.realisasi_saat_ini,
-        0
-      );
-      return totalRealisasi;
-    },
-    totalDPSaatIni(state) {
-      const totalRealisasi = state.items.reduce(
-        (acc, item) => acc + item.dp_saat_ini,
-        0
-      );
-      return totalRealisasi;
-    },
     searchQuery(state) {
       if (state.filter.searchQuery == "" || state.filter.searchQuery == null) {
         return "";
       }
       return "&query=" + state.filter.searchQuery;
+    },
+    unitQuery(state) {
+      if (state.filter.unit == 0) {
+        return "";
+      }
+      return "&unit=" + state.filter.unit;
     },
   },
   actions: {
@@ -63,7 +56,7 @@ export const useRealisasiAnggaranStore = defineStore("realisasiAnggaran", {
       this.isLoading = true;
       try {
         const response = await axiosIns.get(
-          `/realisasi-anggaran?tahun=${this.filter.currentYear}&bulan=${this.filter.currentMonth}${this.searchQuery}`
+          `/dipa?tahun=${this.filter.currentYear}${this.unitQuery}`
         );
         this.responses = response.data.data;
       } catch (error) {
@@ -76,14 +69,10 @@ export const useRealisasiAnggaranStore = defineStore("realisasiAnggaran", {
     async store() {
       this.isStoreLoading = true;
       try {
-        const response = await axiosIns.post(`/realisasi-anggaran`, {
-          head: this.filter,
-          detail: this.items,
-          created_by: this.created_by,
-        });
+        const response = await axiosIns.post(`/dipa`, this.form);
 
         if (response.status == 200) {
-          toast.success("Data berhasil disimpan", {
+          toast.success("Data berhasil dibuat", {
             timeout: 3000,
           });
           this.clearForm();
@@ -112,12 +101,12 @@ export const useRealisasiAnggaranStore = defineStore("realisasiAnggaran", {
       this.isDestroyLoading = true;
       setTimeout(() => {}, 500);
       try {
-        await axiosIns.delete(`/realisasi-anggaran/${id}`);
+        await axiosIns.delete(`/dipa/${id}`);
         toast.success("Data berhasil di hapus", {
           timeout: 2000,
         });
         const index = this.items.findIndex((item) => item.id === id);
-        this.responses.data.splice(index, 1);
+        this.responses.splice(index, 1);
       } catch (error) {
         toast.error(error.message, {
           timeout: 2000,
@@ -130,7 +119,7 @@ export const useRealisasiAnggaranStore = defineStore("realisasiAnggaran", {
       this.isUpdateLoading = true;
       try {
         const response = await axiosIns.put(
-          `/realisasi-anggaran/${this.singleResponses.id}`,
+          `/dipa/${this.singleResponses.id}`,
           this.singleResponses
         );
         if (response.status == 200) {
@@ -151,9 +140,11 @@ export const useRealisasiAnggaranStore = defineStore("realisasiAnggaran", {
     },
     clearForm() {
       this.form = {
+        kode: null,
+        name: null,
+        pagu: null,
+        group_id: null,
         tahun: new Date().getFullYear(),
-        name: "",
-        target: "",
         created_by: authStore.user.user.id,
       };
     },

@@ -13,15 +13,9 @@ export default [
         label: "IKK",
         to: "/ikk/list",
       },
-    ],
-  },
-  {
-    label: "Realisasi",
-    icon: mdiChartBarStacked,
-    menu: [
       {
-        label: "Persuratan",
-        to: "/persuratan/list",
+        label: "DIPA",
+        to: "/dipa/list",
       },
     ],
   },

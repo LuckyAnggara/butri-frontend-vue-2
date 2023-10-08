@@ -5,90 +5,95 @@ import CardBox from "@/components/CardBox.vue";
 import SectionTitleLineWithButton from "@/components/SectionTitleLineWithButton.vue";
 
 import { useRoute, useRouter } from "vue-router";
-import { useKegiatanStore } from "@/stores/all/kegiatan";
-import { computed, inject, onMounted, ref } from "vue";
+import { computed, defineAsyncComponent, onMounted, ref } from "vue";
 import FormField from "@/components/FormField.vue";
 import FormControl from "@/components/FormControl.vue";
 import { useDebounceFn } from "@vueuse/core";
 import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue";
 import {
-  EllipsisVerticalIcon,
-  TrashIcon,
   ArrowPathIcon,
+  EllipsisVerticalIcon,
+  PencilSquareIcon,
+  TrashIcon,
 } from "@heroicons/vue/24/outline";
 import { useMainStore } from "@/stores/main";
+import { useAuthStore } from "@/stores/auth";
 import BaseButton from "@/components/BaseButton.vue";
+import { useKinerjaKeuanganStore } from "@/stores/keuangan/kinerja";
+import { getMonthName } from "@/utilities/formatter";
 
-const search = useDebounceFn(() => {
-  kegiatanStore.getData();
-}, 500);
+const NewMasterModal = defineAsyncComponent(() => import("./NewModal.vue"));
+
+const showNewModal = ref(false);
+const updateData = ref(false);
 const route = useRoute();
-const router = useRouter();
-const kegiatanStore = useKegiatanStore();
+const kinerjaKeuanganStore = useKinerjaKeuanganStore();
 const mainStore = useMainStore();
-const swal = inject("$swal");
+const authStore = useAuthStore();
 
-const indexDestroy = ref(0);
+function toNew() {
+  showNewModal.value = true;
+}
+function open() {
+  kinerjaKeuanganStore.clearForm();
 
-const formatter = ref({
-  date: "DD MMMM YYYY",
-});
-
+  showNewModal.value = true;
+}
+function close() {
+  showNewModal.value = false;
+  kinerjaKeuanganStore.clearForm();
+}
+function edit(item) {
+  if (item.id) {
+  } else {
+    item.id = "new";
+    item.created_by = authStore.user.user.id;
+  }
+  showNewModal.value = true;
+  updateData.value = true;
+  kinerjaKeuanganStore.readyEdit(item);
+}
+async function submit() {
+  const result = await kinerjaKeuanganStore.store();
+  if (result) {
+    showNewModal.value = false;
+    kinerjaKeuanganStore.getData();
+  }
+}
+async function update() {
+  const result = await kinerjaKeuanganStore.update();
+  if (result) {
+    showNewModal.value = false;
+    kinerjaKeuanganStore.getData();
+  }
+}
 const itemMenu = [
   {
-    function: destroy,
-    label: "Hapus",
-    icon: TrashIcon,
+    function: edit,
+    label: "Edit",
+    icon: PencilSquareIcon,
   },
 ];
 
-const previousPage = computed(() => {
-  return "&page=" + (kegiatanStore.currentPage - 1);
-});
-
-const nextPage = computed(() => {
-  return "&page=" + (kegiatanStore.currentPage + 1);
-});
-
-function toNew() {
-  router.push({ name: "new-kegiatan" });
+function nilaiKinerja(item) {
+  var nki =
+    item.penyerapan * 0.097 +
+    item.konsistensi * 0.182 +
+    item.capaian_output_program * 0.435 +
+    item.nilai_efisiensi * 0.286;
+  var nka = nki * 0.333 + item.capaian_sasaran_program * 0.667;
+  var result = (nka + item.rata_nka_satker) / 2;
+  return result.toFixed(2);
 }
 
-function destroy(item) {
-  if (item.capaian > 0) {
-    swal.fire({
-      title: "Hapus data?",
-      text: "Data kegitan ini berkaitan dengan program unggulan!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: "Ya, hapus!",
-      cancelButtonText: "Cancel!",
-      showLoaderOnConfirm: true,
-      reverseButtons: true,
-      preConfirm: async () => {
-        await kegiatanStore.destroy(item.id);
-        indexDestroy.value = item.id;
-      },
-      allowOutsideClick: () => !kegiatanStore.isDestroyLoading,
-      backdrop: true,
-    });
-  } else {
-    kegiatanStore.destroy(item.id);
-    indexDestroy.value = item.id;
-  }
-}
-
-kegiatanStore.$subscribe((mutation, state) => {
-  if (mutation.events.key == "currentLimit") {
-    kegiatanStore.getData();
-  }
-  if (mutation.events.key == "date") {
-    kegiatanStore.getData();
+kinerjaKeuanganStore.$subscribe((mutation, state) => {
+  if (mutation.events.key == "currentYear") {
+    kinerjaKeuanganStore.getData();
   }
 });
 
 onMounted(() => {
-  kegiatanStore.getData();
+  kinerjaKeuanganStore.getData();
 });
 </script>
 
@@ -98,53 +103,30 @@ onMounted(() => {
 
     <CardBox class="mb-4 px-4" has-table>
       <div class="w-full my-4 flex flex-row space-x-4">
-        <div class="w-1/12">
-          <FormField label="Show">
+        <div class="w-2/12">
+          <FormField label="Tahun">
             <select
-              :disabled="kegiatanStore.isStoreLoading"
-              v-model="kegiatanStore.currentLimit"
-              class="border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
+              :disabled="kinerjaKeuanganStore.isLoading"
+              v-model="kinerjaKeuanganStore.filter.currentYear"
+              class="h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
             >
               <option
-                v-for="option in mainStore.limitDataOptions"
+                v-for="option in mainStore.tahunOptions"
                 :key="option"
                 :value="option"
               >
-                {{ option == 100000 ? "SEMUA" : option }}
+                {{ option }}
               </option>
             </select>
           </FormField>
         </div>
-        <div class="w-5/12">
-          <FormField label="Search">
-            <FormControl
-              @keyup="search"
-              v-model="kegiatanStore.filter.searchQuery"
-              type="tel"
-              placeholder="Cari berdasarkan kegiatan"
-            />
-          </FormField>
-        </div>
-        <div class="w-4/12">
-          <FormField label="Tanggal">
-            <vue-tailwind-datepicker
-              :disabled="kegiatanStore.isStoreLoading"
-              required
-              separator=" s/d "
-              placeholder="Tanggal Data"
-              v-model="kegiatanStore.filter.date"
-              :formatter="formatter"
-              input-classes="h-12 border  px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
-            />
-          </FormField>
-        </div>
-        <div class="w-2/12 flex justify-end">
+        <div class="w-6/12"></div>
+        <div class="w-6/12 flex justify-end">
           <BaseButton
-            @click="toNew()"
+            @click="open()"
             class="mt-8"
-            type="submit"
             color="info"
-            label="Tambah"
+            label="Input Data"
           />
         </div>
       </div>
@@ -153,17 +135,21 @@ onMounted(() => {
       <table>
         <thead>
           <tr>
-            <th>No</th>
-            <th>Kegiatan</th>
-            <th>Jenis</th>
-            <th>Waktu Pelaksanaan</th>
-            <th>Tempat</th>
-            <th />
+            <td class="text-center">Bulan</td>
+            <td class="text-center">Capaian Sasaran Program</td>
+            <td class="text-center">Penyerapan</td>
+            <td class="text-center">Konsistensi</td>
+            <td class="text-center">Capaian Output Program</td>
+            <td class="text-center">Efisiensi</td>
+            <td class="text-center">Nilai Efisiensi</td>
+            <td class="text-center">Rata Rata NKA Satker</td>
+            <td class="text-center">Nilai Kinerja</td>
+            <td class="text-center"></td>
           </tr>
         </thead>
         <tbody>
-          <tr v-if="kegiatanStore.isLoading">
-            <td colspan="6" class="text-center">
+          <tr v-if="kinerjaKeuanganStore.isLoading">
+            <td colspan="10" class="text-center">
               <div
                 class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
                 role="status"
@@ -176,26 +162,42 @@ onMounted(() => {
             </td>
           </tr>
           <template v-else>
-            <tr v-if="kegiatanStore.items.length == 0">
-              <td colspan="6" class="text-center">
+            <tr v-if="kinerjaKeuanganStore.items.length == 0">
+              <td colspan="9" class="text-center">
                 <span>Tidak ada data</span>
               </td>
             </tr>
             <tr
               v-else
-              v-for="(item, index) in kegiatanStore.items"
-              :key="item.id"
+              v-for="(item, index) in kinerjaKeuanganStore.items"
+              :key="item.bulan"
             >
-              <td class="text-center">
-                {{ kegiatanStore.from + index }}
+              <td>
+                {{ getMonthName(item.bulan) }}
               </td>
               <td>
-                {{ item.name }}
+                {{ item.capaian_sasaran_program }}
               </td>
-              <td>{{ item.jenis_kegiatan }}</td>
-              <td>{{ item.start_at }} s/d {{ item.end_at }}</td>
               <td>
-                {{ item.tempat }}
+                {{ item.penyerapan }}
+              </td>
+              <td>
+                {{ item.konsistensi }}
+              </td>
+              <td>
+                {{ item.capaian_output_program }}
+              </td>
+              <td>
+                {{ item.efisiensi }}
+              </td>
+              <td>
+                {{ item.nilai_efisiensi }}
+              </td>
+              <td>
+                {{ item.rata_nka_satker }}
+              </td>
+              <td>
+                {{ nilaiKinerja(item) }}
               </td>
               <td class="before:hidden lg:w-1 whitespace-nowrap">
                 <div>
@@ -203,11 +205,11 @@ onMounted(() => {
                     <div>
                       <MenuButton
                         :disabled="
-                          kegiatanStore.isDestroyLoading &&
+                          kinerjaKeuanganStore.isDestroyLoading &&
                           indexDestroy == item.id
                         "
                         :class="
-                          kegiatanStore.isDestroyLoading &&
+                          kinerjaKeuanganStore.isDestroyLoading &&
                           indexDestroy == item.id
                             ? ''
                             : 'hover:scale-125 ease-in-out duration-300'
@@ -216,7 +218,7 @@ onMounted(() => {
                       >
                         <ArrowPathIcon
                           v-if="
-                            kegiatanStore.isDestroyLoading &&
+                            kinerjaKeuanganStore.isDestroyLoading &&
                             indexDestroy == item.id
                           "
                           class="animate-spin h-5 w-5 text-black dark:text-white"
@@ -244,6 +246,7 @@ onMounted(() => {
                         <div class="px-2 py-1">
                           <MenuItem
                             v-for="menu in itemMenu"
+                            :key="menu.label"
                             v-slot="{ active }"
                           >
                             <button
@@ -271,44 +274,21 @@ onMounted(() => {
       </table>
       <div
         class="p-3 lg:px-6 border-t border-gray-100 dark:border-slate-800 flex justify-end"
-      >
-        <ul class="inline-flex items-stretch -space-x-px">
-          <li>
-            <a
-              @click="
-                kegiatanStore.currentPage == 1
-                  ? ''
-                  : kegiatanStore.getData(previousPage)
-              "
-              :disabled="kegiatanStore.currentPage == 1 ? true : false"
-              :class="
-                kegiatanStore.currentPage == 1
-                  ? 'cursor-not-allowed'
-                  : 'cursor-pointer dark:hover:bg-blue-700 dark:hover:text-white hover:bg-blue-100 hover:text-gray-700'
-              "
-              class="w-32 px-3 py-2 ml-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
-              >Previous</a
-            >
-          </li>
-
-          <li>
-            <a
-              @click="
-                kegiatanStore.lastPage == kegiatanStore.currentPage
-                  ? ''
-                  : kegiatanStore.getData(nextPage)
-              "
-              :class="
-                kegiatanStore.lastPage == kegiatanStore.currentPage
-                  ? 'cursor-not-allowed'
-                  : 'cursor-pointer dark:hover:bg-blue-700 dark:hover:text-white hover:bg-blue-100 hover:text-gray-700'
-              "
-              class="w-32 px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
-              >Next {{
-            }}</a>
-          </li>
-        </ul>
-      </div>
+      ></div>
     </CardBox>
+
+    <!-- Modal -->
+
+    <Teleport to="body">
+      <!-- use the modal component, pass in the prop -->
+      <NewMasterModal
+        :updateData="updateData"
+        :show="showNewModal"
+        @close="close()"
+        @submitStore="submit()"
+        @submitUpdate="update()"
+      >
+      </NewMasterModal>
+    </Teleport>
   </SectionMain>
 </template>

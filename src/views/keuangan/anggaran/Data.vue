@@ -215,6 +215,33 @@ onMounted(() => {
             </tr>
           </template>
         </tbody>
+        <tfoot>
+          <tr>
+            <th scope="row" colspan="2">Total Pagu</th>
+            <th>{{ IDRCurrency.format(realisasiAnggaranStore.totalPagu) }}</th>
+            <th>
+              {{ IDRCurrency.format(realisasiAnggaranStore.totalRealisasi) }}
+            </th>
+            <th>
+              {{
+                (
+                  (realisasiAnggaranStore.totalRealisasi /
+                    realisasiAnggaranStore.totalPagu) *
+                  100
+                ).toFixed(2)
+              }}
+              %
+            </th>
+            <th>
+              {{
+                IDRCurrency.format(realisasiAnggaranStore.totalRealisasiSaatIni)
+              }}
+            </th>
+            <th>
+              {{ IDRCurrency.format(realisasiAnggaranStore.totalDPSaatIni) }}
+            </th>
+          </tr>
+        </tfoot>
       </table>
       <div
         class="p-3 lg:px-6 border-t border-gray-100 dark:border-slate-800 flex justify-end"
@@ -224,4 +251,3 @@ onMounted(() => {
     <!-- Modal -->
   </SectionMain>
 </template>
-@/stores/keuangan/realisasi

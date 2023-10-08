@@ -5,11 +5,10 @@ import { useAuthStore } from "../auth";
 import { useToast } from "vue-toastification";
 const toast = useToast();
 const authStore = useAuthStore();
-export const useRealisasiAnggaranStore = defineStore("realisasiAnggaran", {
+export const useIkpaStore = defineStore("ikpa", {
   state: () => ({
     responses: null,
-    singleResponses: null,
-    originalSingleResponses: null,
+    originalResponses: null,
     isUpdateLoading: false,
     isLoading: false,
     isStoreLoading: false,
@@ -24,38 +23,29 @@ export const useRealisasiAnggaranStore = defineStore("realisasiAnggaran", {
   }),
   getters: {
     items(state) {
-      return state.responses ?? [];
+      return state.responses ?? {};
     },
-    totalPagu(state) {
-      const totalPagu = state.items.reduce((acc, item) => acc + item.pagu, 0);
-      return totalPagu;
-    },
-    totalRealisasi(state) {
-      const totalRealisasi = state.items.reduce(
-        (acc, item) => acc + item.total_realisasi,
-        0
+    nilaiAspek_2(state) {
+      return (
+        (state.items.penyerapan_anggaran +
+          state.items.belanja_kontraktual +
+          state.items.penyelesaian_tagihan +
+          state.items.pengelolaan_up_tup +
+          state.items.dispensasi_spm) /
+        5
       );
-      return totalRealisasi;
     },
-    totalRealisasiSaatIni(state) {
-      const totalRealisasi = state.items.reduce(
-        (acc, item) => acc + item.realisasi_saat_ini,
-        0
+    nilaiTotal(state) {
+      return (
+        (10 / 100) * state.items.revisi_dipa +
+        (10 / 100) * state.items.halaman_tiga_dipa +
+        (20 / 100) * state.items.penyerapan_anggaran +
+        (10 / 100) * state.items.belanja_kontraktual +
+        (10 / 100) * state.items.penyelesaian_tagihan +
+        (10 / 100) * state.items.pengelolaan_up_tup +
+        (5 / 100) * state.items.dispensasi_spm +
+        (25 / 100) * state.items.capaian_output
       );
-      return totalRealisasi;
-    },
-    totalDPSaatIni(state) {
-      const totalRealisasi = state.items.reduce(
-        (acc, item) => acc + item.dp_saat_ini,
-        0
-      );
-      return totalRealisasi;
-    },
-    searchQuery(state) {
-      if (state.filter.searchQuery == "" || state.filter.searchQuery == null) {
-        return "";
-      }
-      return "&query=" + state.filter.searchQuery;
     },
   },
   actions: {
@@ -63,9 +53,25 @@ export const useRealisasiAnggaranStore = defineStore("realisasiAnggaran", {
       this.isLoading = true;
       try {
         const response = await axiosIns.get(
-          `/realisasi-anggaran?tahun=${this.filter.currentYear}&bulan=${this.filter.currentMonth}${this.searchQuery}`
+          `/ikpa?tahun=${this.filter.currentYear}&bulan=${this.filter.currentMonth}`
         );
         this.responses = response.data.data;
+        if (this.responses == null) {
+          this.responses = {
+            id: 1,
+            tahun: this.filter.currentYear,
+            bulan: this.filter.currentMonth,
+            revisi_dipa: 0,
+            halaman_tiga_dipa: 0,
+            penyerapan_anggaran: 0,
+            belanja_kontraktual: 0,
+            penyelesaian_tagihan: 0,
+            pengelolaan_up_tup: 0,
+            dispensasi_spm: 0,
+            capaian_output: 0,
+            created_by: authStore.user.user.id,
+          };
+        }
       } catch (error) {
         alert(error.message);
       } finally {
@@ -76,12 +82,7 @@ export const useRealisasiAnggaranStore = defineStore("realisasiAnggaran", {
     async store() {
       this.isStoreLoading = true;
       try {
-        const response = await axiosIns.post(`/realisasi-anggaran`, {
-          head: this.filter,
-          detail: this.items,
-          created_by: this.created_by,
-        });
-
+        const response = await axiosIns.post(`/ikpa`, this.items);
         if (response.status == 200) {
           toast.success("Data berhasil disimpan", {
             timeout: 3000,
@@ -112,7 +113,7 @@ export const useRealisasiAnggaranStore = defineStore("realisasiAnggaran", {
       this.isDestroyLoading = true;
       setTimeout(() => {}, 500);
       try {
-        await axiosIns.delete(`/realisasi-anggaran/${id}`);
+        await axiosIns.delete(`/ikpa/${id}`);
         toast.success("Data berhasil di hapus", {
           timeout: 2000,
         });
@@ -130,7 +131,7 @@ export const useRealisasiAnggaranStore = defineStore("realisasiAnggaran", {
       this.isUpdateLoading = true;
       try {
         const response = await axiosIns.put(
-          `/realisasi-anggaran/${this.singleResponses.id}`,
+          `/ikpa/${this.singleResponses.id}`,
           this.singleResponses
         );
         if (response.status == 200) {
@@ -157,9 +158,11 @@ export const useRealisasiAnggaranStore = defineStore("realisasiAnggaran", {
         created_by: authStore.user.user.id,
       };
     },
-    readyEdit(item) {
-      this.singleResponses = JSON.parse(JSON.stringify(item));
-      this.originalSingleResponses = JSON.parse(JSON.stringify(item));
+    readyEdit() {
+      this.originalResponses = JSON.parse(JSON.stringify(this.responses));
+    },
+    cancelEdit() {
+      this.responses = JSON.parse(JSON.stringify(this.originalResponses));
     },
   },
 });

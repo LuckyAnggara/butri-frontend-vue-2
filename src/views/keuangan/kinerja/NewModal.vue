@@ -14,7 +14,7 @@
           class="flex justify-between items-center pb-4 mb-4 rounded-t border-b sm:mb-5 dark:border-gray-600"
         >
           <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-            Tambah data Persuratan
+            Tambah data
           </h3>
           <button
             @click="closeModal"
@@ -40,8 +40,9 @@
         <form v-if="updateData" @submit.prevent="prosesUpdate()">
           <FormField label="Tahun">
             <select
-              :disabled="persuratanStore.isUpdateLoading"
-              v-model="persuratanStore.singleResponses.tahun"
+              required
+              :disabled="kinerjaKeuanganStore.isStoreLoading"
+              v-model="kinerjaKeuanganStore.singleResponses.tahun"
               class="h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
             >
               <option
@@ -55,8 +56,9 @@
           </FormField>
           <FormField label="Bulan">
             <select
-              :disabled="persuratanStore.isUpdateLoading"
-              v-model="persuratanStore.singleResponses.bulan"
+              required
+              :disabled="kinerjaKeuanganStore.isStoreLoading"
+              v-model="kinerjaKeuanganStore.singleResponses.bulan"
               class="h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
             >
               <option
@@ -68,20 +70,60 @@
               </option>
             </select>
           </FormField>
-          <FormField label="Surat Masuk*">
+
+          <FormField label="Capaian Sasaran Program">
             <FormControl
+              :allowStep="true"
+              v-model="
+                kinerjaKeuanganStore.singleResponses.capaian_sasaran_program
+              "
+              :disabled="kinerjaKeuanganStore.isStoreLoading"
               type="number"
-              v-model="persuratanStore.singleResponses.surat_masuk"
-              :disabled="persuratanStore.isUpdateLoading"
-              required
             />
           </FormField>
-          <FormField label="Surat Keluar*">
+          <FormField label="Penyerapan">
             <FormControl
               type="number"
-              v-model="persuratanStore.singleResponses.surat_keluar"
-              :disabled="persuratanStore.isUpdateLoading"
-              required
+              v-model="kinerjaKeuanganStore.singleResponses.penyerapan"
+              :disabled="kinerjaKeuanganStore.isStoreLoading"
+            />
+          </FormField>
+          <FormField label="Konsistensi">
+            <FormControl
+              type="number"
+              v-model="kinerjaKeuanganStore.singleResponses.konsistensi"
+              :disabled="kinerjaKeuanganStore.isStoreLoading"
+            />
+          </FormField>
+          <FormField label="Capaian Output Program">
+            <FormControl
+              type="number"
+              v-model="
+                kinerjaKeuanganStore.singleResponses.capaian_output_program
+              "
+              :disabled="kinerjaKeuanganStore.isStoreLoading"
+            />
+          </FormField>
+          <FormField label="Efisiensi">
+            <FormControl
+              type="number"
+              v-model="kinerjaKeuanganStore.singleResponses.efisiensi"
+              :disabled="kinerjaKeuanganStore.isStoreLoading"
+            />
+          </FormField>
+          <FormField label="Nilai Efisiensi">
+            <FormControl
+              step=".01"
+              type="number"
+              v-model="kinerjaKeuanganStore.singleResponses.nilai_efisiensi"
+              :disabled="kinerjaKeuanganStore.isStoreLoading"
+            />
+          </FormField>
+          <FormField label="Rata Rata NKA Satker">
+            <FormControl
+              type="number"
+              v-model="kinerjaKeuanganStore.singleResponses.rata_nka_satker"
+              :disabled="kinerjaKeuanganStore.isStoreLoading"
             />
           </FormField>
 
@@ -89,23 +131,30 @@
 
           <div class="flex justify-start space-x-3 items-center">
             <BaseButton
-              :disabled="persuratanStore.isUpdateLoading"
+              :disabled="kinerjaKeuanganStore.isUpdateLoading"
               type="submit"
               color="info"
-              ><span v-if="!persuratanStore.isUpdateLoading"
+              ><span v-if="!kinerjaKeuanganStore.isUpdateLoading"
                 ><span>Update</span></span
               ><span class="flex flex-row items-center" v-else>
                 <ArrowPathIcon class="h-5 w-5 animate-spin mr-3" />
                 Processing</span
               ></BaseButton
             >
+            <BaseButton
+              @click="emit('close')"
+              :disabled="kinerjaKeuanganStore.isUpdateLoading"
+              color="warning"
+              label="Batal"
+            ></BaseButton>
           </div>
         </form>
-        <form v-else @submit.prevent="prosesRequest()">
+        <form v-else @submit.prevent="prosesStore()">
           <FormField label="Tahun">
             <select
-              :disabled="persuratanStore.isStoreLoading"
-              v-model="persuratanStore.form.tahun"
+              required
+              :disabled="kinerjaKeuanganStore.isStoreLoading"
+              v-model="kinerjaKeuanganStore.form.tahun"
               class="h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
             >
               <option
@@ -119,8 +168,9 @@
           </FormField>
           <FormField label="Bulan">
             <select
-              :disabled="persuratanStore.isStoreLoading"
-              v-model="persuratanStore.form.bulan"
+              required
+              :disabled="kinerjaKeuanganStore.isStoreLoading"
+              v-model="kinerjaKeuanganStore.form.bulan"
               class="h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
             >
               <option
@@ -132,20 +182,55 @@
               </option>
             </select>
           </FormField>
-          <FormField label="Surat Masuk*">
+          <FormField label="Capaian Sasaran Program">
             <FormControl
+              :allowStep="true"
+              v-model="kinerjaKeuanganStore.form.capaian_sasaran_program"
+              :disabled="kinerjaKeuanganStore.isStoreLoading"
               type="number"
-              v-model="persuratanStore.form.surat_masuk"
-              :disabled="persuratanStore.isStoreLoading"
-              required
             />
           </FormField>
-          <FormField label="Surat Keluar*">
+          <FormField label="Penyerapan">
             <FormControl
               type="number"
-              v-model="persuratanStore.form.surat_keluar"
-              :disabled="persuratanStore.isStoreLoading"
-              required
+              v-model="kinerjaKeuanganStore.form.penyerapan"
+              :disabled="kinerjaKeuanganStore.isStoreLoading"
+            />
+          </FormField>
+          <FormField label="Konsistensi">
+            <FormControl
+              type="number"
+              v-model="kinerjaKeuanganStore.form.konsistensi"
+              :disabled="kinerjaKeuanganStore.isStoreLoading"
+            />
+          </FormField>
+          <FormField label="Capaian Output Program">
+            <FormControl
+              type="number"
+              v-model="kinerjaKeuanganStore.form.capaian_output_program"
+              :disabled="kinerjaKeuanganStore.isStoreLoading"
+            />
+          </FormField>
+          <FormField label="Efisiensi">
+            <FormControl
+              type="number"
+              v-model="kinerjaKeuanganStore.form.efisiensi"
+              :disabled="kinerjaKeuanganStore.isStoreLoading"
+            />
+          </FormField>
+          <FormField label="Nilai Efisiensi">
+            <FormControl
+              step=".01"
+              type="number"
+              v-model="kinerjaKeuanganStore.form.nilai_efisiensi"
+              :disabled="kinerjaKeuanganStore.isStoreLoading"
+            />
+          </FormField>
+          <FormField label="Rata Rata NKA Satker">
+            <FormControl
+              type="number"
+              v-model="kinerjaKeuanganStore.form.rata_nka_satker"
+              :disabled="kinerjaKeuanganStore.isStoreLoading"
             />
           </FormField>
 
@@ -153,15 +238,21 @@
 
           <div class="flex justify-start space-x-3 items-center">
             <BaseButton
-              :disabled="persuratanStore.isStoreLoading"
+              :disabled="kinerjaKeuanganStore.isStoreLoading"
               type="submit"
               color="info"
-              ><span v-if="!persuratanStore.isStoreLoading">Submit</span
+              ><span v-if="!kinerjaKeuanganStore.isStoreLoading">Submit</span
               ><span class="flex flex-row items-center" v-else>
                 <ArrowPathIcon class="h-5 w-5 animate-spin mr-3" />
                 Processing</span
               ></BaseButton
             >
+            <BaseButton
+              @click="emit('close')"
+              :disabled="kinerjaKeuanganStore.isUpdateLoading"
+              color="warning"
+              label="Batal"
+            ></BaseButton>
           </div>
         </form>
       </div>
@@ -174,9 +265,11 @@ import FormField from "@/components/FormField.vue";
 import FormControl from "@/components/FormControl.vue";
 import BaseDivider from "@/components/BaseDivider.vue";
 import BaseButton from "@/components/BaseButton.vue";
-import { usePersuratanStore } from "@/stores/umum/persuratan";
+import { useKinerjaKeuanganStore } from "@/stores/keuangan/kinerja";
 import { useMainStore } from "@/stores/main";
+import { useUnitGroupStore } from "@/stores/unitGroup";
 import { ArrowPathIcon } from "@heroicons/vue/24/outline";
+import { ref } from "vue";
 
 const props = defineProps({
   show: Boolean,
@@ -185,10 +278,11 @@ const props = defineProps({
 
 const emit = defineEmits(["close", "submitStore", "submitUpdate"]);
 
-const persuratanStore = usePersuratanStore();
+const kinerjaKeuanganStore = useKinerjaKeuanganStore();
 const mainStore = useMainStore();
+const groupStore = useUnitGroupStore();
 
-async function prosesRequest() {
+async function prosesStore() {
   emit("submitStore");
 }
 
@@ -197,6 +291,7 @@ async function prosesUpdate() {
 }
 
 function closeModal() {
+  kinerjaKeuanganStore.clearForm();
   emit("close");
 }
 </script>

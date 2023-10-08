@@ -5,7 +5,7 @@ import { useAuthStore } from "../auth";
 import { useToast } from "vue-toastification";
 const toast = useToast();
 const authStore = useAuthStore();
-export const useRealisasiAnggaranStore = defineStore("realisasiAnggaran", {
+export const useKinerjaKeuanganStore = defineStore("kinerjaKeunagan", {
   state: () => ({
     responses: null,
     singleResponses: null,
@@ -16,6 +16,18 @@ export const useRealisasiAnggaranStore = defineStore("realisasiAnggaran", {
     isUpdateLoading: false,
     isDestroyLoading: false,
     created_by: authStore.user.user.id,
+    form: {
+      bulan: new Date().getMonth() + 1,
+      tahun: new Date().getFullYear(),
+      capaian_sasaran_program: 0,
+      capaian_output_program: 0,
+      efisiensi: 0,
+      konsistensi: 0,
+      nilai_efisiensi: 0,
+      penyerapan: 0,
+      rata_nka_satker: 0,
+      created_by: authStore.user.user.id,
+    },
     filter: {
       searchQuery: "",
       currentMonth: new Date().getMonth() + 1,
@@ -25,31 +37,6 @@ export const useRealisasiAnggaranStore = defineStore("realisasiAnggaran", {
   getters: {
     items(state) {
       return state.responses ?? [];
-    },
-    totalPagu(state) {
-      const totalPagu = state.items.reduce((acc, item) => acc + item.pagu, 0);
-      return totalPagu;
-    },
-    totalRealisasi(state) {
-      const totalRealisasi = state.items.reduce(
-        (acc, item) => acc + item.total_realisasi,
-        0
-      );
-      return totalRealisasi;
-    },
-    totalRealisasiSaatIni(state) {
-      const totalRealisasi = state.items.reduce(
-        (acc, item) => acc + item.realisasi_saat_ini,
-        0
-      );
-      return totalRealisasi;
-    },
-    totalDPSaatIni(state) {
-      const totalRealisasi = state.items.reduce(
-        (acc, item) => acc + item.dp_saat_ini,
-        0
-      );
-      return totalRealisasi;
     },
     searchQuery(state) {
       if (state.filter.searchQuery == "" || state.filter.searchQuery == null) {
@@ -63,7 +50,7 @@ export const useRealisasiAnggaranStore = defineStore("realisasiAnggaran", {
       this.isLoading = true;
       try {
         const response = await axiosIns.get(
-          `/realisasi-anggaran?tahun=${this.filter.currentYear}&bulan=${this.filter.currentMonth}${this.searchQuery}`
+          `/kinerja-keuangan?tahun=${this.filter.currentYear}&bulan=${this.filter.currentMonth}${this.searchQuery}`
         );
         this.responses = response.data.data;
       } catch (error) {
@@ -76,11 +63,7 @@ export const useRealisasiAnggaranStore = defineStore("realisasiAnggaran", {
     async store() {
       this.isStoreLoading = true;
       try {
-        const response = await axiosIns.post(`/realisasi-anggaran`, {
-          head: this.filter,
-          detail: this.items,
-          created_by: this.created_by,
-        });
+        const response = await axiosIns.post(`/kinerja-keuangan`, this.form);
 
         if (response.status == 200) {
           toast.success("Data berhasil disimpan", {
@@ -112,7 +95,7 @@ export const useRealisasiAnggaranStore = defineStore("realisasiAnggaran", {
       this.isDestroyLoading = true;
       setTimeout(() => {}, 500);
       try {
-        await axiosIns.delete(`/realisasi-anggaran/${id}`);
+        await axiosIns.delete(`/kinerja-keuangan/${id}`);
         toast.success("Data berhasil di hapus", {
           timeout: 2000,
         });
@@ -130,7 +113,7 @@ export const useRealisasiAnggaranStore = defineStore("realisasiAnggaran", {
       this.isUpdateLoading = true;
       try {
         const response = await axiosIns.put(
-          `/realisasi-anggaran/${this.singleResponses.id}`,
+          `/kinerja-keuangan/${this.singleResponses.id}`,
           this.singleResponses
         );
         if (response.status == 200) {
@@ -151,9 +134,15 @@ export const useRealisasiAnggaranStore = defineStore("realisasiAnggaran", {
     },
     clearForm() {
       this.form = {
+        bulan: new Date().getMonth() + 1,
         tahun: new Date().getFullYear(),
-        name: "",
-        target: "",
+        capaian_sasaran_program: 0,
+        capaian_output_program: 0,
+        efisiensi: 0,
+        konsistensi: 0,
+        nilai_efisiensi: 0,
+        penyerapan: 0,
+        rata_nka_satker: 0,
         created_by: authStore.user.user.id,
       };
     },
