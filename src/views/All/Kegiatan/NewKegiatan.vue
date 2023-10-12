@@ -78,6 +78,7 @@ onUnmounted(() => {
         <form @submit.prevent="submit()">
           <FormField label="Nama Kegiatan">
             <FormControl
+              type="textarea"
               :disabled="kegiatanStore.isStoreLoading"
               v-model="kegiatanStore.form.name"
               required

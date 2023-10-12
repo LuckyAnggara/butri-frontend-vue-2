@@ -18,18 +18,18 @@ import {
 } from "@heroicons/vue/24/outline";
 import { useMainStore } from "@/stores/main";
 import BaseButton from "@/components/BaseButton.vue";
-import { useRealisasiAnggaranStore } from "@/stores/keuangan/realisasi";
+import { useMonitoringInternalStore } from "@/stores/sip/monitoringInternal";
 import { useAuthStore } from "@/stores/auth";
 import { IDRCurrency, getMonthName } from "@/utilities/formatter";
 
 const route = useRoute();
-const realisasiAnggaranStore = useRealisasiAnggaranStore();
+const monitoringInternalStore = useMonitoringInternalStore();
 const mainStore = useMainStore();
 
 const isInput = ref(false);
 
 async function submit() {
-  const result = await realisasiAnggaranStore.store();
+  const result = await monitoringInternalStore.store();
   if (result) {
     isInput.value = !isInput;
   }
@@ -44,17 +44,17 @@ function deviasi(item) {
   return (header / item.dp_saat_ini).toFixed(2);
 }
 
-realisasiAnggaranStore.$subscribe((mutation, state) => {
+monitoringInternalStore.$subscribe((mutation, state) => {
   if (mutation.events.key == "currentYear") {
-    realisasiAnggaranStore.getData();
+    monitoringInternalStore.getData();
   }
   if (mutation.events.key == "currentMonth") {
-    realisasiAnggaranStore.getData();
+    monitoringInternalStore.getData();
   }
 });
 
 onMounted(() => {
-  realisasiAnggaranStore.getData();
+  monitoringInternalStore.getData();
 });
 </script>
 
@@ -67,8 +67,8 @@ onMounted(() => {
         <div class="w-2/12">
           <FormField label="Tahun">
             <select
-              :disabled="realisasiAnggaranStore.isLoading"
-              v-model="realisasiAnggaranStore.filter.currentYear"
+              :disabled="monitoringInternalStore.isLoading"
+              v-model="monitoringInternalStore.filter.currentYear"
               class="h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
             >
               <option
@@ -84,8 +84,8 @@ onMounted(() => {
         <div class="w-2/12">
           <FormField label="Bulan">
             <select
-              :disabled="realisasiAnggaranStore.isLoading"
-              v-model="realisasiAnggaranStore.filter.currentMonth"
+              :disabled="monitoringInternalStore.isLoading"
+              v-model="monitoringInternalStore.filter.currentMonth"
               class="h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
             >
               <option
@@ -109,11 +109,11 @@ onMounted(() => {
           />
           <BaseButton
             v-else
-            :disabled="realisasiAnggaranStore.isStoreLoading"
+            :disabled="monitoringInternalStore.isStoreLoading"
             @click="submit"
             class="mt-8"
             color="success"
-            ><span v-if="!realisasiAnggaranStore.isStoreLoading">Submit</span
+            ><span v-if="!monitoringInternalStore.isStoreLoading">Submit</span
             ><span class="flex flex-row items-center" v-else>
               <ArrowPathIcon class="h-5 w-5 animate-spin mr-3" />
               Processing</span
@@ -126,28 +126,22 @@ onMounted(() => {
       <table>
         <thead>
           <tr>
-            <td rowspan="2" class="text-center">Kode</td>
-            <td rowspan="2" class="text-center">Kegiatan</td>
-            <td rowspan="2" class="text-center">DIPA Existing</td>
-            <td colspan="2" class="text-center">
-              Realisasi s/d
-              {{ getMonthName(realisasiAnggaranStore.filter.currentMonth - 1) }}
-            </td>
-            <td colspan="2" class="text-center">
-              {{ getMonthName(realisasiAnggaranStore.filter.currentMonth) }}
-            </td>
-
-            <td rowspan="2" class="text-center">Deviasi (%)</td>
+            <td rowspan="2" class="text-center">Unit</td>
+            <td colspan="2" class="text-center">Temuan</td>
+            <td colspan="2" class="text-center">Sudah Tindak Lanjut</td>
+            <td colspan="2" class="text-center">Belum Tindak Lanjut</td>
           </tr>
           <tr>
-            <td class="text-center">Rp</td>
-            <td class="text-center">%</td>
-            <td class="text-center">Realisasi</td>
-            <td class="text-center">DP</td>
+            <td class="text-center">Jumlah</td>
+            <td class="text-center">Nominal</td>
+            <td class="text-center">Jumlah</td>
+            <td class="text-center">Nominal</td>
+            <td class="text-center">Jumlah</td>
+            <td class="text-center">Nominal</td>
           </tr>
         </thead>
         <tbody>
-          <tr v-if="realisasiAnggaranStore.isLoading">
+          <tr v-if="monitoringInternalStore.isLoading">
             <td colspan="9" class="text-center">
               <div
                 class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
@@ -161,87 +155,40 @@ onMounted(() => {
             </td>
           </tr>
           <template v-else>
-            <tr v-if="realisasiAnggaranStore.items.length == 0">
+            <tr v-if="monitoringInternalStore.items.length == 0">
               <td colspan="9" class="text-center">
                 <span>Tidak ada data</span>
               </td>
             </tr>
             <tr
               v-else
-              v-for="item in realisasiAnggaranStore.items"
+              v-for="item in monitoringInternalStore.items"
               :key="item.id"
             >
               <td>
-                {{ item.kode }}
+                {{ item.group.name }}
               </td>
               <td>
-                {{ item.name }}
+                {{ item.temuan_jumlah }}
               </td>
               <td>
-                {{ IDRCurrency.format(item.pagu) }}
+                {{ IDRCurrency.format(item.temuan_nominal) }}
               </td>
               <td>
-                {{ IDRCurrency.format(item.total_realisasi) }}
+                {{ item.tl_jumlah }}
               </td>
               <td>
-                {{ ((item.total_realisasi / item.pagu) * 100).toFixed(2) }}
-                %
+                {{ IDRCurrency.format(item.tl_nominal) }}
               </td>
               <td>
-                <span v-if="!isInput">
-                  {{ IDRCurrency.format(item.realisasi_saat_ini) }}</span
-                >
-                <FormControl
-                  v-else
-                  :disabled="!isInput"
-                  v-model="item.realisasi_saat_ini"
-                  type="number"
-                />
+                {{ item.btl_jumlah }}
               </td>
               <td>
-                <span v-if="!isInput">
-                  {{ IDRCurrency.format(item.dp_saat_ini) }}</span
-                >
-                <FormControl
-                  v-else
-                  :disabled="!isInput"
-                  v-model="item.dp_saat_ini"
-                  type="number"
-                />
-              </td>
-              <td>
-                {{ deviasi(item) }}
+                {{ IDRCurrency.format(item.btl_nominal) }}
               </td>
             </tr>
           </template>
         </tbody>
-        <tfoot>
-          <tr>
-            <th scope="row" colspan="2">Total Pagu</th>
-            <th>{{ IDRCurrency.format(realisasiAnggaranStore.totalPagu) }}</th>
-            <th>
-              {{ IDRCurrency.format(realisasiAnggaranStore.totalRealisasi) }}
-            </th>
-            <th>
-              {{
-                (
-                  (realisasiAnggaranStore.totalRealisasi /
-                    realisasiAnggaranStore.totalPagu) *
-                  100
-                ).toFixed(2)
-              }}
-              %
-            </th>
-            <th>
-              {{
-                IDRCurrency.format(realisasiAnggaranStore.totalRealisasiSaatIni)
-              }}
-            </th>
-            <th>
-              {{ IDRCurrency.format(realisasiAnggaranStore.totalDPSaatIni) }}
-            </th>
-          </tr>
-        </tfoot>
       </table>
       <div
         class="p-3 lg:px-6 border-t border-gray-100 dark:border-slate-800 flex justify-end"

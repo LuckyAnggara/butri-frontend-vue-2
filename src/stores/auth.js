@@ -55,6 +55,7 @@ export const useAuthStore = defineStore("auth", {
           } else {
             localStorage.removeItem("userDataLawas");
             localStorage.removeItem("token");
+            localStorage.clear();
           }
           const pinia = getActivePinia();
           // pinia._s.forEach((store) => store.$reset());

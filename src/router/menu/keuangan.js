@@ -3,7 +3,7 @@ import all from "./all";
 
 export default [
   {
-    to: "/",
+    to: "/keuangan/dashboard",
     label: "Dashboard",
     icon: mdiViewDashboard,
   },

@@ -34,9 +34,13 @@ export const useMainStore = defineStore("main", {
     jenisKegiatanOptions: [
       "RAPAT INTERNAL",
       "RAPAT EKSTERNAL",
+      "FORUM GROUP DISCUSION",
       "DINAS LUAR",
       "KOORDINASI",
       "KONSINYERING",
+      "FASILITASI",
+      "FASILITASI KEGIATAN",
+      "HELPDESK TI",
     ],
     jenisKegiatanArsipOptions: ["PENGARSIPAN", "PEMUSNAHAN"],
   }),

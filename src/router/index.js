@@ -7,6 +7,7 @@ import { program } from "./program";
 import { umum } from "./umum";
 import { keuangan } from "./keuangan";
 import { admin } from "./admin";
+import { sip } from "./sip";
 
 const routes = [
   {
@@ -74,6 +75,7 @@ const routes = [
   ...admin,
   ...umum,
   ...keuangan,
+  ...sip,
   ...all,
 ];
 
