@@ -40,8 +40,8 @@
         <form @submit.prevent="prosesRequest()">
           <FormField label="Tahun">
             <select
-              :disabled="monitoringInternalStore.isStoreLoading"
-              v-model="monitoringInternalStore.form.tahun"
+              :disabled="monitoringEksternalStore.isStoreLoading"
+              v-model="monitoringEksternalStore.form.tahun"
               class="h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
             >
               <option
@@ -55,8 +55,8 @@
           </FormField>
           <FormField label="Bulan">
             <select
-              :disabled="monitoringInternalStore.isStoreLoading"
-              v-model="monitoringInternalStore.form.bulan"
+              :disabled="monitoringEksternalStore.isStoreLoading"
+              v-model="monitoringEksternalStore.form.bulan"
               class="h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
             >
               <option
@@ -71,15 +71,15 @@
           <FormField
             label="Wilayah"
             :help="
-              monitoringInternalStore.exist
+              monitoringEksternalStore.exist
                 ? 'Data wilayah ini sudah di input'
                 : ''
             "
           >
             <select
               required
-              :disabled="monitoringInternalStore.isStoreLoading"
-              v-model="monitoringInternalStore.form.group_id"
+              :disabled="monitoringEksternalStore.isStoreLoading"
+              v-model="monitoringEksternalStore.form.group_id"
               class="h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
             >
               <option
@@ -94,28 +94,28 @@
           <FormField label="Temuan">
             <FormControl
               type="number"
-              v-model="monitoringInternalStore.form.temuan_jumlah"
-              :disabled="monitoringInternalStore.isStoreLoading"
+              v-model="monitoringEksternalStore.form.temuan_jumlah"
+              :disabled="monitoringEksternalStore.isStoreLoading"
               placeholder="Jumlah"
             />
             <FormControl
-              v-model="monitoringInternalStore.form.temuan_nominal"
+              v-model="monitoringEksternalStore.form.temuan_nominal"
               type="number"
-              :disabled="monitoringInternalStore.isStoreLoading"
+              :disabled="monitoringEksternalStore.isStoreLoading"
               placeholder="Nominal"
             />
           </FormField>
           <FormField label="Temuan Yang Sudah Tindak Lanjut ">
             <FormControl
               type="number"
-              v-model="monitoringInternalStore.form.tl_jumlah"
-              :disabled="monitoringInternalStore.isStoreLoading"
+              v-model="monitoringEksternalStore.form.tl_jumlah"
+              :disabled="monitoringEksternalStore.isStoreLoading"
               placeholder="Jumlah"
             />
             <FormControl
-              v-model="monitoringInternalStore.form.tl_nominal"
+              v-model="monitoringEksternalStore.form.tl_nominal"
               type="number"
-              :disabled="monitoringInternalStore.isStoreLoading"
+              :disabled="monitoringEksternalStore.isStoreLoading"
               placeholder="Nominal"
             />
           </FormField>
@@ -123,16 +123,16 @@
             <input
               type="number"
               :value="
-                monitoringInternalStore.form.temuan_jumlah -
-                monitoringInternalStore.form.tl_jumlah
+                monitoringEksternalStore.form.temuan_jumlah -
+                monitoringEksternalStore.form.tl_jumlah
               "
               :disabled="true"
               placeholder="Jumlah"
             />
             <input
               :value="
-                monitoringInternalStore.form.temuan_nominal -
-                monitoringInternalStore.form.tl_nominal
+                monitoringEksternalStore.form.temuan_nominal -
+                monitoringEksternalStore.form.tl_nominal
               "
               type="number"
               :disabled="true"
@@ -144,10 +144,11 @@
 
           <div class="flex justify-start space-x-3 items-center">
             <BaseButton
-              :disabled="monitoringInternalStore.isStoreLoading"
+              :disabled="monitoringEksternalStore.isStoreLoading"
               type="submit"
               color="info"
-              ><span v-if="!monitoringInternalStore.isStoreLoading">Submit</span
+              ><span v-if="!monitoringEksternalStore.isStoreLoading"
+                >Submit</span
               ><span class="flex flex-row items-center" v-else>
                 <ArrowPathIcon class="h-5 w-5 animate-spin mr-3" />
                 Processing</span
@@ -165,7 +166,7 @@ import FormField from "@/components/FormField.vue";
 import FormControl from "@/components/FormControl.vue";
 import BaseDivider from "@/components/BaseDivider.vue";
 import BaseButton from "@/components/BaseButton.vue";
-import { useMonitoringInternalStore } from "@/stores/sip/monitoringInternal";
+import { useMonitoringEksternalStore } from "@/stores/sip/monitoringExternal";
 import { useMainStore } from "@/stores/main";
 import { useUnitGroupStore } from "@/stores/unitGroup";
 import { ArrowPathIcon } from "@heroicons/vue/24/outline";
@@ -178,7 +179,7 @@ const props = defineProps({
 
 const emit = defineEmits(["close", "submitStore", "submitUpdate"]);
 
-const monitoringInternalStore = useMonitoringInternalStore();
+const monitoringEksternalStore = useMonitoringEksternalStore();
 const groupStore = useUnitGroupStore();
 const mainStore = useMainStore();
 

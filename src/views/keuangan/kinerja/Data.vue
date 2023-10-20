@@ -31,9 +31,6 @@ const kinerjaKeuanganStore = useKinerjaKeuanganStore();
 const mainStore = useMainStore();
 const authStore = useAuthStore();
 
-function toNew() {
-  showNewModal.value = true;
-}
 function open() {
   kinerjaKeuanganStore.clearForm();
 
@@ -169,7 +166,7 @@ onMounted(() => {
             </tr>
             <tr
               v-else
-              v-for="(item, index) in kinerjaKeuanganStore.items"
+              v-for="item in kinerjaKeuanganStore.items"
               :key="item.bulan"
             >
               <td>

@@ -5,7 +5,7 @@ import CardBox from "@/components/CardBox.vue";
 import SectionTitleLineWithButton from "@/components/SectionTitleLineWithButton.vue";
 
 import { useRoute, useRouter } from "vue-router";
-import { computed, onMounted, ref } from "vue";
+import { computed, defineAsyncComponent, onMounted, ref } from "vue";
 import FormField from "@/components/FormField.vue";
 import FormControl from "@/components/FormControl.vue";
 import { useDebounceFn } from "@vueuse/core";
@@ -14,27 +14,36 @@ import {
   EllipsisVerticalIcon,
   TrashIcon,
   ArrowPathIcon,
+  PencilSquareIcon,
   DocumentTextIcon,
 } from "@heroicons/vue/24/outline";
 import { useMainStore } from "@/stores/main";
 import BaseButton from "@/components/BaseButton.vue";
-import { useMutasiStore } from "@/stores/pegawai/mutasi";
+import { useUnitGroupStore } from "@/stores/unitGroup";
+import { useAuthStore } from "@/stores/auth";
+import { IDRCurrency, getMonthName } from "@/utilities/formatter";
+import { usePengelolaanMediaStore } from "@/stores/sip/pengelolaanMedia";
 
-const search = useDebounceFn(() => {
-  mutasiStore.getData();
-}, 500);
+const NewMasterModal = defineAsyncComponent(() => import("./NewModal.vue"));
+
+const showNewModal = ref(false);
+const updateData = ref(false);
+
 const route = useRoute();
-const router = useRouter();
-const mutasiStore = useMutasiStore();
+const pengelolaanMediaStore = usePengelolaanMediaStore();
 const mainStore = useMainStore();
+const groupStore = useUnitGroupStore();
 
 const indexDestroy = ref(0);
 
-const formatter = ref({
-  date: "DD MMMM YYYY",
-});
+const isInput = ref(false);
 
 const itemMenu = [
+  {
+    function: edit,
+    label: "Edit",
+    icon: DocumentTextIcon,
+  },
   {
     function: destroy,
     label: "Hapus",
@@ -42,30 +51,55 @@ const itemMenu = [
   },
 ];
 
-const previousPage = computed(() => {
-  return "&page=" + (mutasiStore.currentPage - 1);
-});
-
-const nextPage = computed(() => {
-  return "&page=" + (mutasiStore.currentPage + 1);
-});
+function edit(item) {
+  showNewModal.value = true;
+  updateData.value = true;
+  pengelolaanMediaStore.readyEdit(item);
+}
 
 function destroy(item) {
-  mutasiStore.destroy(item.id);
+  pengelolaanMediaStore.destroy(item.id);
   indexDestroy.value = item.id;
 }
 
-mutasiStore.$subscribe((mutation, state) => {
-  if (mutation.events.key == "currentLimit") {
-    mutasiStore.getData();
+function open() {
+  pengelolaanMediaStore.clearForm();
+  showNewModal.value = true;
+}
+function close() {
+  showNewModal.value = false;
+  pengelolaanMediaStore.clearForm();
+}
+
+async function submit() {
+  const result = await pengelolaanMediaStore.store();
+  if (result) {
+    close();
+    pengelolaanMediaStore.getData();
+    isInput.value = !isInput;
   }
-  if (mutation.events.key == "date") {
-    mutasiStore.getData();
+}
+
+async function update() {
+  const result = await pengelolaanMediaStore.update();
+  if (result) {
+    showNewModal.value = false;
+    pengelolaanMediaStore.getData();
+  }
+}
+
+pengelolaanMediaStore.$subscribe((mutation, state) => {
+  if (mutation.events.key == "currentYear") {
+    pengelolaanMediaStore.getData();
+  }
+  if (mutation.events.key == "currentMonth") {
+    pengelolaanMediaStore.getData();
   }
 });
 
 onMounted(() => {
-  mutasiStore.getData();
+  pengelolaanMediaStore.getData();
+  groupStore.getData();
 });
 </script>
 
@@ -75,74 +109,59 @@ onMounted(() => {
 
     <CardBox class="mb-4 px-4" has-table>
       <div class="w-full my-4 flex flex-row space-x-4">
-        <div class="w-1/12">
-          <FormField label="Show">
+        <div class="w-2/12">
+          <FormField label="Tahun">
             <select
-              :disabled="mutasiStore.isStoreLoading"
-              v-model="mutasiStore.currentLimit"
-              class="border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
+              :disabled="pengelolaanMediaStore.isLoading"
+              v-model="pengelolaanMediaStore.filter.currentYear"
+              class="h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
             >
               <option
-                v-for="option in mainStore.limitDataOptions"
+                v-for="option in mainStore.tahunOptions"
                 :key="option"
                 :value="option"
               >
-                {{ option == 100000 ? "SEMUA" : option }}
+                {{ option }}
               </option>
             </select>
           </FormField>
         </div>
-        <div class="w-5/12">
-          <FormField label="Search">
-            <FormControl
-              @keyup="search"
-              v-model="mutasiStore.filter.searchQuery"
-              type="tel"
-              placeholder="Cari berdasarkan nama / nip / nomor sk"
-            />
+        <div class="w-2/12">
+          <FormField label="Bulan">
+            <select
+              :disabled="pengelolaanMediaStore.isLoading"
+              v-model="pengelolaanMediaStore.filter.currentMonth"
+              class="h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
+            >
+              <option
+                v-for="option in mainStore.bulanOptions"
+                :key="option.id"
+                :value="option.id"
+              >
+                {{ option.label }}
+              </option>
+            </select>
           </FormField>
         </div>
-        <div class="w-4/12">
-          <FormField label="Tanggal">
-            <vue-tailwind-datepicker
-              :disabled="mutasiStore.isStoreLoading"
-              required
-              separator=" s/d "
-              placeholder="Tanggal Data"
-              v-model="mutasiStore.filter.date"
-              :formatter="formatter"
-              input-classes="h-12 border  px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
-            />
-          </FormField>
-        </div>
+        <div class="w-6/12"></div>
         <div class="w-2/12 flex justify-end">
-          <BaseButton
-            @click="router.push({ name: 'new-mutasi-pegawai' })"
-            class="mt-8"
-            type="submit"
-            color="info"
-            label="Tambah"
-          />
+          <BaseButton @click="open()" class="mt-8" color="info" label="Input" />
         </div>
       </div>
     </CardBox>
     <CardBox class="mb-6" has-table>
-      <table class="text-sm">
+      <table>
         <thead>
           <tr>
-            <th>No</th>
-            <th>Nomor SK</th>
-            <th>Nama Pegawai</th>
-            <th>Jabatan Lama</th>
-            <th>Jabatan Baru</th>
-            <th>Unit Lama</th>
-            <th>Unit Baru</th>
-            <th>Efektif</th>
-            <th />
+            <td class="text-center">No</td>
+            <td class="text-center">Jenis</td>
+            <td class="text-center">Keterangan</td>
+            <td class="text-center">Link</td>
+            <td class="text-center"></td>
           </tr>
         </thead>
         <tbody>
-          <tr v-if="mutasiStore.isLoading">
+          <tr v-if="pengelolaanMediaStore.isLoading">
             <td colspan="9" class="text-center">
               <div
                 class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
@@ -156,33 +175,27 @@ onMounted(() => {
             </td>
           </tr>
           <template v-else>
-            <tr v-if="mutasiStore.items.length == 0">
+            <tr v-if="pengelolaanMediaStore.items.length == 0">
               <td colspan="9" class="text-center">
                 <span>Tidak ada data</span>
               </td>
             </tr>
             <tr
               v-else
-              v-for="(item, index) in mutasiStore.items"
+              v-for="(item, index) in pengelolaanMediaStore.items"
               :key="item.id"
             >
-              <td class="text-center">
-                {{ mutasiStore.from + index }}
+              <td>
+                {{ ++index }}
               </td>
               <td>
-                {{ item.nomor_sk ?? "-" }}
-              </td>
-              <td>{{ item.pegawai.name ?? "-" }}</td>
-              <td>{{ item.jabatan.name ?? "-" }}</td>
-              <td>{{ item.jabatan_new.name ?? "-" }}</td>
-              <td>
-                {{ item.unit.name ?? "-" }}
+                {{ item.type }}
               </td>
               <td>
-                {{ item.unit_new.name ?? "-" }}
+                {{ item.keterangan }}
               </td>
               <td>
-                {{ item.tmt_jabatan ?? "-" }}
+                {{ item.link }}
               </td>
               <td class="before:hidden lg:w-1 whitespace-nowrap">
                 <div>
@@ -190,11 +203,11 @@ onMounted(() => {
                     <div>
                       <MenuButton
                         :disabled="
-                          mutasiStore.isDestroyLoading &&
+                          pengelolaanMediaStore.isDestroyLoading &&
                           indexDestroy == item.id
                         "
                         :class="
-                          mutasiStore.isDestroyLoading &&
+                          pengelolaanMediaStore.isDestroyLoading &&
                           indexDestroy == item.id
                             ? ''
                             : 'hover:scale-125 ease-in-out duration-300'
@@ -203,7 +216,7 @@ onMounted(() => {
                       >
                         <ArrowPathIcon
                           v-if="
-                            mutasiStore.isDestroyLoading &&
+                            pengelolaanMediaStore.isDestroyLoading &&
                             indexDestroy == item.id
                           "
                           class="animate-spin h-5 w-5 text-black dark:text-white"
@@ -259,44 +272,20 @@ onMounted(() => {
       </table>
       <div
         class="p-3 lg:px-6 border-t border-gray-100 dark:border-slate-800 flex justify-end"
-      >
-        <ul class="inline-flex items-stretch -space-x-px">
-          <li>
-            <a
-              @click="
-                mutasiStore.currentPage == 1
-                  ? ''
-                  : mutasiStore.getData(previousPage)
-              "
-              :disabled="mutasiStore.currentPage == 1 ? true : false"
-              :class="
-                mutasiStore.currentPage == 1
-                  ? 'cursor-not-allowed'
-                  : 'cursor-pointer dark:hover:bg-blue-700 dark:hover:text-white hover:bg-blue-100 hover:text-gray-700'
-              "
-              class="w-32 px-3 py-2 ml-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
-              >Previous</a
-            >
-          </li>
-
-          <li>
-            <a
-              @click="
-                mutasiStore.lastPage == mutasiStore.currentPage
-                  ? ''
-                  : mutasiStore.getData(nextPage)
-              "
-              :class="
-                mutasiStore.lastPage == mutasiStore.currentPage
-                  ? 'cursor-not-allowed'
-                  : 'cursor-pointer dark:hover:bg-blue-700 dark:hover:text-white hover:bg-blue-100 hover:text-gray-700'
-              "
-              class="w-32 px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
-              >Next {{
-            }}</a>
-          </li>
-        </ul>
-      </div>
+      ></div>
     </CardBox>
+
+    <!-- Modal -->
+    <Teleport to="body">
+      <!-- use the modal component, pass in the prop -->
+      <NewMasterModal
+        :updateData="updateData"
+        :show="showNewModal"
+        @close="close()"
+        @submitStore="submit()"
+        @submitUpdate="update()"
+      >
+      </NewMasterModal>
+    </Teleport>
   </SectionMain>
 </template>

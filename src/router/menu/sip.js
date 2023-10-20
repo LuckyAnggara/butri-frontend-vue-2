@@ -4,6 +4,8 @@ import {
   mdiAccountMultipleOutline,
   mdiBriefcaseAccountOutline,
   mdiCashMultiple,
+  mdiInstagram,
+  mdiMonitorAccount,
   mdiShieldAccount,
   mdiViewDashboard,
 } from "@mdi/js";
@@ -15,6 +17,21 @@ export default [
     icon: mdiViewDashboard,
   },
   {
+    label: "Pengelolaan",
+    icon: mdiMonitorAccount,
+    menu: [
+      {
+        to: "/pengelolaan/media/list",
+        label: "Media",
+      },
+      {
+        to: "/",
+        label: "Teknologi Informasi",
+      },
+    ],
+  },
+
+  {
     label: "Monitoring",
     icon: mdiAccountGroupOutline,
     menu: [
@@ -23,8 +40,12 @@ export default [
         label: "Temuan Internal",
       },
       {
-        to: "/monitoring/eksternal",
+        to: "/monitoring/eksternal/list",
         label: "Temuan Eksternal",
+      },
+      {
+        to: "/monitoring/pengaduan/list",
+        label: "Pengaduan",
       },
     ],
   },

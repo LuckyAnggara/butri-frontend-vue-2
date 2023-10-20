@@ -5,7 +5,7 @@ import { useAuthStore } from "../auth";
 import { useToast } from "vue-toastification";
 const toast = useToast();
 const authStore = useAuthStore();
-export const useMonitoringInternalStore = defineStore("monitoringInternal", {
+export const usePengelolaanMediaStore = defineStore("pengelolaanMedia", {
   state: () => ({
     responses: null,
     singleResponses: null,
@@ -20,13 +20,9 @@ export const useMonitoringInternalStore = defineStore("monitoringInternal", {
     form: {
       tahun: new Date().getFullYear(),
       bulan: new Date().getMonth() + 1,
-      group_id: 0,
-      temuan_nominal: 0,
-      temuan_jumlah: 0,
-      tl_nominal: 0,
-      tl_jumlah: 0,
-      btl_nominal: "",
-      btl_jumlah: "",
+      keterangan: null,
+      type: null,
+      link: null,
       created_by: authStore.user.user.id,
     },
     filter: {
@@ -52,9 +48,9 @@ export const useMonitoringInternalStore = defineStore("monitoringInternal", {
       this.isLoading = true;
       try {
         const response = await axiosIns.get(
-          `/monitoring-temuan-internal?tahun=${this.filter.currentYear}&bulan=${this.filter.currentMonth}`
+          `/pengelolaan-media?tahun=${this.filter.currentYear}&bulan=${this.filter.currentMonth}`
         );
-        this.responsesBPK = response.data;
+        this.responses = response.data;
       } catch (error) {
         alert(error.message);
       } finally {
@@ -66,10 +62,7 @@ export const useMonitoringInternalStore = defineStore("monitoringInternal", {
     async store() {
       this.isStoreLoading = true;
       try {
-        const response = await axiosIns.post(
-          `/monitoring-temuan-internal`,
-          this.form
-        );
+        const response = await axiosIns.post(`/pengelolaan-media`, this.form);
         if (response.status == 200) {
           toast.success("Data berhasil dibuat", {
             timeout: 3000,
@@ -91,7 +84,7 @@ export const useMonitoringInternalStore = defineStore("monitoringInternal", {
       this.isDestroyLoading = true;
       setTimeout(() => {}, 500);
       try {
-        await axiosIns.delete(`/monitoring-temuan-internal/${id}`);
+        await axiosIns.delete(`/pengelolaan-media/${id}`);
         toast.success("Data berhasil di hapus", {
           timeout: 2000,
         });
@@ -109,7 +102,7 @@ export const useMonitoringInternalStore = defineStore("monitoringInternal", {
       this.isUpdateLoading = true;
       try {
         const response = await axiosIns.put(
-          `/monitoring-temuan-internal/${this.singleResponses.id}`,
+          `/pengelolaan-media/${this.singleResponses.id}`,
           this.singleResponses
         );
         if (response.status == 200) {
@@ -131,24 +124,17 @@ export const useMonitoringInternalStore = defineStore("monitoringInternal", {
         this.isUpdateLoading = false;
       }
     },
-    isMonitoringExist(item) {
-      const d = this.items.filter((x) => x.id == item.id);
-      if (d) {
-        this.wilayahExist = true;
-      }
-      this.wilayahExist = false;
+    readyEdit(item) {
+      this.singleResponses = JSON.parse(JSON.stringify(item));
+      this.originalSingleResponses = JSON.parse(JSON.stringify(item));
     },
     clearForm() {
       this.form = {
         tahun: new Date().getFullYear(),
         bulan: new Date().getMonth() + 1,
-        group_id: 0,
-        temuan_nominal: "",
-        temuan_jumlah: "",
-        tl_nominal: "",
-        tl_jumlah: "",
-        btl_nominal: "",
-        btl_jumlah: "",
+        keterangan: null,
+        type: null,
+        link: null,
         created_by: authStore.user.user.id,
       };
     },

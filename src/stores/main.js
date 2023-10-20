@@ -42,7 +42,9 @@ export const useMainStore = defineStore("main", {
       "FASILITASI KEGIATAN",
       "HELPDESK TI",
     ],
+    jenisMediaOptions: ["SOSIAL MEDIA", "WEBSITE"],
     jenisKegiatanArsipOptions: ["PENGARSIPAN", "PEMUSNAHAN"],
+    eselonOptions: ["ESELON I", "ESELON II"],
   }),
   actions: {
     setUser(payload) {

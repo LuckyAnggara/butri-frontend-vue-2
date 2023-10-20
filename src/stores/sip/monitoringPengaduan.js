@@ -5,7 +5,7 @@ import { useAuthStore } from "../auth";
 import { useToast } from "vue-toastification";
 const toast = useToast();
 const authStore = useAuthStore();
-export const useMonitoringInternalStore = defineStore("monitoringInternal", {
+export const useMonitoringPengaduanStore = defineStore("monitoringPengaduan", {
   state: () => ({
     responses: null,
     singleResponses: null,
@@ -20,18 +20,21 @@ export const useMonitoringInternalStore = defineStore("monitoringInternal", {
     form: {
       tahun: new Date().getFullYear(),
       bulan: new Date().getMonth() + 1,
-      group_id: 0,
-      temuan_nominal: 0,
-      temuan_jumlah: 0,
-      tl_nominal: 0,
-      tl_jumlah: 0,
-      btl_nominal: "",
-      btl_jumlah: "",
+      eselon: null,
+      satker_id: 0,
+      wbs: 0,
+      aplikasi_lapor: 0,
+      website: 0,
+      sms_gateway: 0,
+      media_sosial: 0,
+      surat_pos: 0,
+      kotak_pengaduan: 0,
       created_by: authStore.user.user.id,
     },
     filter: {
       currentMonth: new Date().getMonth() + 1,
       currentYear: new Date().getFullYear(),
+      currentEselon: 0,
     },
     currentLimit: 5,
   }),
@@ -46,15 +49,21 @@ export const useMonitoringInternalStore = defineStore("monitoringInternal", {
       }
       return false;
     },
+    eselonQuery(state) {
+      if (state.filter.currentEselon == 0) {
+        return "";
+      }
+      return "&eselon=" + state.filter.currentEselon;
+    },
   },
   actions: {
     async getData(page = "") {
       this.isLoading = true;
       try {
         const response = await axiosIns.get(
-          `/monitoring-temuan-internal?tahun=${this.filter.currentYear}&bulan=${this.filter.currentMonth}`
+          `/monitoring-pengaduan?tahun=${this.filter.currentYear}&bulan=${this.filter.currentMonth}${this.eselonQuery}`
         );
-        this.responsesBPK = response.data;
+        this.responses = response.data;
       } catch (error) {
         alert(error.message);
       } finally {
@@ -67,7 +76,7 @@ export const useMonitoringInternalStore = defineStore("monitoringInternal", {
       this.isStoreLoading = true;
       try {
         const response = await axiosIns.post(
-          `/monitoring-temuan-internal`,
+          `/monitoring-pengaduan`,
           this.form
         );
         if (response.status == 200) {
@@ -91,7 +100,7 @@ export const useMonitoringInternalStore = defineStore("monitoringInternal", {
       this.isDestroyLoading = true;
       setTimeout(() => {}, 500);
       try {
-        await axiosIns.delete(`/monitoring-temuan-internal/${id}`);
+        await axiosIns.delete(`/monitoring-pengaduan/${id}`);
         toast.success("Data berhasil di hapus", {
           timeout: 2000,
         });
@@ -109,7 +118,7 @@ export const useMonitoringInternalStore = defineStore("monitoringInternal", {
       this.isUpdateLoading = true;
       try {
         const response = await axiosIns.put(
-          `/monitoring-temuan-internal/${this.singleResponses.id}`,
+          `/monitoring-pengaduan/${this.singleResponses.id}`,
           this.singleResponses
         );
         if (response.status == 200) {
