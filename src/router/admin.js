@@ -21,6 +21,16 @@ export const admin = [
   },
   {
     meta: {
+      title: "Program Unggulan",
+      layout: "layout-authenticated",
+      requiresAuth: true,
+    },
+    path: "/program-unggulan/list",
+    name: "list-program-unggulan",
+    component: () => import("@/views/admin/programunggulan/DataMaster.vue"),
+  },
+  {
+    meta: {
       title: "Daftar Isian Pelaksanaan Anggaran",
       layout: "layout-authenticated",
       requiresAuth: true,

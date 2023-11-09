@@ -8,6 +8,8 @@ import { umum } from "./umum";
 import { keuangan } from "./keuangan";
 import { admin } from "./admin";
 import { sip } from "./sip";
+import { wilayah } from "./wilayah";
+import { laporan } from "./laporan";
 
 const routes = [
   {
@@ -76,7 +78,9 @@ const routes = [
   ...umum,
   ...keuangan,
   ...sip,
+  ...wilayah,
   ...all,
+  ...laporan,
 ];
 
 const router = createRouter({

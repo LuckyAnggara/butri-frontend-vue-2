@@ -61,7 +61,7 @@ const menu = computed(() => {
   if (authStore.user.user?.unit?.id == 5) return keuangan;
   if (authStore.user.user?.unit?.id == 6) return kepegawaian;
   if (authStore.user.user?.unit?.id == 7) return sip;
-  if (authStore.user.user?.unit?.id > 8) return wilayah;
+  if (authStore.user.user?.unit?.id > 7) return wilayah;
 });
 
 onMounted(() => {

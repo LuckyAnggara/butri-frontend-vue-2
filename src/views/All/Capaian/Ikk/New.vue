@@ -60,7 +60,7 @@ onUnmounted(() => {
   <SectionMain>
     <SectionTitleLineWithButton :title="route.meta.title" main />
     <div class="flex space-x-2">
-      <CardBox class="w-full">
+      <CardBox class="w-full shadow-md">
         <form @submit.prevent="submit()">
           <FormField label="Indikator Kinerja Kegiatan">
             <select

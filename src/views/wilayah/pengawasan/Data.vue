@@ -5,7 +5,7 @@ import CardBox from "@/components/CardBox.vue";
 import SectionTitleLineWithButton from "@/components/SectionTitleLineWithButton.vue";
 
 import { useRoute, useRouter } from "vue-router";
-import { computed, onMounted, ref } from "vue";
+import { computed, defineAsyncComponent, onMounted, ref } from "vue";
 import FormField from "@/components/FormField.vue";
 import FormControl from "@/components/FormControl.vue";
 import { useDebounceFn } from "@vueuse/core";
@@ -14,26 +14,43 @@ import {
   EllipsisVerticalIcon,
   TrashIcon,
   ArrowPathIcon,
+  DocumentTextIcon,
+  ChatBubbleLeftIcon,
 } from "@heroicons/vue/24/outline";
 import { useMainStore } from "@/stores/main";
 import BaseButton from "@/components/BaseButton.vue";
-import { useCapaianProgramUnggulan } from "@/stores/all/capaianProgramUnggulan";
+import { useUnitGroupStore } from "@/stores/unitGroup";
+import { usePengawasanStore } from "@/stores/wilayah/pengawasan";
+import { useJenisPengawasanStore } from "@/stores/jenisPengawasan";
 
-const search = useDebounceFn(() => {
-  capaianProgramUnggulanStore.getData();
-}, 500);
+const NewMasterModal = defineAsyncComponent(() => import("./NewModal.vue"));
+const DetailModal = defineAsyncComponent(() => import("./DetailModal.vue"));
+
+const showNewModal = ref(false);
+const showDetailModal = ref(false);
+const updateData = ref(false);
+
 const route = useRoute();
-const router = useRouter();
-const capaianProgramUnggulanStore = useCapaianProgramUnggulan();
+const pengawasanStore = usePengawasanStore();
 const mainStore = useMainStore();
+const groupStore = useUnitGroupStore();
+const jenisPengawasanStore = useJenisPengawasanStore();
 
 const indexDestroy = ref(0);
 
-const formatter = ref({
-  date: "DD MMMM YYYY",
-});
+const isInput = ref(false);
 
 const itemMenu = [
+  {
+    function: output,
+    label: "Output",
+    icon: ChatBubbleLeftIcon,
+  },
+  {
+    function: edit,
+    label: "Edit",
+    icon: DocumentTextIcon,
+  },
   {
     function: destroy,
     label: "Hapus",
@@ -41,50 +58,91 @@ const itemMenu = [
   },
 ];
 
-const previousPage = computed(() => {
-  return "&page=" + (capaianProgramUnggulanStore.currentPage - 1);
-});
+function edit(item) {
+  showNewModal.value = true;
+  updateData.value = true;
+  pengawasanStore.readyEdit(item);
+}
 
-const nextPage = computed(() => {
-  return "&page=" + (capaianProgramUnggulanStore.currentPage + 1);
-});
-
-function toNew() {
-  router.push({ name: "new-capaian-program-unggulan" });
+function output(item) {
+  showDetailModal.value = true;
+  pengawasanStore.readyEdit(item);
 }
 
 function destroy(item) {
-  // swal("Hello Vue world!!!");
-  capaianProgramUnggulanStore.destroy(item.id);
+  pengawasanStore.destroy(item.id);
   indexDestroy.value = item.id;
 }
 
-capaianProgramUnggulanStore.$subscribe((mutation, state) => {
-  if (mutation.events.key == "currentLimit") {
-    capaianProgramUnggulanStore.getData();
+function open() {
+  pengawasanStore.clearForm();
+  showNewModal.value = true;
+}
+function close() {
+  showNewModal.value = false;
+  pengawasanStore.clearForm();
+}
+function closeDetail() {
+  showDetailModal.value = false;
+}
+
+async function submit() {
+  const result = await pengawasanStore.store();
+  if (result) {
+    close();
+    pengawasanStore.getData();
+    isInput.value = !isInput;
   }
-  if (mutation.events.key == "date") {
-    capaianProgramUnggulanStore.getData();
+}
+
+async function update() {
+  const result = await pengawasanStore.update();
+  if (result) {
+    showNewModal.value = false;
+    pengawasanStore.getData();
+  }
+}
+
+const previousPage = computed(() => {
+  return "&page=" + (pengawasanStore.currentPage - 1);
+});
+
+const nextPage = computed(() => {
+  return "&page=" + (pengawasanStore.currentPage + 1);
+});
+
+pengawasanStore.$subscribe((mutation, state) => {
+  if (mutation.events.key == "currentLimit") {
+    pengawasanStore.getData();
+  }
+
+  if (mutation.events.key == "currentYear") {
+    pengawasanStore.getData();
+  }
+  if (mutation.events.key == "currentMonth") {
+    pengawasanStore.getData();
   }
 });
 
 onMounted(() => {
-  capaianProgramUnggulanStore.getData();
+  pengawasanStore.getData();
+  groupStore.getData();
+  jenisPengawasanStore.getData();
 });
 </script>
 
 <template>
-  <SectionMain>
+  <SectionMain :max-w="false">
     <SectionTitleLineWithButton :title="route.meta.title" main />
 
     <CardBox class="mb-4 px-4" has-table>
       <div class="w-full my-4 flex flex-row space-x-4">
-        <div class="w-3/12">
+        <div class="w-1/12">
           <FormField label="Show">
             <select
-              :disabled="capaianProgramUnggulanStore.isStoreLoading"
-              v-model="capaianProgramUnggulanStore.currentLimit"
-              class="border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
+              :disabled="pengawasanStore.isStoreLoading"
+              v-model="pengawasanStore.currentLimit"
+              class="h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
             >
               <option
                 v-for="option in mainStore.limitDataOptions"
@@ -96,37 +154,43 @@ onMounted(() => {
             </select>
           </FormField>
         </div>
-        <div class="w-5/12">
-          <FormField label="Search">
-            <FormControl
-              @keyup="search"
-              v-model="capaianProgramUnggulanStore.filter.searchQuery"
-              type="tel"
-              placeholder="Cari berdasarkan nama kegiatan"
-            />
+        <div class="w-2/12">
+          <FormField label="Tahun">
+            <select
+              :disabled="pengawasanStore.isLoading"
+              v-model="pengawasanStore.filter.currentYear"
+              class="h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
+            >
+              <option
+                v-for="option in mainStore.tahunOptions"
+                :key="option"
+                :value="option"
+              >
+                {{ option }}
+              </option>
+            </select>
           </FormField>
         </div>
-        <div class="w-4/12">
-          <FormField label="Tanggal">
-            <vue-tailwind-datepicker
-              :disabled="capaianProgramUnggulanStore.isStoreLoading"
-              required
-              separator=" s/d "
-              placeholder="Tanggal Data"
-              v-model="capaianProgramUnggulanStore.filter.date"
-              :formatter="formatter"
-              input-classes="h-12 border  px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
-            />
+        <div class="w-2/12">
+          <FormField label="Bulan">
+            <select
+              :disabled="pengawasanStore.isLoading"
+              v-model="pengawasanStore.filter.currentMonth"
+              class="h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
+            >
+              <option
+                v-for="option in mainStore.bulanOptions"
+                :key="option.id"
+                :value="option.id"
+              >
+                {{ option.label }}
+              </option>
+            </select>
           </FormField>
         </div>
+        <div class="w-5/12"></div>
         <div class="w-2/12 flex justify-end">
-          <BaseButton
-            @click="toNew()"
-            class="mt-8"
-            type="submit"
-            color="info"
-            label="Tambah"
-          />
+          <BaseButton @click="open()" class="mt-8" color="info" label="Input" />
         </div>
       </div>
     </CardBox>
@@ -134,17 +198,17 @@ onMounted(() => {
       <table>
         <thead>
           <tr>
-            <th>No</th>
-            <th>Program</th>
-            <th>Nama Kegiatan</th>
-            <th>Tanggal Pelaksanaan</th>
-            <th>Output</th>
-            <th />
+            <td class="text-center">No</td>
+            <td class="text-center">Jenis</td>
+            <td class="text-center">Nama Kegiatan</td>
+            <td class="text-center">Surat Perintah</td>
+            <td class="text-center">TMT & Lokasi Kegiatan</td>
+            <td class="text-center"></td>
           </tr>
         </thead>
         <tbody>
-          <tr v-if="capaianProgramUnggulanStore.isLoading">
-            <td colspan="6" class="text-center">
+          <tr v-if="pengawasanStore.isLoading">
+            <td colspan="9" class="text-center">
               <div
                 class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
                 role="status"
@@ -157,32 +221,32 @@ onMounted(() => {
             </td>
           </tr>
           <template v-else>
-            <tr v-if="capaianProgramUnggulanStore.items.length == 0">
-              <td colspan="6" class="text-center">
+            <tr v-if="pengawasanStore.items.length == 0">
+              <td colspan="9" class="text-center">
                 <span>Tidak ada data</span>
               </td>
             </tr>
             <tr
               v-else
-              v-for="(item, index) in capaianProgramUnggulanStore.items"
+              v-for="(item, index) in pengawasanStore.items"
               :key="item.id"
             >
               <td class="text-center">
-                {{ capaianProgramUnggulanStore.from + index }}
+                {{ pengawasanStore.from + index }}
               </td>
               <td>
-                {{ item.program.name }}
+                {{ item.jenis.name }}
+              </td>
+              <td style="white-space: pre-line">
+                {{ item.name }}
               </td>
               <td>
-                {{ item.kegiatan.name }}
+                {{ item.sp_number }} <br />
+                {{ item.sp_date }}
               </td>
               <td>
-                {{ item.kegiatan.start_at ?? "" }}
-                {{ item.kegiatan.end_at ? "s/d" : "" }}
-                {{ item.kegiatan.end_at ?? "" }}
-              </td>
-              <td>
-                {{ item.kegiatan.output }}
+                {{ item.location }} <br />
+                {{ item.start_at }} - {{ item.end_at }}
               </td>
               <td class="before:hidden lg:w-1 whitespace-nowrap">
                 <div>
@@ -190,11 +254,11 @@ onMounted(() => {
                     <div>
                       <MenuButton
                         :disabled="
-                          capaianProgramUnggulanStore.isDestroyLoading &&
+                          pengawasanStore.isDestroyLoading &&
                           indexDestroy == item.id
                         "
                         :class="
-                          capaianProgramUnggulanStore.isDestroyLoading &&
+                          pengawasanStore.isDestroyLoading &&
                           indexDestroy == item.id
                             ? ''
                             : 'hover:scale-125 ease-in-out duration-300'
@@ -203,7 +267,7 @@ onMounted(() => {
                       >
                         <ArrowPathIcon
                           v-if="
-                            capaianProgramUnggulanStore.isDestroyLoading &&
+                            pengawasanStore.isDestroyLoading &&
                             indexDestroy == item.id
                           "
                           class="animate-spin h-5 w-5 text-black dark:text-white"
@@ -232,6 +296,7 @@ onMounted(() => {
                           <MenuItem
                             v-for="menu in itemMenu"
                             v-slot="{ active }"
+                            :key="menu"
                           >
                             <button
                               @click="menu.function(item)"
@@ -263,15 +328,13 @@ onMounted(() => {
           <li>
             <a
               @click="
-                capaianProgramUnggulanStore.currentPage == 1
+                pengawasanStore.currentPage == 1
                   ? ''
-                  : capaianProgramUnggulanStore.getData(previousPage)
+                  : pengawasanStore.getData(previousPage)
               "
-              :disabled="
-                capaianProgramUnggulanStore.currentPage == 1 ? true : false
-              "
+              :disabled="pengawasanStore.currentPage == 1 ? true : false"
               :class="
-                capaianProgramUnggulanStore.currentPage == 1
+                pengawasanStore.currentPage == 1
                   ? 'cursor-not-allowed'
                   : 'cursor-pointer dark:hover:bg-blue-700 dark:hover:text-white hover:bg-blue-100 hover:text-gray-700'
               "
@@ -283,14 +346,12 @@ onMounted(() => {
           <li>
             <a
               @click="
-                capaianProgramUnggulanStore.lastPage ==
-                capaianProgramUnggulanStore.currentPage
+                pengawasanStore.lastPage == pengawasanStore.currentPage
                   ? ''
-                  : capaianProgramUnggulanStore.getData(nextPage)
+                  : pengawasanStore.getData(nextPage)
               "
               :class="
-                capaianProgramUnggulanStore.lastPage ==
-                capaianProgramUnggulanStore.currentPage
+                pengawasanStore.lastPage == pengawasanStore.currentPage
                   ? 'cursor-not-allowed'
                   : 'cursor-pointer dark:hover:bg-blue-700 dark:hover:text-white hover:bg-blue-100 hover:text-gray-700'
               "
@@ -301,6 +362,24 @@ onMounted(() => {
         </ul>
       </div>
     </CardBox>
+
+    <!-- Modal -->
+    <Teleport to="body">
+      <!-- use the modal component, pass in the prop -->
+      <NewMasterModal
+        :updateData="updateData"
+        :show="showNewModal"
+        @close="close()"
+        @submitStore="submit()"
+        @submitUpdate="update()"
+      >
+      </NewMasterModal>
+    </Teleport>
+
+    <Teleport to="body">
+      <!-- use the modal component, pass in the prop -->
+      <DetailModal :show="showDetailModal" @close="closeDetail()">
+      </DetailModal>
+    </Teleport>
   </SectionMain>
 </template>
-@/stores/all/capaianProgramUnggulan

@@ -2,46 +2,43 @@ import {
   mdiAccountArrowLeftOutline,
   mdiAccountGroupOutline,
   mdiAccountMultipleOutline,
+  mdiBookMultipleOutline,
   mdiBriefcaseAccountOutline,
+  mdiBriefcaseOutline,
   mdiCashMultiple,
+  mdiPoll,
   mdiShieldAccount,
   mdiViewDashboard,
 } from "@mdi/js";
 
 export default [
   {
-    to: "/",
+    to: "/wilayah/dashboard",
     label: "Dashboard",
     icon: mdiViewDashboard,
   },
   {
-    to: "/pegawai/list",
-    label: "Pegawai",
-    icon: mdiAccountGroupOutline,
+    to: "/pengawasan/list",
+    label: "Pengawasan",
+    icon: mdiBookMultipleOutline,
   },
   {
-    to: "/pegawai/mutasi/list",
-    label: "Mutasi",
-    icon: mdiAccountArrowLeftOutline,
+    to: "/kegiatan/list",
+    label: "Kegiatan",
+    icon: mdiBriefcaseOutline,
   },
   {
-    to: "/pegawai/pengembangan/list",
-    label: "Pengembangan",
-    icon: mdiAccountMultipleOutline,
-  },
-  {
-    to: "/pegawai/kepangkatan/list",
-    label: "Kepangkatan",
-    icon: mdiBriefcaseAccountOutline,
-  },
-  {
-    to: "/pegawai/pensiun/list",
-    label: "Pensiun",
-    icon: mdiShieldAccount,
-  },
-  {
-    to: "/pegawai/kgb/list",
-    label: "KGB",
-    icon: mdiCashMultiple,
+    label: "Realisasi Kinerja",
+    icon: mdiPoll,
+    menu: [
+      {
+        to: "/capaian/ikk/list",
+        label: "Capaian IKK",
+      },
+      {
+        to: "/program-unggulan/list",
+        label: "Program Unggulan",
+      },
+    ],
   },
 ];

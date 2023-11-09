@@ -25,8 +25,8 @@ export const all = [
       layout: "layout-authenticated",
       requiresAuth: true,
     },
-    path: "/program-unggulan/list",
-    name: "list-program-unggulan",
+    path: "/capaian/program-unggulan/list",
+    name: "list-capaian-program-unggulan",
     component: () => import("@/views/all/Programunggulan/Data.vue"),
   },
   {
@@ -35,8 +35,8 @@ export const all = [
       layout: "layout-authenticated",
       requiresAuth: false,
     },
-    path: "/program-unggulan/new",
-    name: "new-program-unggulan",
+    path: "/capaian/program-unggulan/new",
+    name: "new-capaian-program-unggulan",
     component: () => import("@/views/all/Programunggulan/New.vue"),
   },
   {

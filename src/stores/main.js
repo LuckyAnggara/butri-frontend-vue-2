@@ -44,6 +44,14 @@ export const useMainStore = defineStore("main", {
     ],
     jenisMediaOptions: ["SOSIAL MEDIA", "WEBSITE"],
     jenisKegiatanArsipOptions: ["PENGARSIPAN", "PEMUSNAHAN"],
+    jenisPengawasanOptions: [
+      "AUDIT",
+      "AUDIT TUJUAN TERTENTU / KHUSUS",
+      "REVIU",
+      "PEMANTAUAN / MONITORING",
+      "EVALUASI",
+      "PENGAWASAN LAINNYA",
+    ],
     eselonOptions: ["ESELON I", "ESELON II"],
   }),
   actions: {
@@ -58,7 +66,6 @@ export const useMainStore = defineStore("main", {
         this.userAvatar = payload.avatar;
       }
     },
-
     fetch(sampleDataKey) {
       axios
         .get(`data-sources/${sampleDataKey}.json`)

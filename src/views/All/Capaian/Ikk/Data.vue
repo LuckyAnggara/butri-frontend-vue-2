@@ -126,7 +126,7 @@ onMounted(() => {
             </select>
           </FormField>
         </div>
-        <div class="w-5/12">
+        <div class="w-6/12">
           <FormField label="Search">
             <FormControl
               @keyup="search"

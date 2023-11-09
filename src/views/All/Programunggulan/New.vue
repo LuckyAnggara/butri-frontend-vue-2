@@ -27,6 +27,11 @@ const mainStore = useMainStore();
 
 const search = ref("");
 
+const quilOptions = {
+  readOnly: programUnggalanStore.isStoreLoading,
+  theme: "snow",
+};
+
 const formatter = ref({
   date: "DD MMMM YYYY",
 });
@@ -44,7 +49,7 @@ async function submit() {
   ) {
     const result = await capaianProgramUnggulanStore.store();
     if (result) {
-      router.push({ name: "list-program-unggulan" });
+      router.push({ name: "list-capaian-program-unggulan" });
     }
   } else {
     toast.error("Data belum lengkap", { timeout: 2000 });
@@ -195,22 +200,28 @@ onUnmounted(() => {
           </FormField>
 
           <FormField label="Output">
-            <FormControl
-              :type="'textarea'"
-              :disabled="
+            <QuillEditor
+              class="h-24"
+              toolbar="full"
+              :readOnly="
                 capaianProgramUnggulanStore.isStoreLoading || dariKegiatan
               "
-              v-model="capaianProgramUnggulanStore.form.output"
+              :contentType="'html'"
+              :options="quilOptions"
+              v-model:content="capaianProgramUnggulanStore.form.output"
             />
           </FormField>
 
           <FormField label="Catatan">
-            <FormControl
-              :type="'textarea'"
-              :disabled="
+            <QuillEditor
+              class="h-24"
+              toolbar="full"
+              :readOnly="
                 capaianProgramUnggulanStore.isStoreLoading || dariKegiatan
               "
-              v-model="capaianProgramUnggulanStore.form.notes"
+              :contentType="'html'"
+              :options="quilOptions"
+              v-model:content="capaianProgramUnggulanStore.form.hambatan"
             />
           </FormField>
           <div class="flex flex-col space-y-4">

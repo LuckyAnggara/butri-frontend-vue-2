@@ -19,6 +19,7 @@ import {
 import { useMainStore } from "@/stores/main";
 import BaseButton from "@/components/BaseButton.vue";
 import { useIKUStore } from "@/stores/admin/iku";
+import NewModal from "./Modal.vue";
 
 const search = useDebounceFn(() => {
   ikuStore.getData();
@@ -32,10 +33,6 @@ const showNewModal = ref(false);
 const updateData = ref(false);
 
 const indexDestroy = ref(0);
-
-const NewMasterModal = defineAsyncComponent(() =>
-  import("@/views/admin/iku/NewModal.vue")
-);
 
 const itemMenu = [
   {
@@ -302,14 +299,14 @@ onMounted(() => {
     <!-- Modal -->
     <Teleport to="body">
       <!-- use the modal component, pass in the prop -->
-      <NewMasterModal
+      <NewModal
         :updateData="updateData"
         :show="showNewModal"
         @close="showNewModal = false"
         @submitStore="submit()"
         @submitUpdate="update()"
       >
-      </NewMasterModal>
+      </NewModal>
     </Teleport>
   </SectionMain>
 </template>

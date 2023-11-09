@@ -14,7 +14,7 @@
           class="flex justify-between items-center pb-4 mb-4 rounded-t border-b sm:mb-5 dark:border-gray-600"
         >
           <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-            Tambah Indikator Kinerja Utama
+            Tambah Program Unggulan
           </h3>
           <button
             @click="closeModal"
@@ -40,8 +40,8 @@
         <form v-if="updateData" @submit.prevent="prosesUpdate()">
           <FormField label="Tahun">
             <select
-              :disabled="ikuStore.isUpdateLoading"
-              v-model="ikuStore.singleResponses.tahun"
+              :disabled="programUnggulanStore.isUpdateLoading"
+              v-model="programUnggulanStore.singleResponses.tahun"
               class="h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
             >
               <option
@@ -53,18 +53,17 @@
               </option>
             </select>
           </FormField>
-          <FormField label="Indikator*">
+          <FormField label="Nama Program Unggulan*">
             <FormControl
-              v-model="ikuStore.singleResponses.name"
-              :disabled="ikuStore.isUpdateLoading"
+              v-model="programUnggulanStore.singleResponses.name"
+              :disabled="programUnggulanStore.isUpdateLoading"
               required
             />
           </FormField>
-          <FormField label="Target*">
+          <FormField label="Target">
             <FormControl
-              v-model="ikuStore.singleResponses.target"
-              :disabled="ikuStore.isUpdateLoading"
-              required
+              v-model="programUnggulanStore.singleResponses.target"
+              :disabled="programUnggulanStore.isUpdateLoading"
             />
           </FormField>
 
@@ -72,10 +71,11 @@
 
           <div class="flex justify-start space-x-3 items-center">
             <BaseButton
-              :disabled="ikuStore.isUpdateLoading"
+              :disabled="programUnggulanStore.isUpdateLoading"
               type="submit"
               color="info"
-              ><span v-if="!ikuStore.isUpdateLoading"><span>Update</span></span
+              ><span v-if="!programUnggulanStore.isUpdateLoading"
+                ><span>Update</span></span
               ><span class="flex flex-row items-center" v-else>
                 <ArrowPathIcon class="h-5 w-5 animate-spin mr-3" />
                 Processing</span
@@ -86,8 +86,8 @@
         <form v-else @submit.prevent="prosesRequest()">
           <FormField label="Tahun">
             <select
-              :disabled="ikuStore.isStoreLoading"
-              v-model="ikuStore.form.tahun"
+              :disabled="programUnggulanStore.isStoreLoading"
+              v-model="programUnggulanStore.form.tahun"
               class="h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
             >
               <option
@@ -99,18 +99,18 @@
               </option>
             </select>
           </FormField>
-          <FormField label="Indikator*">
+          <FormField label="Nama Program Unggulan*">
             <FormControl
-              v-model="ikuStore.form.name"
-              :disabled="ikuStore.isStoreLoading"
+              type="textarea"
+              v-model="programUnggulanStore.form.name"
+              :disabled="programUnggulanStore.isStoreLoading"
               required
             />
           </FormField>
-          <FormField label="Target*">
+          <FormField label="Target">
             <FormControl
-              v-model="ikuStore.form.target"
-              :disabled="ikuStore.isStoreLoading"
-              required
+              v-model="programUnggulanStore.form.target"
+              :disabled="programUnggulanStore.isStoreLoading"
             />
           </FormField>
 
@@ -118,10 +118,10 @@
 
           <div class="flex justify-start space-x-3 items-center">
             <BaseButton
-              :disabled="ikuStore.isStoreLoading"
+              :disabled="programUnggulanStore.isStoreLoading"
               type="submit"
               color="info"
-              ><span v-if="!ikuStore.isStoreLoading">Submit</span
+              ><span v-if="!programUnggulanStore.isStoreLoading">Submit</span
               ><span class="flex flex-row items-center" v-else>
                 <ArrowPathIcon class="h-5 w-5 animate-spin mr-3" />
                 Processing</span
@@ -139,7 +139,7 @@ import FormField from "@/components/FormField.vue";
 import FormControl from "@/components/FormControl.vue";
 import BaseDivider from "@/components/BaseDivider.vue";
 import BaseButton from "@/components/BaseButton.vue";
-import { useIKUStore } from "@/stores/program/iku";
+import { useProgramUnggulanStore } from "@/stores/admin/programunggulan";
 import { useMainStore } from "@/stores/main";
 import { ArrowPathIcon } from "@heroicons/vue/24/outline";
 
@@ -150,7 +150,7 @@ const props = defineProps({
 
 const emit = defineEmits(["close", "submitStore", "submitUpdate"]);
 
-const ikuStore = useIKUStore();
+const programUnggulanStore = useProgramUnggulanStore();
 const mainStore = useMainStore();
 
 async function prosesRequest() {
@@ -162,6 +162,7 @@ async function prosesUpdate() {
 }
 
 function closeModal() {
+  programUnggulanStore.clearForm();
   emit("close");
 }
 </script>

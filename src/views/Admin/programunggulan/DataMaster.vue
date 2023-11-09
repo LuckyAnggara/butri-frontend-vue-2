@@ -5,7 +5,7 @@ import CardBox from "@/components/CardBox.vue";
 import SectionTitleLineWithButton from "@/components/SectionTitleLineWithButton.vue";
 
 import { useRoute, useRouter } from "vue-router";
-import { computed, onMounted, ref } from "vue";
+import { computed, defineAsyncComponent, onMounted, ref } from "vue";
 import FormField from "@/components/FormField.vue";
 import FormControl from "@/components/FormControl.vue";
 import { useDebounceFn } from "@vueuse/core";
@@ -14,26 +14,32 @@ import {
   EllipsisVerticalIcon,
   TrashIcon,
   ArrowPathIcon,
+  PencilSquareIcon,
 } from "@heroicons/vue/24/outline";
 import { useMainStore } from "@/stores/main";
 import BaseButton from "@/components/BaseButton.vue";
-import { useCapaianProgramUnggulan } from "@/stores/all/capaianProgramUnggulan";
+import { useProgramUnggulanStore } from "@/stores/admin/programUnggulan";
+import NewModal from "./Modal.vue";
 
 const search = useDebounceFn(() => {
-  capaianProgramUnggulanStore.getData();
+  programUnggulanStore.getData();
 }, 500);
 const route = useRoute();
 const router = useRouter();
-const capaianProgramUnggulanStore = useCapaianProgramUnggulan();
+const programUnggulanStore = useProgramUnggulanStore();
 const mainStore = useMainStore();
+
+const showNewModal = ref(false);
+const updateData = ref(false);
 
 const indexDestroy = ref(0);
 
-const formatter = ref({
-  date: "DD MMMM YYYY",
-});
-
 const itemMenu = [
+  {
+    function: edit,
+    label: "Edit",
+    icon: PencilSquareIcon,
+  },
   {
     function: destroy,
     label: "Hapus",
@@ -42,34 +48,52 @@ const itemMenu = [
 ];
 
 const previousPage = computed(() => {
-  return "&page=" + (capaianProgramUnggulanStore.currentPage - 1);
+  return "&page=" + (programUnggulanStore.currentPage - 1);
 });
 
 const nextPage = computed(() => {
-  return "&page=" + (capaianProgramUnggulanStore.currentPage + 1);
+  return "&page=" + (programUnggulanStore.currentPage + 1);
 });
 
 function toNew() {
-  router.push({ name: "new-capaian-program-unggulan" });
+  showNewModal.value = true;
 }
 
 function destroy(item) {
-  // swal("Hello Vue world!!!");
-  capaianProgramUnggulanStore.destroy(item.id);
+  programUnggulanStore.destroy(item.id);
   indexDestroy.value = item.id;
 }
 
-capaianProgramUnggulanStore.$subscribe((mutation, state) => {
-  if (mutation.events.key == "currentLimit") {
-    capaianProgramUnggulanStore.getData();
+function edit(item) {
+  showNewModal.value = true;
+  updateData.value = true;
+  programUnggulanStore.readyEdit(item);
+}
+
+async function submit() {
+  const result = await programUnggulanStore.store();
+  if (result) {
+    showNewModal.value = false;
+    programUnggulanStore.getData();
   }
-  if (mutation.events.key == "date") {
-    capaianProgramUnggulanStore.getData();
+}
+
+async function update() {
+  const result = await programUnggulanStore.update();
+  if (result) {
+    showNewModal.value = false;
+    programUnggulanStore.getData();
+  }
+}
+
+programUnggulanStore.$subscribe((mutation, state) => {
+  if (mutation.events.key == "currentYear") {
+    programUnggulanStore.getData();
   }
 });
 
 onMounted(() => {
-  capaianProgramUnggulanStore.getData();
+  programUnggulanStore.getData();
 });
 </script>
 
@@ -80,18 +104,18 @@ onMounted(() => {
     <CardBox class="mb-4 px-4" has-table>
       <div class="w-full my-4 flex flex-row space-x-4">
         <div class="w-3/12">
-          <FormField label="Show">
+          <FormField label="Tahun">
             <select
-              :disabled="capaianProgramUnggulanStore.isStoreLoading"
-              v-model="capaianProgramUnggulanStore.currentLimit"
-              class="border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
+              :disabled="programUnggulanStore.isLoading"
+              v-model="programUnggulanStore.currentYear"
+              class="h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
             >
               <option
-                v-for="option in mainStore.limitDataOptions"
+                v-for="option in mainStore.tahunOptions"
                 :key="option"
                 :value="option"
               >
-                {{ option == 100000 ? "SEMUA" : option }}
+                {{ option }}
               </option>
             </select>
           </FormField>
@@ -100,30 +124,18 @@ onMounted(() => {
           <FormField label="Search">
             <FormControl
               @keyup="search"
-              v-model="capaianProgramUnggulanStore.filter.searchQuery"
+              v-model="programUnggulanStore.filter.searchQuery"
               type="tel"
-              placeholder="Cari berdasarkan nama kegiatan"
+              placeholder="Cari berdasarkan Nama Program Unggulan"
             />
           </FormField>
         </div>
-        <div class="w-4/12">
-          <FormField label="Tanggal">
-            <vue-tailwind-datepicker
-              :disabled="capaianProgramUnggulanStore.isStoreLoading"
-              required
-              separator=" s/d "
-              placeholder="Tanggal Data"
-              v-model="capaianProgramUnggulanStore.filter.date"
-              :formatter="formatter"
-              input-classes="h-12 border  px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
-            />
-          </FormField>
-        </div>
+        <div class="w-2/12"></div>
+
         <div class="w-2/12 flex justify-end">
           <BaseButton
             @click="toNew()"
             class="mt-8"
-            type="submit"
             color="info"
             label="Tambah"
           />
@@ -135,16 +147,14 @@ onMounted(() => {
         <thead>
           <tr>
             <th>No</th>
-            <th>Program</th>
-            <th>Nama Kegiatan</th>
-            <th>Tanggal Pelaksanaan</th>
-            <th>Output</th>
+            <th>Nama</th>
+            <th>Target</th>
             <th />
           </tr>
         </thead>
         <tbody>
-          <tr v-if="capaianProgramUnggulanStore.isLoading">
-            <td colspan="6" class="text-center">
+          <tr v-if="programUnggulanStore.isLoading">
+            <td colspan="5" class="text-center">
               <div
                 class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
                 role="status"
@@ -157,32 +167,24 @@ onMounted(() => {
             </td>
           </tr>
           <template v-else>
-            <tr v-if="capaianProgramUnggulanStore.items.length == 0">
-              <td colspan="6" class="text-center">
+            <tr v-if="programUnggulanStore.items.length == 0">
+              <td colspan="5" class="text-center">
                 <span>Tidak ada data</span>
               </td>
             </tr>
             <tr
               v-else
-              v-for="(item, index) in capaianProgramUnggulanStore.items"
+              v-for="(item, index) in programUnggulanStore.items"
               :key="item.id"
             >
               <td class="text-center">
-                {{ capaianProgramUnggulanStore.from + index }}
+                {{ programUnggulanStore.from + index }}
               </td>
               <td>
-                {{ item.program.name }}
+                {{ item.name }}
               </td>
               <td>
-                {{ item.kegiatan.name }}
-              </td>
-              <td>
-                {{ item.kegiatan.start_at ?? "" }}
-                {{ item.kegiatan.end_at ? "s/d" : "" }}
-                {{ item.kegiatan.end_at ?? "" }}
-              </td>
-              <td>
-                {{ item.kegiatan.output }}
+                {{ item.target }}
               </td>
               <td class="before:hidden lg:w-1 whitespace-nowrap">
                 <div>
@@ -190,11 +192,11 @@ onMounted(() => {
                     <div>
                       <MenuButton
                         :disabled="
-                          capaianProgramUnggulanStore.isDestroyLoading &&
+                          programUnggulanStore.isDestroyLoading &&
                           indexDestroy == item.id
                         "
                         :class="
-                          capaianProgramUnggulanStore.isDestroyLoading &&
+                          programUnggulanStore.isDestroyLoading &&
                           indexDestroy == item.id
                             ? ''
                             : 'hover:scale-125 ease-in-out duration-300'
@@ -203,7 +205,7 @@ onMounted(() => {
                       >
                         <ArrowPathIcon
                           v-if="
-                            capaianProgramUnggulanStore.isDestroyLoading &&
+                            programUnggulanStore.isDestroyLoading &&
                             indexDestroy == item.id
                           "
                           class="animate-spin h-5 w-5 text-black dark:text-white"
@@ -231,6 +233,7 @@ onMounted(() => {
                         <div class="px-2 py-1">
                           <MenuItem
                             v-for="menu in itemMenu"
+                            :key="menu.label"
                             v-slot="{ active }"
                           >
                             <button
@@ -263,15 +266,13 @@ onMounted(() => {
           <li>
             <a
               @click="
-                capaianProgramUnggulanStore.currentPage == 1
+                programUnggulanStore.currentPage == 1
                   ? ''
-                  : capaianProgramUnggulanStore.getData(previousPage)
+                  : programUnggulanStore.getData(previousPage)
               "
-              :disabled="
-                capaianProgramUnggulanStore.currentPage == 1 ? true : false
-              "
+              :disabled="programUnggulanStore.currentPage == 1 ? true : false"
               :class="
-                capaianProgramUnggulanStore.currentPage == 1
+                programUnggulanStore.currentPage == 1
                   ? 'cursor-not-allowed'
                   : 'cursor-pointer dark:hover:bg-blue-700 dark:hover:text-white hover:bg-blue-100 hover:text-gray-700'
               "
@@ -283,14 +284,14 @@ onMounted(() => {
           <li>
             <a
               @click="
-                capaianProgramUnggulanStore.lastPage ==
-                capaianProgramUnggulanStore.currentPage
+                programUnggulanStore.lastPage ==
+                programUnggulanStore.currentPage
                   ? ''
-                  : capaianProgramUnggulanStore.getData(nextPage)
+                  : programUnggulanStore.getData(nextPage)
               "
               :class="
-                capaianProgramUnggulanStore.lastPage ==
-                capaianProgramUnggulanStore.currentPage
+                programUnggulanStore.lastPage ==
+                programUnggulanStore.currentPage
                   ? 'cursor-not-allowed'
                   : 'cursor-pointer dark:hover:bg-blue-700 dark:hover:text-white hover:bg-blue-100 hover:text-gray-700'
               "
@@ -301,6 +302,18 @@ onMounted(() => {
         </ul>
       </div>
     </CardBox>
+
+    <!-- Modal -->
+    <Teleport to="body">
+      <!-- use the modal component, pass in the prop -->
+      <NewModal
+        :updateData="updateData"
+        :show="showNewModal"
+        @close="showNewModal = false"
+        @submitStore="submit()"
+        @submitUpdate="update()"
+      >
+      </NewModal>
+    </Teleport>
   </SectionMain>
 </template>
-@/stores/all/capaianProgramUnggulan

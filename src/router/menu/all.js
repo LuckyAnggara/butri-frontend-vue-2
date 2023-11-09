@@ -23,7 +23,7 @@ export default [
         label: "Capaian lainnya",
       },
       {
-        to: "/program-unggulan/list",
+        to: "/capaian/program-unggulan/list",
         label: "Program Unggulan",
       },
     ],
