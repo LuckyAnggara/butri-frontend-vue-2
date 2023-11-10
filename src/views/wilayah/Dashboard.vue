@@ -16,17 +16,22 @@ import {
 } from "@mdi/js";
 import { onMounted } from "vue";
 import { useRoute } from "vue-router";
+import { useMainStore } from "@/stores/main";
+import FormField from "@/components/FormField.vue";
 
 const route = useRoute();
 
 const dashboardStore = useDashboardWilayahStore();
+const mainStore = useMainStore();
 
-function callData() {
-  dashboardStore.getData();
-}
+dashboardStore.$subscribe((mutation, state) => {
+  if (mutation.events.key == "currentMonth") {
+    dashboardStore.getData();
+  }
+});
 
 onMounted(() => {
-  callData();
+  dashboardStore.getData();
 });
 </script>
 
@@ -42,15 +47,35 @@ onMounted(() => {
       >
     </NotificationBar>
     <div v-else class="space-y-4">
+      <div class="w-2/12">
+        <FormField label="Data Bulan">
+          <select
+            :disabled="dashboardStore.isLoading"
+            v-model="dashboardStore.filter.currentMonth"
+            class="h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
+          >
+            <option
+              v-for="option in mainStore.bulanOptions"
+              :key="option.id"
+              :value="option.id"
+            >
+              {{ option.label }}
+            </option>
+          </select>
+        </FormField>
+      </div>
+
       <div class="flex space-x-2">
         <CardBoxWidget
           class="min-w-fit w-1/3"
           color="text-emerald-500"
+          :trend="dashboardStore.responses.anggaran.created_at"
           :number="dashboardStore.responses.anggaran.pagu"
           prefix="Rp. "
           label="Anggaran"
         />
         <CardBoxWidget
+          :trend="dashboardStore.responses.anggaran.created_at"
           class="min-w-fit w-1/3"
           color="text-emerald-500"
           :number="dashboardStore.responses.anggaran.total_realisasi"
@@ -60,9 +85,13 @@ onMounted(() => {
         <CardBoxWidget
           class="min-w-fit w-1/3"
           color="text-emerald-500"
+          :trend="dashboardStore.responses.anggaran.created_at"
           :number="
-            dashboardStore.responses.anggaran.total_realisasi /
-            dashboardStore.responses.anggaran.pagu
+            (
+              (dashboardStore.responses.anggaran.total_realisasi /
+                dashboardStore.responses.anggaran.pagu) *
+              100
+            ).toFixed(2)
           "
           suffix="%"
           label="Realisasi"
@@ -108,9 +137,19 @@ onMounted(() => {
               </template>
             </tbody>
           </table>
+
           <div
             class="p-3 lg:px-6 border-t border-gray-100 dark:border-slate-800 flex justify-end"
-          ></div>
+          >
+            <small class="italic"
+              >data s.d
+              {{
+                mainStore.bulanOptions[dashboardStore.filter.currentMonth - 1]
+                  .label
+              }}
+              2023</small
+            >
+          </div>
         </CardBox>
       </div>
     </div>

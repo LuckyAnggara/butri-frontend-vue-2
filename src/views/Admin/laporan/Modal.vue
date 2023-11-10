@@ -14,7 +14,7 @@
           class="flex justify-between items-center pb-4 mb-4 rounded-t border-b sm:mb-5 dark:border-gray-600"
         >
           <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-            Tambah Indikator Kinerja Utama
+            Generate Laporan / Output
           </h3>
           <button
             @click="closeModal"
@@ -37,11 +37,14 @@
             <span class="sr-only">Close modal</span>
           </button>
         </div>
-        <form v-if="updateData" @submit.prevent="prosesUpdate()">
+
+        <form @submit.prevent="prosesRequest()">
+          <h4 class="font-bold mb-2">Data</h4>
           <FormField label="Tahun">
             <select
-              :disabled="ikuStore.isUpdateLoading"
-              v-model="ikuStore.singleResponses.tahun"
+              :disabled="laporanStore.isStoreLoading"
+              required
+              v-model="laporanStore.form.parameter.tahun"
               class="h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
             >
               <option
@@ -53,64 +56,45 @@
               </option>
             </select>
           </FormField>
-          <FormField label="Indikator*">
-            <FormControl
-              v-model="ikuStore.singleResponses.name"
-              :disabled="ikuStore.isUpdateLoading"
-              required
-            />
-          </FormField>
-          <FormField label="Target*">
-            <FormControl
-              v-model="ikuStore.singleResponses.target"
-              :disabled="ikuStore.isUpdateLoading"
-              required
-            />
-          </FormField>
-
-          <BaseDivider />
-
-          <div class="flex justify-start space-x-3 items-center">
-            <BaseButton
-              :disabled="ikuStore.isUpdateLoading"
-              type="submit"
-              color="info"
-              ><span v-if="!ikuStore.isUpdateLoading"><span>Update</span></span
-              ><span class="flex flex-row items-center" v-else>
-                <ArrowPathIcon class="h-5 w-5 animate-spin mr-3" />
-                Processing</span
-              ></BaseButton
-            >
-          </div>
-        </form>
-        <form v-else @submit.prevent="prosesRequest()">
-          <FormField label="Tahun">
+          <FormField label="Bulan">
             <select
-              :disabled="ikuStore.isStoreLoading"
-              v-model="ikuStore.form.tahun"
+              required
+              :disabled="laporanStore.isStoreLoading"
+              v-model="laporanStore.form.parameter.bulan"
               class="h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
             >
               <option
-                v-for="option in mainStore.tahunOptions"
-                :key="option"
-                :value="option"
+                v-for="option in mainStore.bulanOptions"
+                :key="option.id"
+                :value="option.id"
               >
-                {{ option }}
+                {{ option.label }}
               </option>
             </select>
           </FormField>
-          <FormField label="Indikator*">
+          <hr />
+          <h4 class="font-bold my-2">Data Tanda Tangan</h4>
+
+          <FormField label="Nama">
             <FormControl
-              type="textarea"
-              v-model="ikuStore.form.name"
-              :disabled="ikuStore.isStoreLoading"
+              v-model="laporanStore.form.ttd_name"
+              :disabled="laporanStore.isStoreLoading"
               required
             />
           </FormField>
-          <FormField label="Target*">
+
+          <FormField label="NIP">
             <FormControl
-              v-model="ikuStore.form.target"
-              :disabled="ikuStore.isStoreLoading"
+              v-model="laporanStore.form.ttd_nip"
+              :disabled="laporanStore.isStoreLoading"
+              required
+            />
+          </FormField>
+
+          <FormField label="Lokasi">
+            <FormControl
+              v-model="laporanStore.form.ttd_location"
+              :disabled="laporanStore.isStoreLoading"
               required
             />
           </FormField>
@@ -119,10 +103,10 @@
 
           <div class="flex justify-start space-x-3 items-center">
             <BaseButton
-              :disabled="ikuStore.isStoreLoading"
+              :disabled="laporanStore.isStoreLoading"
               type="submit"
               color="info"
-              ><span v-if="!ikuStore.isStoreLoading">Submit</span
+              ><span v-if="!laporanStore.isStoreLoading">Submit</span
               ><span class="flex flex-row items-center" v-else>
                 <ArrowPathIcon class="h-5 w-5 animate-spin mr-3" />
                 Processing</span
@@ -140,7 +124,7 @@ import FormField from "@/components/FormField.vue";
 import FormControl from "@/components/FormControl.vue";
 import BaseDivider from "@/components/BaseDivider.vue";
 import BaseButton from "@/components/BaseButton.vue";
-import { useIKUStore } from "@/stores/admin/iku";
+import { useLaporanStore } from "@/stores/admin/laporan";
 import { useMainStore } from "@/stores/main";
 import { ArrowPathIcon } from "@heroicons/vue/24/outline";
 
@@ -151,7 +135,7 @@ const props = defineProps({
 
 const emit = defineEmits(["close", "submitStore", "submitUpdate"]);
 
-const ikuStore = useIKUStore();
+const laporanStore = useLaporanStore();
 const mainStore = useMainStore();
 
 async function prosesRequest() {
@@ -163,7 +147,7 @@ async function prosesUpdate() {
 }
 
 function closeModal() {
-  ikuStore.clearForm();
+  laporanStore.clearForm();
   emit("close");
 }
 </script>

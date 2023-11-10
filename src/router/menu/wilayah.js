@@ -10,10 +10,11 @@ import {
   mdiShieldAccount,
   mdiViewDashboard,
 } from "@mdi/js";
+import laporan from "./laporan";
 
 export default [
   {
-    to: "/wilayah/dashboard",
+    to: "/",
     label: "Dashboard",
     icon: mdiViewDashboard,
   },
@@ -36,9 +37,10 @@ export default [
         label: "Capaian IKK",
       },
       {
-        to: "/program-unggulan/list",
+        to: "/capaian/program-unggulan/list",
         label: "Program Unggulan",
       },
     ],
   },
+  ...laporan,
 ];

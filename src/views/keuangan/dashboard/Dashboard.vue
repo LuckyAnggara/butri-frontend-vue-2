@@ -7,33 +7,21 @@ import SectionMain from "@/components/SectionMain.vue";
 import * as chartConfig from "@/components/Charts/chart.config.js";
 
 import SectionTitleLineWithButton from "@/components/SectionTitleLineWithButton.vue";
-import { useDashboardKepegawaianStore } from "@/stores/pegawai/dashboard";
 import { ArrowPathIcon } from "@heroicons/vue/24/outline";
-import { mdiAccountMultiple, mdiGenderFemale, mdiGenderMale } from "@mdi/js";
 import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 import LineChart from "./LineChart.vue";
+import { useDashboardKeuanganStore } from "@/stores/keuangan/dashboardKeuangan";
+import CardBox from "@/components/CardBox.vue";
+import BaseButton from "@/components/BaseButton.vue";
+import { mdiChartPie } from "@mdi/js";
+
+const dashboardStore = useDashboardKeuanganStore();
+onMounted(() => {
+  dashboardStore.getData();
+});
 
 const route = useRoute();
-
-const dashboardStore = useDashboardKepegawaianStore();
-
-function callData() {
-  dashboardStore.getData();
-}
-
-const chartData = ref(null);
-
-const fillChartData = () => {
-  chartData.value = chartConfig.sampleChartData();
-};
-
-onMounted(() => {});
-
-onMounted(() => {
-  callData();
-  fillChartData();
-});
 </script>
 
 <template>
@@ -48,7 +36,7 @@ onMounted(() => {
       >
     </NotificationBar>
     <div v-else>
-      <SectionTitleLineWithButton :icon="mdiChartPie" title="Trends overview">
+      <SectionTitleLineWithButton title="Realisasi Anggaran (dalam %)">
         <BaseButton
           :icon="mdiReload"
           color="whiteDark"
@@ -57,8 +45,8 @@ onMounted(() => {
       </SectionTitleLineWithButton>
 
       <CardBox class="mb-6">
-        <div v-if="chartData">
-          <line-chart :data="chartData" class="h-96" />
+        <div v-if="dashboardStore.dataset.datasets">
+          <line-chart class="h-96" />
         </div>
       </CardBox>
     </div>

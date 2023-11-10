@@ -23,7 +23,7 @@ export const useCapaianIkk = defineStore("capaianIkk", {
       analisa: null,
       kegiatan: null,
       kendala: null,
-      hambatan: null,
+      hambatan: "",
       group_id: authStore.user.user.unit.group_id,
       created_by: authStore.user.user.id,
     },

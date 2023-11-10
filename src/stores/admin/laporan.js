@@ -18,9 +18,14 @@ export const useLaporanStore = defineStore("laporan", {
     isDownloading: false,
     downloadId: 0,
     form: {
-      tahun: new Date().getFullYear(),
-      name: "",
-      target: "",
+      ttd_name: "",
+      ttd_nip: "",
+      ttd_location: "",
+      parameter: {
+        tahun: new Date().getFullYear(),
+        bulan: new Date().getMonth() + 1,
+        group: authStore.user.user.unit.group_id,
+      },
       created_by: authStore.user.user.id,
     },
     filter: {
@@ -168,9 +173,14 @@ export const useLaporanStore = defineStore("laporan", {
     },
     clearForm() {
       this.form = {
-        tahun: new Date().getFullYear(),
-        name: "",
-        target: "",
+        ttd_name: "",
+        ttd_nip: "",
+        ttd_location: "",
+        parameter: {
+          tahun: new Date().getFullYear(),
+          bulan: new Date().getMonth() + 1,
+          group: authStore.user.user.unit.group_id,
+        },
         created_by: authStore.user.user.id,
       };
     },

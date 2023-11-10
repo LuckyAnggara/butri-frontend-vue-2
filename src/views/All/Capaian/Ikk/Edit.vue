@@ -130,7 +130,7 @@ onUnmounted(() => {
               />
             </FormField>
 
-            <FormField label="Kendala">
+            <FormField label="Kendala / Hambatan">
               <QuillEditor
                 class="h-24"
                 toolbar="full"
@@ -140,7 +140,7 @@ onUnmounted(() => {
               />
             </FormField>
 
-            <FormField label="Hambatan">
+            <!-- <FormField label="Hambatan">
               <QuillEditor
                 class="h-24"
                 toolbar="full"
@@ -148,7 +148,7 @@ onUnmounted(() => {
                 :options="quilOptions"
                 v-model:content="capaianIKKStore.singleResponses.hambatan"
               />
-            </FormField>
+            </FormField> -->
 
             <div class="flex flex-row space-x-2">
               <BaseButton

@@ -3,16 +3,6 @@ import { all } from "./all";
 export const wilayah = [
   {
     meta: {
-      title: "Dashboard",
-      layout: "layout-authenticated",
-      requiresAuth: true,
-    },
-    path: "/wilayah/dashboard",
-    name: "wilayah-dashboard",
-    component: () => import("@/views/wilayah/Dashboard.vue"),
-  },
-  {
-    meta: {
       title: "Pengelolaan Data Pengawasan",
       layout: "layout-authenticated",
       requiresAuth: true,

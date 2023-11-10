@@ -17,7 +17,14 @@ async function login() {
   const success = await authStore.login();
   console.info(success);
   if (success) {
-    router.push({ name: "dashboard" });
+    if (authStore.user.user?.unit?.id == 4)
+      router.push({ name: "/program/dashboard" });
+    if (authStore.user.user?.unit?.id == 6)
+      router.push({ name: "/keuangan/dashboard" });
+    if (authStore.user.user?.unit?.id == 7) router.push({ name: "/" });
+    if (authStore.user.user?.unit?.id > 7)
+      router.push({ name: "/wilayah/dashboard" });
+    router.push({ name: "/" });
   }
 }
 </script>
@@ -31,7 +38,7 @@ async function login() {
         href="#"
         class="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white"
       >
-        Laporan Pengawasan
+        E-LAPKIN
       </a>
       <div
         class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700"

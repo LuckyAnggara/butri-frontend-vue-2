@@ -1,48 +1,25 @@
-export const chartColors = {
-  default: {
-    primary: "#00D1B2",
-  },
+export const data = {
+  labels: ["January", "February", "March", "April", "May", "June", "July"],
+  datasets: [
+    {
+      label: "Data One",
+      backgroundColor: "#f87979",
+      data: [40, 39, 10, 40, 39, 80, 40],
+    },
+    {
+      label: "Data One",
+      backgroundColor: "#f87979",
+      data: [39, 10, 40, 39, 80, 40, 50],
+    },
+    {
+      label: "Data One",
+      backgroundColor: "#f87979",
+      data: [40, 39, 10, 40, 39, 80, 40],
+    },
+  ],
 };
 
-const randomChartData = (n) => {
-  const data = [];
-
-  for (let i = 0; i < n; i++) {
-    data.push(Math.round(Math.random() * 200));
-  }
-
-  return data;
-};
-
-const datasetObject = (color, points) => {
-  return {
-    fill: false,
-    borderColor: chartColors.default[color],
-    borderWidth: 2,
-    borderDash: [],
-    borderDashOffset: 0.0,
-    pointBackgroundColor: chartColors.default[color],
-    pointBorderColor: "rgba(255,255,255,0)",
-    pointHoverBackgroundColor: chartColors.default[color],
-    pointBorderWidth: 20,
-    pointHoverRadius: 4,
-    pointHoverBorderWidth: 15,
-    pointRadius: 4,
-    data: randomChartData(points),
-    tension: 0.5,
-    cubicInterpolationMode: "default",
-  };
-};
-
-export const sampleChartData = (points = 9) => {
-  const labels = [];
-
-  for (let i = 1; i <= points; i++) {
-    labels.push(`0${i}`);
-  }
-
-  return {
-    labels,
-    datasets: [datasetObject("primary", points)],
-  };
+export const options = {
+  responsive: true,
+  maintainAspectRatio: false,
 };

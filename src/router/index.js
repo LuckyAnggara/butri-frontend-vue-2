@@ -1,7 +1,6 @@
 import { createRouter, createWebHashHistory } from "vue-router";
-import UserDashboard from "@/views/Dashboard/UserDashboard.vue";
-import { useAuthStore } from "@/stores/auth";
 import { kepegawaian } from "./kepegawaian";
+import { useAuthStore } from "@/stores/auth";
 import { all } from "./all";
 import { program } from "./program";
 import { umum } from "./umum";
@@ -23,22 +22,34 @@ const routes = [
     component: () => import("@/views/Login/LoginView.vue"),
   },
   {
-    // Document title tag
     meta: {
       title: "Dashboard",
       requiresAuth: true,
+      layout: "layout-authenticated",
     },
-    path: "/dashboard",
-    name: "asd",
-    component: UserDashboard,
+    path: "/kepegawaian/dashboard",
+    name: "dashboard",
+    component: () => import("@/views/kepegawaian/Dashboard.vue"),
   },
   {
     meta: {
-      title: "Forms",
+      title: "Dashboard",
+      requiresAuth: true,
+      layout: "layout-authenticated",
     },
-    path: "/forms",
-    name: "forms",
-    component: () => import("@/views/FormsView.vue"),
+    path: "/keuangan/dashboard",
+    name: "dashboard",
+    component: () => import("@/views/keuangan/Dashboard.vue"),
+  },
+  {
+    meta: {
+      title: "Dashboard",
+      requiresAuth: true,
+      layout: "layout-authenticated",
+    },
+    path: "/wilayah/dashboard",
+    name: "dashboard",
+    component: () => import("@/views/wilayah/Dashboard.vue"),
   },
   {
     meta: {
@@ -47,30 +58,6 @@ const routes = [
     path: "/profile",
     name: "profile",
     component: () => import("@/views/ProfileView.vue"),
-  },
-  {
-    meta: {
-      title: "Ui",
-    },
-    path: "/ui",
-    name: "ui",
-    component: () => import("@/views/UiView.vue"),
-  },
-  {
-    meta: {
-      title: "Responsive layout",
-    },
-    path: "/responsive",
-    name: "responsive",
-    component: () => import("@/views/ResponsiveView.vue"),
-  },
-  {
-    meta: {
-      title: "Error",
-    },
-    path: "/error",
-    name: "error",
-    component: () => import("@/views/ErrorView.vue"),
   },
   ...kepegawaian,
   ...program,
@@ -93,10 +80,13 @@ const router = createRouter({
 
 router.beforeResolve(async (to, _, next) => {
   const auth = useAuthStore();
-  if (to.meta.requiresAuth == true && auth.isLoggedIn() == false)
+  if (to.meta.requiresAuth == true && auth.isLoggedIn() == false) {
     return next("/login");
-  if (to.name == "login" && auth.isLoggedIn() == true) return next("/");
-  return next();
+  } else if (to.name == "login" && auth.isLoggedIn() == true) {
+    return next("/");
+  } else {
+    return next();
+  }
 });
 
 export default router;

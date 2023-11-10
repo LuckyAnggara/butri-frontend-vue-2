@@ -115,7 +115,7 @@ onMounted(() => {
             @click="toNew()"
             class="mt-8"
             color="info"
-            label="Tambah"
+            label="Generate"
           />
         </div>
       </div>
