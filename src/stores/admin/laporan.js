@@ -17,6 +17,7 @@ export const useLaporanStore = defineStore("laporan", {
     isDestroyLoading: false,
     isDownloading: false,
     downloadId: 0,
+    destroyId: 0,
     form: {
       ttd_name: "",
       ttd_nip: "",
@@ -102,6 +103,7 @@ export const useLaporanStore = defineStore("laporan", {
     },
     async destroy(id) {
       this.isDestroyLoading = true;
+      this.destroyId = id;
       setTimeout(() => {}, 500);
       try {
         await axiosIns.delete(`/laporan/${id}`);
@@ -109,7 +111,7 @@ export const useLaporanStore = defineStore("laporan", {
           timeout: 2000,
         });
         const index = this.items.findIndex((item) => item.id === id);
-        this.responses.data.splice(index, 1);
+        this.responses.splice(index, 1);
       } catch (error) {
         toast.error(error.message, {
           timeout: 2000,

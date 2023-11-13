@@ -47,7 +47,7 @@ const itemMenu = [
 ];
 
 function edit(item) {
-  router.push({ name: "edit-capaian-iku", params: { id: item.id } });
+  router.push({ name: "detail-capaian-iku", params: { id: item.id } });
 }
 function toNew() {
   router.push({ name: "new-capaian-iku" });
@@ -109,17 +109,8 @@ onMounted(() => {
             </select>
           </FormField>
         </div>
-        <div class="w-5/12">
-          <FormField label="Search">
-            <FormControl
-              @keyup="search"
-              v-model="capaianIKUStore.filter.searchQuery"
-              type="tel"
-              placeholder="Cari berdasarkan indikator"
-            />
-          </FormField>
-        </div>
-        <div class="w-3/12"></div>
+
+        <div class="w-8/12"></div>
 
         <div class="w-2/12 flex justify-end">
           <BaseButton
@@ -139,13 +130,12 @@ onMounted(() => {
             <th>Indikator</th>
             <th>Target</th>
             <th>Realisasi</th>
-            <th>Dibuat Tanggal</th>
             <th />
           </tr>
         </thead>
         <tbody>
           <tr v-if="capaianIKUStore.isLoading">
-            <td colspan="6" class="text-center">
+            <td colspan="5" class="text-center">
               <div
                 class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
                 role="status"
@@ -169,20 +159,18 @@ onMounted(() => {
               :key="item.id"
             >
               <td class="text-center">
-                {{ capaianIKUStore.from + index }}
+                {{ ++index }}
               </td>
               <td>
-                {{ item.iku.name }}
+                {{ item.name }}
               </td>
               <td>
-                {{ item.iku.target }}
+                {{ item.target }}
               </td>
               <td>
-                {{ item.realisasi }}
+                {{ item.realisasi?.realisasi ?? "-" }}
               </td>
-              <td>
-                {{ item.created_at }}
-              </td>
+
               <td class="before:hidden lg:w-1 whitespace-nowrap">
                 <div>
                   <Menu as="div" class="relative inline-block text-left">
@@ -256,46 +244,6 @@ onMounted(() => {
           </template>
         </tbody>
       </table>
-      <div
-        class="p-3 lg:px-6 border-t border-gray-100 dark:border-slate-800 flex justify-end"
-      >
-        <ul class="inline-flex items-stretch -space-x-px">
-          <li>
-            <a
-              @click="
-                capaianIKUStore.currentPage == 1
-                  ? ''
-                  : capaianIKUStore.getData(previousPage)
-              "
-              :disabled="capaianIKUStore.currentPage == 1 ? true : false"
-              :class="
-                capaianIKUStore.currentPage == 1
-                  ? 'cursor-not-allowed'
-                  : 'cursor-pointer dark:hover:bg-blue-700 dark:hover:text-white hover:bg-blue-100 hover:text-gray-700'
-              "
-              class="w-32 px-3 py-2 ml-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
-              >Previous</a
-            >
-          </li>
-
-          <li>
-            <a
-              @click="
-                capaianIKUStore.lastPage == capaianIKUStore.currentPage
-                  ? ''
-                  : capaianIKUStore.getData(nextPage)
-              "
-              :class="
-                capaianIKUStore.lastPage == capaianIKUStore.currentPage
-                  ? 'cursor-not-allowed'
-                  : 'cursor-pointer dark:hover:bg-blue-700 dark:hover:text-white hover:bg-blue-100 hover:text-gray-700'
-              "
-              class="w-32 px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
-              >Next {{
-            }}</a>
-          </li>
-        </ul>
-      </div>
     </CardBox>
   </SectionMain>
 </template>

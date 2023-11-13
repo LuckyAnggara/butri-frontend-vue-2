@@ -16,6 +16,8 @@ export const useCapaianIkk = defineStore("capaianIkk", {
     isUpdateLoading: false,
     isDestroyLoading: false,
     form: {
+      tahun: new Date().getFullYear(),
+      bulan: new Date().getMonth() + 1,
       ikk: {
         target: null,
       },
@@ -77,7 +79,7 @@ export const useCapaianIkk = defineStore("capaianIkk", {
         const response = await axiosIns.get(
           `/capaian-ikk?tahun=${this.currentYear}&bulan=${this.currentMonth}${this.searchQuery}${page}${this.unitQuery}`
         );
-        this.responses = response.data.data;
+        this.responses = response.data;
       } catch (error) {
         alert(error.message);
       } finally {
@@ -99,8 +101,8 @@ export const useCapaianIkk = defineStore("capaianIkk", {
           return false;
         }
       } catch (error) {
-        console.info(error);
-        toast.error(error.response.data.data, {
+        console.info("aa");
+        toast.error(error.response?.data, {
           timeout: 3000,
         });
       } finally {
@@ -162,6 +164,22 @@ export const useCapaianIkk = defineStore("capaianIkk", {
       } finally {
         this.isUpdateLoading = false;
       }
+    },
+    clearForm() {
+      this.form = {
+        tahun: new Date().getFullYear(),
+        bulan: new Date().getMonth() + 1,
+        ikk: {
+          target: null,
+        },
+        realisasi: null,
+        analisa: null,
+        kegiatan: null,
+        kendala: null,
+        hambatan: "",
+        group_id: authStore.user.user.unit.group_id,
+        created_by: authStore.user.user.id,
+      };
     },
   },
 });

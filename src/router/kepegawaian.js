@@ -1,14 +1,4 @@
 export const kepegawaian = [
-  // {
-  //   meta: {
-  //     title: "Dashboard",
-  //     layout: "layout-authenticated",
-  //     requiresAuth: true,
-  //   },
-  //   path: "/",
-  //   name: "dashboard",
-  //   component: () => import("@/views/kepegawaian/Dashboard.vue"),
-  // },
   {
     meta: {
       title: "Data Pegawai",

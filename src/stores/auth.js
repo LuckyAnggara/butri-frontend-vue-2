@@ -51,6 +51,8 @@ export const useAuthStore = defineStore("auth", {
         const response = await axiosIns.get(`/logout`);
         if (response.status == 200) {
           if (response.data == "error") {
+            localStorage.removeItem("userDataLawas");
+            localStorage.removeItem("token");
             localStorage.clear();
           } else {
             localStorage.removeItem("userDataLawas");
@@ -58,7 +60,8 @@ export const useAuthStore = defineStore("auth", {
             localStorage.clear();
           }
           const pinia = getActivePinia();
-          // pinia._s.forEach((store) => store.$reset());
+          pinia._s.forEach((store) => store.$reset());
+          setTimeout(() => {}, 500);
           return true;
         } else {
           return false;

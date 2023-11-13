@@ -35,7 +35,7 @@ const indexDestroy = ref(0);
 
 const itemMenu = [
   {
-    function: edit,
+    function: detail,
     label: "Detail",
     icon: PencilSquareIcon,
   },
@@ -48,6 +48,9 @@ const itemMenu = [
 
 function edit(item) {
   router.push({ name: "edit-capaian-ikk", params: { id: item.id } });
+}
+function detail(item) {
+  router.push({ name: "detail-capaian-ikk", params: { id: item.id } });
 }
 function toNew() {
   router.push({ name: "new-capaian-ikk" });
@@ -62,8 +65,9 @@ const nextPage = computed(() => {
 });
 
 function destroy(item) {
-  capaianIKKStore.destroy(item.id);
-  indexDestroy.value = item.id;
+  capaianIKKStore.destroy(item.realisasi.id);
+  indexDestroy.value = item.realisasi.id;
+  capaianIKKStore.getData();
 }
 
 capaianIKKStore.$subscribe((mutation, state) => {
@@ -184,16 +188,16 @@ onMounted(() => {
               :key="item.id"
             >
               <td class="text-center">
-                {{ capaianIKKStore.from + index }}
+                {{ ++index }}
               </td>
               <td>
-                {{ item.ikk.name }}
+                {{ item.name }}
               </td>
               <td>
-                {{ item.ikk.target }}
+                {{ item.target }}
               </td>
               <td>
-                {{ item.realisasi }}
+                {{ item.realisasi?.realisasi ?? "-" }}
               </td>
               <td class="before:hidden lg:w-1 whitespace-nowrap">
                 <div>
@@ -268,46 +272,6 @@ onMounted(() => {
           </template>
         </tbody>
       </table>
-      <div
-        class="p-3 lg:px-6 border-t border-gray-100 dark:border-slate-800 flex justify-end"
-      >
-        <ul class="inline-flex items-stretch -space-x-px">
-          <li>
-            <a
-              @click="
-                capaianIKKStore.currentPage == 1
-                  ? ''
-                  : capaianIKKStore.getData(previousPage)
-              "
-              :disabled="capaianIKKStore.currentPage == 1 ? true : false"
-              :class="
-                capaianIKKStore.currentPage == 1
-                  ? 'cursor-not-allowed'
-                  : 'cursor-pointer dark:hover:bg-blue-700 dark:hover:text-white hover:bg-blue-100 hover:text-gray-700'
-              "
-              class="w-32 px-3 py-2 ml-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
-              >Previous</a
-            >
-          </li>
-
-          <li>
-            <a
-              @click="
-                capaianIKKStore.lastPage == capaianIKKStore.currentPage
-                  ? ''
-                  : capaianIKKStore.getData(nextPage)
-              "
-              :class="
-                capaianIKKStore.lastPage == capaianIKKStore.currentPage
-                  ? 'cursor-not-allowed'
-                  : 'cursor-pointer dark:hover:bg-blue-700 dark:hover:text-white hover:bg-blue-100 hover:text-gray-700'
-              "
-              class="w-32 px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
-              >Next {{
-            }}</a>
-          </li>
-        </ul>
-      </div>
     </CardBox>
   </SectionMain>
 </template>

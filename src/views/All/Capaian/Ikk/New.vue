@@ -13,6 +13,7 @@ import { useToast } from "vue-toastification";
 import { useCapaianIkk } from "@/stores/all/capaianIkk";
 import { useIKKStore } from "@/stores/admin/ikk";
 import { useAuthStore } from "@/stores/auth";
+import { useMainStore } from "@/stores/main";
 
 const route = useRoute();
 const router = useRouter();
@@ -21,6 +22,7 @@ const toast = useToast();
 const ikkStore = useIKKStore();
 const capaianIKKStore = useCapaianIkk();
 const authStore = useAuthStore();
+const mainStore = useMainStore();
 
 const quilOptions = {
   readOnly: capaianIKKStore.isStoreLoading,
@@ -62,6 +64,41 @@ onUnmounted(() => {
     <div class="flex space-x-2">
       <CardBox class="w-full shadow-md">
         <form @submit.prevent="submit()">
+          <div class="flex space-x-2">
+            <FormField label="Tahun" class="w-1/3">
+              <select
+                :disabled="capaianIKKStore.isStoreLoading"
+                required
+                v-model="capaianIKKStore.form.tahun"
+                class="border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
+              >
+                <option
+                  v-for="option in mainStore.tahunOptions"
+                  :key="option"
+                  :value="option"
+                >
+                  {{ option }}
+                </option>
+              </select>
+            </FormField>
+            <FormField label="Bulan" class="w-1/3">
+              <select
+                :disabled="capaianIKKStore.isStoreLoading"
+                required
+                v-model="capaianIKKStore.form.bulan"
+                class="border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
+              >
+                <option
+                  v-for="option in mainStore.bulanOptions"
+                  :key="option.id"
+                  :value="option.id"
+                >
+                  {{ option.label }}
+                </option>
+              </select>
+            </FormField>
+          </div>
+
           <FormField label="Indikator Kinerja Kegiatan">
             <select
               :disabled="capaianIKKStore.isStoreLoading"
@@ -96,23 +133,29 @@ onUnmounted(() => {
           </FormField>
 
           <FormField label="Analisa">
-            <QuillEditor
+            <FormControl
+              type="textarea"
+              :disabled="capaianIKKStore.isStoreLoading"
+              v-model="capaianIKKStore.form.analisa"
+              required
+            />
+            <!-- <QuillEditor
               class="h-24"
               toolbar="full"
               :contentType="'html'"
               :options="quilOptions"
               v-model:content="capaianIKKStore.form.analisa"
-            />
+            /> -->
           </FormField>
 
           <FormField label="Kegiatan">
-            <QuillEditor
+            <!-- <QuillEditor
               class="h-24"
               toolbar="full"
               :contentType="'html'"
               :options="quilOptions"
               v-model:content="capaianIKKStore.form.kegiatan"
-            />
+            /> -->
           </FormField>
 
           <FormField label="Kendala / Hambatan">

@@ -16,6 +16,8 @@ export const useCapaianIKU = defineStore("capaianIKU", {
     isUpdateLoading: false,
     isDestroyLoading: false,
     form: {
+      tahun: new Date().getFullYear(),
+      bulan: new Date().getMonth() + 1,
       iku: {
         target: null,
       },
@@ -70,7 +72,7 @@ export const useCapaianIKU = defineStore("capaianIKU", {
         const response = await axiosIns.get(
           `/capaian-iku?tahun=${this.currentYear}&bulan=${this.currentMonth}${this.searchQuery}${page}`
         );
-        this.responses = response.data.data;
+        this.responses = response.data;
       } catch (error) {
         alert(error.message);
       } finally {

@@ -12,7 +12,7 @@ export default [
       },
       {
         label: "Template",
-        to: "/download/list",
+        to: "/laporan/download/list",
       },
     ],
   },

@@ -27,30 +27,21 @@ const routes = [
       requiresAuth: true,
       layout: "layout-authenticated",
     },
-    path: "/kepegawaian/dashboard",
+    path: "/",
     name: "dashboard",
-    component: () => import("@/views/kepegawaian/Dashboard.vue"),
-  },
-  {
-    meta: {
-      title: "Dashboard",
-      requiresAuth: true,
-      layout: "layout-authenticated",
+    component: () => {
+      const auth = useAuthStore();
+      if (auth.user.user?.unit?.id == 4)
+        return import("@/views/wilayah/Dashboard.vue");
+      if (auth.user.user?.unit?.id == 6)
+        return import("@/views/kepegawaian/Dashboard.vue");
+      if (auth.user.user?.unit?.id == 7)
+        return import("@/views/wilayah/Dashboard.vue");
+      if (auth.user.user?.unit?.id > 7)
+        return import("@/views/wilayah/Dashboard.vue");
     },
-    path: "/keuangan/dashboard",
-    name: "dashboard",
-    component: () => import("@/views/keuangan/Dashboard.vue"),
   },
-  {
-    meta: {
-      title: "Dashboard",
-      requiresAuth: true,
-      layout: "layout-authenticated",
-    },
-    path: "/wilayah/dashboard",
-    name: "dashboard",
-    component: () => import("@/views/wilayah/Dashboard.vue"),
-  },
+
   {
     meta: {
       title: "Profile",

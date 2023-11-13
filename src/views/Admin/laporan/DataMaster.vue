@@ -42,12 +42,6 @@ function destroy(item) {
   indexDestroy.value = item.id;
 }
 
-function edit(item) {
-  showNewModal.value = true;
-  updateData.value = true;
-  laporanStore.readyEdit(item);
-}
-
 async function submit() {
   const result = await laporanStore.store();
   if (result) {
@@ -165,22 +159,40 @@ onMounted(() => {
                 {{ item.created_at }}
               </td>
               <td>
-                <a
-                  class="dark:hover:text-blue-500 cursor-pointer"
-                  @click="laporanStore.download(item.name, item.id)"
-                >
-                  <span
-                    v-if="
-                      laporanStore.downloadId == item.id &&
-                      laporanStore.isDownloading
-                    "
+                <div class="flex space-x-2">
+                  <a
+                    class="dark:hover:text-blue-500 cursor-pointer"
+                    @click="laporanStore.download(item.name, item.id)"
                   >
-                    <ArrowPathIcon class="h-5 w-5 animate-spin mr-3" />
-                  </span>
-                  <span v-else>
-                    <ArrowDownTrayIcon class="w-6 h-6" />
-                  </span>
-                </a>
+                    <span
+                      v-if="
+                        laporanStore.downloadId == item.id &&
+                        laporanStore.isDownloading
+                      "
+                    >
+                      <ArrowPathIcon class="h-5 w-5 animate-spin mr-3" />
+                    </span>
+                    <span v-else>
+                      <ArrowDownTrayIcon class="w-6 h-6" />
+                    </span>
+                  </a>
+                  <a
+                    class="dark:hover:text-blue-500 cursor-pointer"
+                    @click="destroy(item)"
+                  >
+                    <span
+                      v-if="
+                        laporanStore.destroyId == item.id &&
+                        laporanStore.isDestroyLoading
+                      "
+                    >
+                      <ArrowPathIcon class="h-5 w-5 animate-spin mr-3" />
+                    </span>
+                    <span v-else>
+                      <TrashIcon class="w-6 h-6" />
+                    </span>
+                  </a>
+                </div>
               </td>
             </tr>
           </template>

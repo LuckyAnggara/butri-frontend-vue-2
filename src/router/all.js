@@ -65,9 +65,19 @@ export const all = [
       layout: "layout-authenticated",
       requiresAuth: false,
     },
-    path: "/capaian/iku/:id/detail",
+    path: "/capaian/iku/:id/edit",
     name: "edit-capaian-iku",
     component: () => import("@/views/all/Capaian/Iku/Edit.vue"),
+  },
+  {
+    meta: {
+      title: "Capaian Indikator Kinerja Utama",
+      layout: "layout-authenticated",
+      requiresAuth: false,
+    },
+    path: "/capaian/iku/:id/detail",
+    name: "detail-capaian-iku",
+    component: () => import("@/views/all/Capaian/Iku/Detail.vue"),
   },
   {
     meta: {
@@ -95,9 +105,19 @@ export const all = [
       layout: "layout-authenticated",
       requiresAuth: false,
     },
-    path: "/capaian/ikk/:id/detail",
+    path: "/capaian/ikk/:id/edit",
     name: "edit-capaian-ikk",
     component: () => import("@/views/all/Capaian/Ikk/Edit.vue"),
+  },
+  {
+    meta: {
+      title: "Detail Capaian Indikator Kinerja Kegiatan",
+      layout: "layout-authenticated",
+      requiresAuth: false,
+    },
+    path: "/capaian/ikk/:id/detail",
+    name: "detail-capaian-ikk",
+    component: () => import("@/views/all/Capaian/Ikk/Detail.vue"),
   },
   {
     meta: {

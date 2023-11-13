@@ -1,16 +1,6 @@
 export const keuangan = [
   {
     meta: {
-      title: "Dashboard",
-      layout: "layout-authenticated",
-      requiresAuth: true,
-    },
-    path: "/keuangan/dashboard",
-    name: "keuangan-dashboard",
-    component: () => import("@/views/keuangan/dashboard/Dashboard.vue"),
-  },
-  {
-    meta: {
       title: "Pengelolaan Anggaran",
       layout: "layout-authenticated",
       requiresAuth: true,

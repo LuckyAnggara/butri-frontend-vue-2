@@ -121,23 +121,13 @@ onUnmounted(() => {
             />
           </FormField>
 
-          <FormField label="Kendala">
+          <FormField label="Kendala / Hambatan">
             <QuillEditor
               class="h-24"
               toolbar="full"
               :contentType="'html'"
               :options="quilOptions"
               v-model:content="capaianIKUStore.form.kendala"
-            />
-          </FormField>
-
-          <FormField label="Hambatan">
-            <QuillEditor
-              class="h-24"
-              toolbar="full"
-              :contentType="'html'"
-              :options="quilOptions"
-              v-model:content="capaianIKUStore.form.hambatan"
             />
           </FormField>
 
