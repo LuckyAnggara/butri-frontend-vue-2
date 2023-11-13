@@ -10,6 +10,7 @@ import {
   mdiViewDashboard,
 } from "@mdi/js";
 import all from "./all";
+import programUnggulan from "./programUnggulan";
 
 export default [
   {
@@ -47,5 +48,5 @@ export default [
       },
     ],
   },
-  ...all,
+  ...programUnggulan,
 ];

@@ -4,6 +4,7 @@ import {
   mdiEmailFastOutline,
   mdiViewDashboard,
 } from "@mdi/js";
+import programUnggulan from "./programUnggulan";
 
 export default [
   {
@@ -21,18 +22,19 @@ export default [
     label: "Arsip",
     icon: mdiArchiveOutline,
   },
-  {
-    label: "BMN",
-    icon: mdiChairRolling,
-    menu: [
-      {
-        to: "/iku/list",
-        label: "Inventaris",
-      },
-      {
-        to: "/iku/list",
-        label: "Mutasi",
-      },
-    ],
-  },
+  ...programUnggulan,
+  // {
+  //   label: "BMN",
+  //   icon: mdiChairRolling,
+  //   menu: [
+  //     {
+  //       to: "/iku/list",
+  //       label: "Inventaris",
+  //     },
+  //     {
+  //       to: "/iku/list",
+  //       label: "Mutasi",
+  //     },
+  //   ],
+  // },
 ];

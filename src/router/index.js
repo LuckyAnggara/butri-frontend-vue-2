@@ -32,7 +32,9 @@ const routes = [
     component: () => {
       const auth = useAuthStore();
       if (auth.user.user?.unit?.id == 4)
-        return import("@/views/wilayah/Dashboard.vue");
+        return import("@/views/program/Dashboard.vue");
+      if (auth.user.user?.unit?.id == 5)
+        return import("@/views/keuangan/dashboard/Dashboard.vue");
       if (auth.user.user?.unit?.id == 6)
         return import("@/views/kepegawaian/Dashboard.vue");
       if (auth.user.user?.unit?.id == 7)

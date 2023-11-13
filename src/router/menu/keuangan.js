@@ -1,9 +1,10 @@
 import { mdiAdjust, mdiCash, mdiViewDashboard } from "@mdi/js";
 import all from "./all";
+import programUnggulan from "./programUnggulan";
 
 export default [
   {
-    to: "/keuangan/dashboard",
+    to: "/",
     label: "Dashboard",
     icon: mdiViewDashboard,
   },
@@ -26,5 +27,5 @@ export default [
     label: "IKPA",
     icon: mdiAdjust,
   },
-  ...all,
+  ...programUnggulan,
 ];

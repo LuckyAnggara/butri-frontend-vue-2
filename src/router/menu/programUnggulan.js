@@ -11,15 +11,6 @@ export default [
     icon: mdiPoll,
     menu: [
       {
-        to: "/capaian/iku/list",
-        label: "Capaian IKU",
-      },
-      {
-        to: "/capaian/ikk/list",
-        label: "Capaian IKK",
-      },
-
-      {
         to: "/capaian/program-unggulan/list",
         label: "Program Unggulan",
       },

@@ -9,6 +9,7 @@ import {
   mdiShieldAccount,
   mdiViewDashboard,
 } from "@mdi/js";
+import programUnggulan from "./programUnggulan";
 
 export default [
   {
@@ -49,4 +50,5 @@ export default [
       },
     ],
   },
+  ...programUnggulan,
 ];
