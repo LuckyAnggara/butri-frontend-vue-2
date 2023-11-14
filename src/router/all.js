@@ -7,7 +7,7 @@ export const all = [
     },
     path: "/kegiatan/list",
     name: "list-kegiatan",
-    component: () => import("@/views/all/Kegiatan/DataKegiatan.vue"),
+    component: () => import("@/views/all/kegiatan/DataKegiatan.vue"),
   },
   {
     meta: {
@@ -17,7 +17,7 @@ export const all = [
     },
     path: "/kegiatan/new",
     name: "new-kegiatan",
-    component: () => import("@/views/all/Kegiatan/NewKegiatan.vue"),
+    component: () => import("@/views/all/kegiatan/NewKegiatan.vue"),
   },
   {
     meta: {
@@ -27,7 +27,7 @@ export const all = [
     },
     path: "/capaian/program-unggulan/list",
     name: "list-capaian-program-unggulan",
-    component: () => import("@/views/all/Programunggulan/Data.vue"),
+    component: () => import("@/views/all/programunggulan/Data.vue"),
   },
   {
     meta: {
@@ -37,7 +37,7 @@ export const all = [
     },
     path: "/capaian/program-unggulan/new",
     name: "new-capaian-program-unggulan",
-    component: () => import("@/views/all/Programunggulan/New.vue"),
+    component: () => import("@/views/all/programunggulan/New.vue"),
   },
   {
     meta: {
@@ -47,7 +47,7 @@ export const all = [
     },
     path: "/capaian/iku/list",
     name: "list-capaian-iku",
-    component: () => import("@/views/all/Capaian/Iku/Data.vue"),
+    component: () => import("@/views/all/capaian/iku/Data.vue"),
   },
   {
     meta: {
@@ -57,7 +57,7 @@ export const all = [
     },
     path: "/capaian/iku/new",
     name: "new-capaian-iku",
-    component: () => import("@/views/all/Capaian/Iku/New.vue"),
+    component: () => import("@/views/all/capaian/iku/New.vue"),
   },
   {
     meta: {
@@ -67,7 +67,7 @@ export const all = [
     },
     path: "/capaian/iku/:id/edit",
     name: "edit-capaian-iku",
-    component: () => import("@/views/all/Capaian/Iku/Edit.vue"),
+    component: () => import("@/views/all/capaian/iku/Edit.vue"),
   },
   {
     meta: {
@@ -77,7 +77,7 @@ export const all = [
     },
     path: "/capaian/iku/:id/detail",
     name: "detail-capaian-iku",
-    component: () => import("@/views/all/Capaian/Iku/Detail.vue"),
+    component: () => import("@/views/all/capaian/iku/Detail.vue"),
   },
   {
     meta: {
@@ -87,7 +87,7 @@ export const all = [
     },
     path: "/capaian/ikk/list",
     name: "list-capaian-ikk",
-    component: () => import("@/views/all/Capaian/Ikk/Data.vue"),
+    component: () => import("@/views/all/capaian/ikk/Data.vue"),
   },
   {
     meta: {
@@ -97,7 +97,7 @@ export const all = [
     },
     path: "/capaian/ikk/new",
     name: "new-capaian-ikk",
-    component: () => import("@/views/all/Capaian/Ikk/New.vue"),
+    component: () => import("@/views/all/capaian/ikk/New.vue"),
   },
   {
     meta: {
@@ -107,7 +107,7 @@ export const all = [
     },
     path: "/capaian/ikk/:id/edit",
     name: "edit-capaian-ikk",
-    component: () => import("@/views/all/Capaian/Ikk/Edit.vue"),
+    component: () => import("@/views/all/capaian/ikk/Edit.vue"),
   },
   {
     meta: {
@@ -117,26 +117,26 @@ export const all = [
     },
     path: "/capaian/ikk/:id/detail",
     name: "detail-capaian-ikk",
-    component: () => import("@/views/all/Capaian/Ikk/Detail.vue"),
+    component: () => import("@/views/all/capaian/ikk/Detail.vue"),
   },
-  {
-    meta: {
-      title: "Capaian Lainnya",
-      layout: "layout-authenticated",
-      requiresAuth: false,
-    },
-    path: "/capaian/lainnya/list",
-    name: "list-capaian-lainnya",
-    component: () => import("@/views/all/Capaian/Lainnya/Data.vue"),
-  },
-  {
-    meta: {
-      title: "Capaian Lainnya",
-      layout: "layout-authenticated",
-      requiresAuth: false,
-    },
-    path: "/capaian/lainnya/new",
-    name: "new-capaian-lainnya",
-    component: () => import("@/views/all/Capaian/Lainnya/New.vue"),
-  },
+  // {
+  //   meta: {
+  //     title: "Capaian Lainnya",
+  //     layout: "layout-authenticated",
+  //     requiresAuth: false,
+  //   },
+  //   path: "/capaian/lainnya/list",
+  //   name: "list-capaian-lainnya",
+  //   component: () => import("@/views/all/capaian/Lainnya/Data.vue"),
+  // },
+  // {
+  //   meta: {
+  //     title: "Capaian Lainnya",
+  //     layout: "layout-authenticated",
+  //     requiresAuth: false,
+  //   },
+  //   path: "/capaian/lainnya/new",
+  //   name: "new-capaian-lainnya",
+  //   component: () => import("@/views/all/capaian/Lainnya/New.vue"),
+  // },
 ];
