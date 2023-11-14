@@ -79,10 +79,10 @@ async function update() {
   }
 }
 dipaStore.$subscribe((mutation, state) => {
-  if (mutation.events.key == "currentYear") {
+  if (mutation.events?.key == "currentYear") {
     dipaStore.getData();
   }
-  if (mutation.events.key == "unit") {
+  if (mutation.events?.key == "unit") {
     dipaStore.getData();
   }
 });

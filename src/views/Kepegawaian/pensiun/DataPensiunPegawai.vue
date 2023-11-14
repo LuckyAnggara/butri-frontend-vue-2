@@ -59,10 +59,10 @@ function destroy(item) {
 }
 
 pensiunStore.$subscribe((mutation, state) => {
-  if (mutation.events.key == "currentLimit") {
+  if (mutation.events?.key == "currentLimit") {
     pensiunStore.getData();
   }
-  if (mutation.events.key == "date") {
+  if (mutation.events?.key == "date") {
     pensiunStore.getData();
   }
 });

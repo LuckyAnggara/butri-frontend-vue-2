@@ -45,10 +45,10 @@ function deviasi(item) {
 }
 
 realisasiAnggaranStore.$subscribe((mutation, state) => {
-  if (mutation.events.key == "currentYear") {
+  if (mutation.events?.key == "currentYear") {
     realisasiAnggaranStore.getData();
   }
-  if (mutation.events.key == "currentMonth") {
+  if (mutation.events?.key == "currentMonth") {
     realisasiAnggaranStore.getData();
   }
 });

@@ -21,10 +21,10 @@ const dashboardStore = useDashboardKeuanganStore();
 const mainStore = useMainStore();
 
 dashboardStore.$subscribe((mutation, state) => {
-  if (mutation.events.key == "currentYear") {
+  if (mutation.events?.key == "currentYear") {
     dashboardStore.getData();
   }
-  if (mutation.events.key == "currentMonth") {
+  if (mutation.events?.key == "currentMonth") {
     dashboardStore.getData();
   }
 });

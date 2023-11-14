@@ -71,13 +71,13 @@ function destroy(item) {
 }
 
 capaianIKKStore.$subscribe((mutation, state) => {
-  if (mutation.events.key == "currentYear") {
+  if (mutation.events?.key == "currentYear") {
     capaianIKKStore.getData();
   }
-  if (mutation.events.key == "currentMonth") {
+  if (mutation.events?.key == "currentMonth") {
     capaianIKKStore.getData();
   }
-  if (mutation.events.key == "unit") {
+  if (mutation.events?.key == "unit") {
     capaianIKKStore.getData();
   }
 });

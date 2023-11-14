@@ -66,10 +66,10 @@ function destroy(item) {
 }
 
 pengembanganStore.$subscribe((mutation, state) => {
-  if (mutation.events.key == "currentLimit") {
+  if (mutation.events?.key == "currentLimit") {
     pengembanganStore.getData();
   }
-  if (mutation.events.key == "date") {
+  if (mutation.events?.key == "date") {
     pengembanganStore.getData();
   }
 });

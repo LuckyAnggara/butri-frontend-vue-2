@@ -69,10 +69,10 @@ async function submit() {
 }
 
 monitoringInternalStore.$subscribe((mutation, state) => {
-  if (mutation.events.key == "currentYear") {
+  if (mutation.events?.key == "currentYear") {
     monitoringInternalStore.getData();
   }
-  if (mutation.events.key == "currentMonth") {
+  if (mutation.events?.key == "currentMonth") {
     monitoringInternalStore.getData();
   }
 });

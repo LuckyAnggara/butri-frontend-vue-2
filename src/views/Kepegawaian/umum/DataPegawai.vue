@@ -64,7 +64,7 @@ function destroy(item) {
 }
 
 pegawaiStore.$subscribe((mutation, state) => {
-  if (mutation.events.key == "currentLimit") {
+  if (mutation.events?.key == "currentLimit") {
     pegawaiStore.getData();
   }
 });

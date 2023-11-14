@@ -87,7 +87,7 @@ async function update() {
 }
 
 ikuStore.$subscribe((mutation, state) => {
-  if (mutation.events.key == "currentYear") {
+  if (mutation.events?.key == "currentYear") {
     ikuStore.getData();
   }
 });

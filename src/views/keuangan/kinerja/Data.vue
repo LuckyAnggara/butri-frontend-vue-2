@@ -84,7 +84,7 @@ function nilaiKinerja(item) {
 }
 
 kinerjaKeuanganStore.$subscribe((mutation, state) => {
-  if (mutation.events.key == "currentYear") {
+  if (mutation.events?.key == "currentYear") {
     kinerjaKeuanganStore.getData();
   }
 });

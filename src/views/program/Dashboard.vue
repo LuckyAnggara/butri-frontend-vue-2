@@ -4,16 +4,12 @@ import CardBoxWidget from "@/components/CardBoxWidget.vue";
 import NotificationBar from "@/components/NotificationBar.vue";
 import SectionMain from "@/components/SectionMain.vue";
 
-import * as chartConfig from "@/components/Charts/chart.config.js";
-
 import SectionTitleLineWithButton from "@/components/SectionTitleLineWithButton.vue";
 import { ArrowPathIcon } from "@heroicons/vue/24/outline";
 import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 import { useDashboardProgramStore } from "@/stores/program/dashboardProgram";
 import CardBox from "@/components/CardBox.vue";
-import BaseButton from "@/components/BaseButton.vue";
-import { mdiChartPie } from "@mdi/js";
 import { useMainStore } from "@/stores/main";
 import FormField from "@/components/FormField.vue";
 import { IDRCurrency, getMonthName } from "@/utilities/formatter";
@@ -23,10 +19,10 @@ const dashboardStore = useDashboardProgramStore();
 const mainStore = useMainStore();
 
 dashboardStore.$subscribe((mutation, state) => {
-  if (mutation.events.key == "currentYear") {
+  if (mutation.events?.key == "currentYear") {
     dashboardStore.getData();
   }
-  if (mutation.events.key == "currentMonth") {
+  if (mutation.events?.key == "currentMonth") {
     dashboardStore.getData();
   }
 });

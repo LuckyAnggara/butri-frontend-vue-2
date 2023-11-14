@@ -56,10 +56,10 @@ function destroy(item) {
 }
 
 kgbStore.$subscribe((mutation, state) => {
-  if (mutation.events.key == "currentLimit") {
+  if (mutation.events?.key == "currentLimit") {
     kgbStore.getData();
   }
-  if (mutation.events.key == "date") {
+  if (mutation.events?.key == "date") {
     kgbStore.getData();
   }
 });

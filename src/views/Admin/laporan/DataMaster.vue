@@ -59,7 +59,7 @@ async function update() {
 }
 
 laporanStore.$subscribe((mutation, state) => {
-  if (mutation.events.key == "currentYear") {
+  if (mutation.events?.key == "currentYear") {
     laporanStore.getData();
   }
 });

@@ -91,10 +91,10 @@ async function update() {
 }
 
 ikkStore.$subscribe((mutation, state) => {
-  if (mutation.events.key == "currentYear") {
+  if (mutation.events?.key == "currentYear") {
     ikkStore.getData();
   }
-  if (mutation.events.key == "unit") {
+  if (mutation.events?.key == "unit") {
     ikkStore.getData();
   }
 });

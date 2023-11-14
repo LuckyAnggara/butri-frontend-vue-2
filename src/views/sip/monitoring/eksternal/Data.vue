@@ -88,11 +88,11 @@ async function submitORI() {
 }
 
 monitoringEksternalStore.$subscribe((mutation, state) => {
-  if (mutation.events.key == "currentYear") {
+  if (mutation.events?.key == "currentYear") {
     isUpdateBPK.value = false;
     callData();
   }
-  if (mutation.events.key == "currentMonth") {
+  if (mutation.events?.key == "currentMonth") {
     isUpdateBPK.value = false;
     callData();
   }

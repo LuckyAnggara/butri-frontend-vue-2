@@ -56,10 +56,10 @@ function destroy(item) {
 }
 
 mutasiStore.$subscribe((mutation, state) => {
-  if (mutation.events.key == "currentLimit") {
+  if (mutation.events?.key == "currentLimit") {
     mutasiStore.getData();
   }
-  if (mutation.events.key == "date") {
+  if (mutation.events?.key == "date") {
     mutasiStore.getData();
   }
 });

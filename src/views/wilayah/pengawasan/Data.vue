@@ -112,14 +112,14 @@ const nextPage = computed(() => {
 });
 
 pengawasanStore.$subscribe((mutation, state) => {
-  if (mutation.events.key == "currentLimit") {
+  if (mutation.events?.key == "currentLimit") {
     pengawasanStore.getData();
   }
 
-  if (mutation.events.key == "currentYear") {
+  if (mutation.events?.key == "currentYear") {
     pengawasanStore.getData();
   }
-  if (mutation.events.key == "currentMonth") {
+  if (mutation.events?.key == "currentMonth") {
     pengawasanStore.getData();
   }
 });

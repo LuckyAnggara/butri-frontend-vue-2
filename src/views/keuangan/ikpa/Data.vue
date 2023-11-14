@@ -47,10 +47,10 @@ function cancel() {
 }
 
 ikpaStore.$subscribe((mutation, state) => {
-  if (mutation.events.key == "currentYear") {
+  if (mutation.events?.key == "currentYear") {
     ikpaStore.getData();
   }
-  if (mutation.events.key == "currentMonth") {
+  if (mutation.events?.key == "currentMonth") {
     ikpaStore.getData();
   }
 });

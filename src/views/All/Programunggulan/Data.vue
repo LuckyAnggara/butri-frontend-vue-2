@@ -60,10 +60,10 @@ function destroy(item) {
 }
 
 capaianProgramUnggulanStore.$subscribe((mutation, state) => {
-  if (mutation.events.key == "currentLimit") {
+  if (mutation.events?.key == "currentLimit") {
     capaianProgramUnggulanStore.getData();
   }
-  if (mutation.events.key == "date") {
+  if (mutation.events?.key == "date") {
     capaianProgramUnggulanStore.getData();
   }
 });

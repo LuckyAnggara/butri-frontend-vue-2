@@ -89,13 +89,13 @@ async function update() {
 }
 
 persuratanStore.$subscribe((mutation, state) => {
-  if (mutation.events.key == "currentYear") {
+  if (mutation.events?.key == "currentYear") {
     persuratanStore.getData();
   }
-  if (mutation.events.key == "currentMonth") {
+  if (mutation.events?.key == "currentMonth") {
     persuratanStore.getData();
   }
-  if (mutation.events.key == "group") {
+  if (mutation.events?.key == "group") {
     persuratanStore.getData();
   }
 });

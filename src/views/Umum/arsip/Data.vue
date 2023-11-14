@@ -94,7 +94,7 @@ async function update() {
 }
 
 arsipStore.$subscribe((mutation, state) => {
-  if (mutation.events.key == "currentYear") {
+  if (mutation.events?.key == "currentYear") {
     arsipStore.getData();
   }
 });
