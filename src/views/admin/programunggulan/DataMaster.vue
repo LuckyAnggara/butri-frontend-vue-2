@@ -18,7 +18,7 @@ import {
 } from "@heroicons/vue/24/outline";
 import { useMainStore } from "@/stores/main";
 import BaseButton from "@/components/BaseButton.vue";
-import { useProgramUnggulanStore } from "@/stores/admin/programUnggulan";
+import { useProgramUnggulanStore } from "@/stores/admin/programunggulan";
 import NewModal from "./Modal.vue";
 
 const search = useDebounceFn(() => {

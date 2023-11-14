@@ -5,7 +5,7 @@ import { useAuthStore } from "../auth";
 import { useToast } from "vue-toastification";
 const toast = useToast();
 const authStore = useAuthStore();
-export const useProgramUnggulanStore = defineStore("programUnggulan", {
+export const useProgramUnggulanStore = defineStore("programunggulan", {
   state: () => ({
     responses: null,
     singleResponses: null,
