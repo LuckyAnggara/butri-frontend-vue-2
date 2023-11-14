@@ -19,7 +19,7 @@ const routes = [
     },
     path: "/login",
     name: "login",
-    component: () => import("@/views/Login/LoginView.vue"),
+    component: () => import("@/views/login/LoginView.vue"),
   },
   {
     meta: {
@@ -38,7 +38,7 @@ const routes = [
       if (auth.user.user?.unit?.id == 5)
         return import("@/views/keuangan/dashboard/Dashboard.vue");
       if (auth.user.user?.unit?.id == 6)
-        return import("@/views/Kepegawaian/Dashboard.vue");
+        return import("@/views/kepegawaian/Dashboard.vue");
       if (auth.user.user?.unit?.id == 7)
         return import("@/views/dashboard/Dashboard.vue");
       if (auth.user.user?.unit?.id > 7)
