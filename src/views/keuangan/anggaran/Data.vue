@@ -123,6 +123,7 @@ onMounted(() => {
       </div>
     </CardBox>
     <CardBox class="mb-6" has-table>
+      <h1 class="text-2xl p-4 font-semibold">Per Jenis Belanja</h1>
       <table>
         <thead>
           <tr>
@@ -161,14 +162,14 @@ onMounted(() => {
             </td>
           </tr>
           <template v-else>
-            <tr v-if="realisasiAnggaranStore.items.length == 0">
+            <tr v-if="realisasiAnggaranStore.perKegiatan.length == 0">
               <td colspan="9" class="text-center">
                 <span>Tidak ada data</span>
               </td>
             </tr>
             <tr
               v-else
-              v-for="item in realisasiAnggaranStore.items"
+              v-for="item in realisasiAnggaranStore.perKegiatan"
               :key="item.id"
             >
               <td>
@@ -218,15 +219,21 @@ onMounted(() => {
         <tfoot>
           <tr>
             <th scope="row" colspan="2">Total Pagu</th>
-            <th>{{ IDRCurrency.format(realisasiAnggaranStore.totalPagu) }}</th>
             <th>
-              {{ IDRCurrency.format(realisasiAnggaranStore.totalRealisasi) }}
+              {{ IDRCurrency.format(realisasiAnggaranStore.totalPaguKegiatan) }}
+            </th>
+            <th>
+              {{
+                IDRCurrency.format(
+                  realisasiAnggaranStore.totalRealisasiKegiatan
+                )
+              }}
             </th>
             <th>
               {{
                 (
-                  (realisasiAnggaranStore.totalRealisasi /
-                    realisasiAnggaranStore.totalPagu) *
+                  (realisasiAnggaranStore.totalRealisasiKegiatan /
+                    realisasiAnggaranStore.totalPaguKegiatan) *
                   100
                 ).toFixed(2)
               }}
@@ -234,20 +241,153 @@ onMounted(() => {
             </th>
             <th>
               {{
-                IDRCurrency.format(realisasiAnggaranStore.totalRealisasiSaatIni)
+                IDRCurrency.format(
+                  realisasiAnggaranStore.totalRealisasiSaatIniKegiatan
+                )
               }}
             </th>
             <th>
-              {{ IDRCurrency.format(realisasiAnggaranStore.totalDPSaatIni) }}
+              {{
+                IDRCurrency.format(
+                  realisasiAnggaranStore.totalDPSaatIniKegiatan
+                )
+              }}
             </th>
           </tr>
         </tfoot>
       </table>
-      <div
-        class="p-3 lg:px-6 border-t border-gray-100 dark:border-slate-800 flex justify-end"
-      ></div>
     </CardBox>
+    <CardBox class="mb-6" has-table>
+      <h1 class="text-2xl p-4 font-semibold">Per Jenis Belanja</h1>
+      <table>
+        <thead>
+          <tr>
+            <td rowspan="2" class="text-center">Kode</td>
+            <td rowspan="2" class="text-center">Kegiatan</td>
+            <td rowspan="2" class="text-center">DIPA Existing</td>
+            <td colspan="2" class="text-center">
+              Realisasi s/d
+              {{ getMonthName(realisasiAnggaranStore.filter.currentMonth - 1) }}
+            </td>
+            <td colspan="2" class="text-center">
+              {{ getMonthName(realisasiAnggaranStore.filter.currentMonth) }}
+            </td>
 
+            <td rowspan="2" class="text-center">Deviasi (%)</td>
+          </tr>
+          <tr>
+            <td class="text-center">Rp</td>
+            <td class="text-center">%</td>
+            <td class="text-center">Realisasi</td>
+            <td class="text-center">DP</td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-if="realisasiAnggaranStore.isLoading">
+            <td colspan="9" class="text-center">
+              <div
+                class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+                role="status"
+              >
+                <span
+                  class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]"
+                  >Loading...</span
+                >
+              </div>
+            </td>
+          </tr>
+          <template v-else>
+            <tr v-if="realisasiAnggaranStore.perBelanja.length == 0">
+              <td colspan="9" class="text-center">
+                <span>Tidak ada data</span>
+              </td>
+            </tr>
+            <tr
+              v-else
+              v-for="item in realisasiAnggaranStore.perBelanja"
+              :key="item.id"
+            >
+              <td>
+                {{ item.kode }}
+              </td>
+              <td>
+                {{ item.name }}
+              </td>
+              <td>
+                {{ IDRCurrency.format(item.pagu) }}
+              </td>
+              <td>
+                {{ IDRCurrency.format(item.total_realisasi) }}
+              </td>
+              <td>
+                {{ ((item.total_realisasi / item.pagu) * 100).toFixed(2) }}
+                %
+              </td>
+              <td>
+                <span v-if="!isInput">
+                  {{ IDRCurrency.format(item.realisasi_saat_ini) }}</span
+                >
+                <FormControl
+                  v-else
+                  :disabled="!isInput"
+                  v-model="item.realisasi_saat_ini"
+                  type="number"
+                />
+              </td>
+              <td>
+                <span v-if="!isInput">
+                  {{ IDRCurrency.format(item.dp_saat_ini) }}</span
+                >
+                <FormControl
+                  v-else
+                  :disabled="!isInput"
+                  v-model="item.dp_saat_ini"
+                  type="number"
+                />
+              </td>
+              <td>
+                {{ deviasi(item) }}
+              </td>
+            </tr>
+          </template>
+        </tbody>
+        <tfoot>
+          <tr>
+            <th scope="row" colspan="2">Total Pagu</th>
+            <th>
+              {{ IDRCurrency.format(realisasiAnggaranStore.totalPaguBelanja) }}
+            </th>
+            <th>
+              {{
+                IDRCurrency.format(realisasiAnggaranStore.totalRealisasiBelanja)
+              }}
+            </th>
+            <th>
+              {{
+                (
+                  (realisasiAnggaranStore.totalRealisasiBelanja /
+                    realisasiAnggaranStore.totalPaguBelanja) *
+                  100
+                ).toFixed(2)
+              }}
+              %
+            </th>
+            <th>
+              {{
+                IDRCurrency.format(
+                  realisasiAnggaranStore.totalRealisasiSaatIniBelanja
+                )
+              }}
+            </th>
+            <th>
+              {{
+                IDRCurrency.format(realisasiAnggaranStore.totalDPSaatIniBelanja)
+              }}
+            </th>
+          </tr>
+        </tfoot>
+      </table>
+    </CardBox>
     <!-- Modal -->
   </SectionMain>
 </template>

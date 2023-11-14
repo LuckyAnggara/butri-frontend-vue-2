@@ -46,6 +46,39 @@ export const useMonitoringInternalStore = defineStore("monitoringInternal", {
       }
       return false;
     },
+    totalTemuanJumlah(state) {
+      const total = state.items.reduce(
+        (acc, item) => acc + item.temuan_jumlah,
+        0
+      );
+      return total;
+    },
+    totalTemuanNominal(state) {
+      const total = state.items.reduce(
+        (acc, item) => acc + item.temuan_nominal,
+        0
+      );
+      return total;
+    },
+    totalTlJumlah(state) {
+      const total = state.items.reduce((acc, item) => acc + item.tl_jumlah, 0);
+      return total;
+    },
+    totalTlNominal(state) {
+      const total = state.items.reduce((acc, item) => acc + item.tl_nominal, 0);
+      return total;
+    },
+    totalBtlJumlah(state) {
+      const total = state.items.reduce((acc, item) => acc + item.btl_jumlah, 0);
+      return total;
+    },
+    totalBtlNominal(state) {
+      const total = state.items.reduce(
+        (acc, item) => acc + item.btl_nominal,
+        0
+      );
+      return total;
+    },
   },
   actions: {
     async getData(page = "") {
@@ -54,7 +87,7 @@ export const useMonitoringInternalStore = defineStore("monitoringInternal", {
         const response = await axiosIns.get(
           `/monitoring-temuan-internal?tahun=${this.filter.currentYear}&bulan=${this.filter.currentMonth}`
         );
-        this.responsesBPK = response.data;
+        this.responses = response.data;
       } catch (error) {
         alert(error.message);
       } finally {

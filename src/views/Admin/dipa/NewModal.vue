@@ -53,7 +53,10 @@
               </option>
             </select>
           </FormField>
-          <FormField label="Kode*">
+          <FormField
+            label="Kode*"
+            v-if="dipaStore.singleResponses.jenis == 'kegiatan'"
+          >
             <FormControl
               v-model="dipaStore.singleResponses.kode"
               :disabled="dipaStore.isStoreLoading"
@@ -67,7 +70,10 @@
               required
             />
           </FormField>
-          <FormField label="Unit">
+          <FormField
+            label="Unit"
+            v-if="dipaStore.singleResponses.jenis == 'kegiatan'"
+          >
             <select
               :disabled="dipaStore.isStoreLoading"
               v-model="dipaStore.singleResponses.group_id"
@@ -123,7 +129,17 @@
               </option>
             </select>
           </FormField>
-          <FormField label="Kode*">
+          <FormField label="Tahun">
+            <select
+              :disabled="dipaStore.isStoreLoading"
+              v-model="dipaStore.form.jenis"
+              class="h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
+            >
+              <option value="kegiatan">Kegiatan</option>
+              <option value="belanja">Belanja</option>
+            </select>
+          </FormField>
+          <FormField label="Kode*" v-if="dipaStore.form.jenis == 'kegiatan'">
             <FormControl
               v-model="dipaStore.form.kode"
               :disabled="dipaStore.isStoreLoading"
@@ -137,7 +153,7 @@
               required
             />
           </FormField>
-          <FormField label="Unit">
+          <FormField label="Unit" v-if="dipaStore.form.jenis == 'kegiatan'">
             <select
               :disabled="dipaStore.isStoreLoading"
               v-model="dipaStore.form.group_id"

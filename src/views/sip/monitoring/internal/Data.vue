@@ -271,6 +271,31 @@ onMounted(() => {
             </tr>
           </template>
         </tbody>
+        <tfoot>
+          <tr>
+            <th scope="row">Total</th>
+            <th>
+              {{ monitoringInternalStore.totalTemuanJumlah }}
+            </th>
+            <th>
+              {{
+                IDRCurrency.format(monitoringInternalStore.totalTemuanNominal)
+              }}
+            </th>
+            <th>
+              {{ monitoringInternalStore.totalTlJumlah }}
+            </th>
+            <th>
+              {{ IDRCurrency.format(monitoringInternalStore.totalTlNominal) }}
+            </th>
+            <th>
+              {{ monitoringInternalStore.totalBtlJumlah }}
+            </th>
+            <th>
+              {{ IDRCurrency.format(monitoringInternalStore.totalBtlNominal) }}
+            </th>
+          </tr>
+        </tfoot>
       </table>
       <div
         class="p-3 lg:px-6 border-t border-gray-100 dark:border-slate-800 flex justify-end"

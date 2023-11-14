@@ -77,30 +77,44 @@ onUnmounted(() => {
       <CardBox class="w-full">
         <form @submit.prevent="submit()">
           <FormField label="Nama Kegiatan">
-            <FormControl
-              type="textarea"
+            <textarea
+              rows="2"
               :disabled="kegiatanStore.isStoreLoading"
+              class="px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
+              style="white-space: pre-wrap"
               v-model="kegiatanStore.form.name"
-              required
-            />
+            ></textarea>
           </FormField>
 
-          <FormField label="Jenis Kegiatan">
-            <select
-              :disabled="kegiatanStore.isStoreLoading"
-              required
-              v-model="kegiatanStore.form.jenis_kegiatan"
-              class="border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
-            >
-              <option
-                v-for="option in mainStore.jenisKegiatanOptions"
-                :key="option"
-                :value="option"
+          <div class="flex space-x-4">
+            <FormField label="Jenis Kegiatan" class="w-1/2">
+              <select
+                :disabled="kegiatanStore.isStoreLoading"
+                required
+                v-model="kegiatanStore.form.jenis_kegiatan"
+                class="w-full h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded dark:placeholder-gray-400 bg-white dark:bg-slate-800"
               >
-                {{ option }}
-              </option>
-            </select>
-          </FormField>
+                <option
+                  v-for="option in mainStore.jenisKegiatanOptions"
+                  :key="option"
+                  :value="option"
+                >
+                  {{ option }}
+                </option>
+              </select>
+            </FormField>
+
+            <FormField label="Tanggal Kegiatan" class="w-1/2">
+              <vue-tailwind-datepicker
+                :disabled="kegiatanStore.isStoreLoading"
+                required
+                placeholder="Tanggal dari mulai s/d berakhir"
+                v-model="kegiatanStore.form.waktu"
+                :formatter="formatter"
+                input-classes="w-full h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded  dark:placeholder-gray-400 bg-white dark:bg-slate-800"
+              />
+            </FormField>
+          </div>
 
           <FormField label="Tempat Kegiatan">
             <FormControl
@@ -110,31 +124,24 @@ onUnmounted(() => {
             />
           </FormField>
 
-          <FormField label="Tanggal Kegiatan">
-            <vue-tailwind-datepicker
-              :disabled="kegiatanStore.isStoreLoading"
-              required
-              placeholder="Tanggal dari mulai s/d berakhir"
-              v-model="kegiatanStore.form.waktu"
-              :formatter="formatter"
-              input-classes="h-12 border  px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
-            />
-          </FormField>
-
           <FormField label="Output">
-            <FormControl
-              :type="'textarea'"
+            <textarea
+              rows="5"
               :disabled="kegiatanStore.isStoreLoading"
+              class="px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
+              style="white-space: pre-wrap"
               v-model="kegiatanStore.form.output"
-            />
+            ></textarea>
           </FormField>
 
           <FormField label="Catatan">
-            <FormControl
-              :type="'textarea'"
+            <textarea
+              rows="5"
               :disabled="kegiatanStore.isStoreLoading"
+              class="px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
+              style="white-space: pre-wrap"
               v-model="kegiatanStore.form.notes"
-            />
+            ></textarea>
           </FormField>
 
           <div class="flex flex-col space-y-4">

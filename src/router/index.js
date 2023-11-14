@@ -31,6 +31,8 @@ const routes = [
     name: "dashboard",
     component: () => {
       const auth = useAuthStore();
+      if (auth.user.user?.unit?.id == 3)
+        return import("@/views/dashboard/Dashboard.vue");
       if (auth.user.user?.unit?.id == 4)
         return import("@/views/program/Dashboard.vue");
       if (auth.user.user?.unit?.id == 5)
@@ -38,7 +40,7 @@ const routes = [
       if (auth.user.user?.unit?.id == 6)
         return import("@/views/kepegawaian/Dashboard.vue");
       if (auth.user.user?.unit?.id == 7)
-        return import("@/views/wilayah/Dashboard.vue");
+        return import("@/views/dashboard/Dashboard.vue");
       if (auth.user.user?.unit?.id > 7)
         return import("@/views/wilayah/Dashboard.vue");
     },

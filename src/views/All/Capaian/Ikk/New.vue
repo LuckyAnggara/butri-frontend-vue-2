@@ -133,39 +133,33 @@ onUnmounted(() => {
           </FormField>
 
           <FormField label="Analisa">
-            <FormControl
-              type="textarea"
-              :disabled="capaianIKKStore.isStoreLoading"
+            <textarea
+              :disabled="capaianIKUStore.isStoreLoading"
+              rows="5"
+              class="px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
+              style="white-space: pre-wrap"
               v-model="capaianIKKStore.form.analisa"
-              required
-            />
-            <!-- <QuillEditor
-              class="h-24"
-              toolbar="full"
-              :contentType="'html'"
-              :options="quilOptions"
-              v-model:content="capaianIKKStore.form.analisa"
-            /> -->
+            ></textarea>
           </FormField>
 
           <FormField label="Kegiatan">
-            <!-- <QuillEditor
-              class="h-24"
-              toolbar="full"
-              :contentType="'html'"
-              :options="quilOptions"
-              v-model:content="capaianIKKStore.form.kegiatan"
-            /> -->
+            <textarea
+              :disabled="capaianIKUStore.isStoreLoading"
+              rows="5"
+              class="px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
+              style="white-space: pre-wrap"
+              v-model="capaianIKKStore.form.kegiatan"
+            ></textarea>
           </FormField>
 
           <FormField label="Kendala / Hambatan">
-            <QuillEditor
-              class="h-24"
-              toolbar="full"
-              :contentType="'html'"
-              :options="quilOptions"
-              v-model:content="capaianIKKStore.form.kendala"
-            />
+            <textarea
+              :disabled="capaianIKUStore.isStoreLoading"
+              rows="5"
+              class="px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
+              style="white-space: pre-wrap"
+              v-model="capaianIKKStore.form.kendala"
+            ></textarea>
           </FormField>
 
           <!-- <FormField label="Hambatan">

@@ -26,26 +26,63 @@ export const useRealisasiAnggaranStore = defineStore("realisasiAnggaran", {
     items(state) {
       return state.responses ?? [];
     },
-    totalPagu(state) {
-      const totalPagu = state.items.reduce((acc, item) => acc + item.pagu, 0);
+    perKegiatan(state) {
+      return state.items.filter((x) => x.jenis == "kegiatan");
+    },
+    perBelanja(state) {
+      return state.items.filter((x) => x.jenis == "belanja");
+    },
+    totalPaguKegiatan(state) {
+      const totalPagu = state.perKegiatan.reduce(
+        (acc, item) => acc + item.pagu,
+        0
+      );
       return totalPagu;
     },
-    totalRealisasi(state) {
-      const totalRealisasi = state.items.reduce(
+    totalPaguBelanja(state) {
+      const totalPagu = state.perBelanja.reduce(
+        (acc, item) => acc + item.pagu,
+        0
+      );
+      return totalPagu;
+    },
+    totalRealisasiKegiatan(state) {
+      const totalRealisasi = state.perKegiatan.reduce(
         (acc, item) => acc + item.total_realisasi,
         0
       );
       return totalRealisasi;
     },
-    totalRealisasiSaatIni(state) {
-      const totalRealisasi = state.items.reduce(
+    totalRealisasiSaatIniKegiatan(state) {
+      const totalRealisasi = state.perKegiatan.reduce(
         (acc, item) => acc + item.realisasi_saat_ini,
         0
       );
       return totalRealisasi;
     },
-    totalDPSaatIni(state) {
-      const totalRealisasi = state.items.reduce(
+    totalDPSaatIniKegiatan(state) {
+      const totalRealisasi = state.perKegiatan.reduce(
+        (acc, item) => acc + item.dp_saat_ini,
+        0
+      );
+      return totalRealisasi;
+    },
+    totalRealisasiBelanja(state) {
+      const totalRealisasi = state.perBelanja.reduce(
+        (acc, item) => acc + item.total_realisasi,
+        0
+      );
+      return totalRealisasi;
+    },
+    totalRealisasiSaatIniBelanja(state) {
+      const totalRealisasi = state.perBelanja.reduce(
+        (acc, item) => acc + item.realisasi_saat_ini,
+        0
+      );
+      return totalRealisasi;
+    },
+    totalDPSaatIniBelanja(state) {
+      const totalRealisasi = state.perBelanja.reduce(
         (acc, item) => acc + item.dp_saat_ini,
         0
       );

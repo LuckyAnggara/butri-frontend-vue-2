@@ -11,11 +11,16 @@ export const useDashboardProgramStore = defineStore("dashboardProgram", {
     filter: {
       currentMonth: new Date().getMonth() + 1,
       currentYear: new Date().getFullYear(),
+      jenisAnggaran: "kegiatan",
     },
   }),
   getters: {
     dataRealisasi(state) {
-      return state.responses.dataRealisasi ?? [];
+      return (
+        state.responses.dataRealisasi.filter(
+          (x) => x.jenis == state.filter.jenisAnggaran
+        ) ?? []
+      );
     },
     dataKepegawaian(state) {
       return state.responses.dataKepegawaian ?? [];

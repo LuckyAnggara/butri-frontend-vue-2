@@ -79,7 +79,9 @@ async function submit() {
 }
 
 async function update() {
+  persuratanStore.singleResponses.created_by = authStore.user.user.id;
   const result = await persuratanStore.update();
+
   if (result) {
     showNewModal.value = false;
     persuratanStore.getData();
@@ -189,13 +191,13 @@ onMounted(() => {
             <th>Bulan</th>
             <th>Surat Masuk</th>
             <th>Surat Keluar</th>
-            <th>Unit</th>
+            <!-- <th>Unit</th> -->
             <th />
           </tr>
         </thead>
         <tbody>
           <tr v-if="persuratanStore.isLoading">
-            <td colspan="5" class="text-center">
+            <td colspan="4" class="text-center">
               <div
                 class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
                 role="status"
@@ -209,7 +211,7 @@ onMounted(() => {
           </tr>
           <template v-else>
             <tr v-if="persuratanStore.items.length == 0">
-              <td colspan="5" class="text-center">
+              <td colspan="4" class="text-center">
                 <span>Tidak ada data</span>
               </td>
             </tr>
@@ -223,9 +225,9 @@ onMounted(() => {
               <td>
                 {{ item.surat_keluar }}
               </td>
-              <td>
+              <!-- <td>
                 {{ item.group.name }}
-              </td>
+              </td> -->
               <td class="before:hidden lg:w-1 whitespace-nowrap">
                 <div>
                   <Menu as="div" class="relative inline-block text-left">
@@ -297,6 +299,13 @@ onMounted(() => {
             </tr>
           </template>
         </tbody>
+        <tfoot>
+          <tr>
+            <th scope="row">Total</th>
+            <th>{{ persuratanStore.totalSuratMasuk }}</th>
+            <th>{{ persuratanStore.totalSuratKeluar }}</th>
+          </tr>
+        </tfoot>
       </table>
       <div
         class="p-3 lg:px-6 border-t border-gray-100 dark:border-slate-800 flex justify-end"

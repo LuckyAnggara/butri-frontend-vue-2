@@ -20,7 +20,7 @@ export const usePersuratanStore = defineStore("persuratan", {
       bulan: new Date().getMonth() + 1,
       surat_masuk: "",
       surat_keluar: "",
-      group_id: authStore.user.user.unit.group_id,
+      // group_id: authStore.user.user.unit.group_id,
       created_by: authStore.user.user.id,
     },
     filter: {
@@ -33,6 +33,20 @@ export const usePersuratanStore = defineStore("persuratan", {
   getters: {
     items(state) {
       return state.responses ?? [];
+    },
+    totalSuratMasuk(state) {
+      const totalMasuk = state.items.reduce(
+        (acc, item) => acc + item.surat_masuk,
+        0
+      );
+      return totalMasuk;
+    },
+    totalSuratKeluar(state) {
+      const totalKeluar = state.items.reduce(
+        (acc, item) => acc + item.surat_keluar,
+        0
+      );
+      return totalKeluar;
     },
     unitQuery(state) {
       if (state.filter.group == 0) {
@@ -117,10 +131,9 @@ export const usePersuratanStore = defineStore("persuratan", {
     async update() {
       this.isUpdateLoading = true;
       try {
-        const response = await axiosIns.put(
-          `/pengelolaan-persuratan/${this.singleResponses.id}`,
-          this.singleResponses
-        );
+        const response = await axiosIns.post(`/pengelolaan-persuratan`, {
+          ...this.singleResponses,
+        });
         if (response.status == 200) {
           toast.success(response.data.message, {
             timeout: 2000,
@@ -139,6 +152,7 @@ export const usePersuratanStore = defineStore("persuratan", {
     },
     clearForm() {
       this.form = {
+        bulan: new Date().getMonth() + 1,
         tahun: new Date().getFullYear(),
         name: "",
         target: "",

@@ -52,6 +52,7 @@ const nextPage = computed(() => {
   return "&page=" + (dipaStore.currentPage + 1);
 });
 function toNew() {
+  updateData.value = false;
   showNewModal.value = true;
 }
 function destroy(item) {
@@ -143,6 +144,7 @@ onMounted(() => {
       </div>
     </CardBox>
     <CardBox class="mb-6" has-table>
+      <h1 class="text-2xl p-4 font-semibold">Per Jenis Kegiatan</h1>
       <table>
         <thead>
           <tr>
@@ -155,7 +157,7 @@ onMounted(() => {
         </thead>
         <tbody>
           <tr v-if="dipaStore.isLoading">
-            <td colspan="4" class="text-center">
+            <td colspan="5" class="text-center">
               <div
                 class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
                 role="status"
@@ -168,12 +170,16 @@ onMounted(() => {
             </td>
           </tr>
           <template v-else>
-            <tr v-if="dipaStore.items.length == 0">
-              <td colspan="4" class="text-center">
+            <tr v-if="dipaStore.perKegiatan.length == 0">
+              <td colspan="5" class="text-center">
                 <span>Tidak ada data</span>
               </td>
             </tr>
-            <tr v-else v-for="(item, index) in dipaStore.items" :key="item.id">
+            <tr
+              v-else
+              v-for="(item, index) in dipaStore.perKegiatan"
+              :key="item.id"
+            >
               <td>
                 {{ item.kode }}
               </td>
@@ -259,51 +265,140 @@ onMounted(() => {
         <tfoot>
           <tr>
             <th scope="row" colspan="3">Total Pagu</th>
-            <th>{{ IDRCurrency.format(dipaStore.totalPagu) }}</th>
+            <th>{{ IDRCurrency.format(dipaStore.totalPaguKegiatan) }}</th>
             <td></td>
           </tr>
         </tfoot>
       </table>
-      <div
-        class="p-3 lg:px-6 border-t border-gray-100 dark:border-slate-800 flex justify-end"
-      >
-        <ul class="inline-flex items-stretch -space-x-px">
-          <li>
-            <a
-              @click="
-                dipaStore.currentPage == 1
-                  ? ''
-                  : dipaStore.getData(previousPage)
-              "
-              :disabled="dipaStore.currentPage == 1 ? true : false"
-              :class="
-                dipaStore.currentPage == 1
-                  ? 'cursor-not-allowed'
-                  : 'cursor-pointer dark:hover:bg-blue-700 dark:hover:text-white hover:bg-blue-100 hover:text-gray-700'
-              "
-              class="w-32 px-3 py-2 ml-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
-              >Previous</a
-            >
-          </li>
+    </CardBox>
 
-          <li>
-            <a
-              @click="
-                dipaStore.lastPage == dipaStore.currentPage
-                  ? ''
-                  : dipaStore.getData(nextPage)
-              "
-              :class="
-                dipaStore.lastPage == dipaStore.currentPage
-                  ? 'cursor-not-allowed'
-                  : 'cursor-pointer dark:hover:bg-blue-700 dark:hover:text-white hover:bg-blue-100 hover:text-gray-700'
-              "
-              class="w-32 px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
-              >Next {{
-            }}</a>
-          </li>
-        </ul>
-      </div>
+    <CardBox class="mb-6" has-table>
+      <h1 class="text-2xl p-4 font-semibold">Per Jenis Belanja</h1>
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Kegiatan</th>
+            <!-- <th>Unit</th> -->
+            <th>Pagu</th>
+            <td></td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-if="dipaStore.isLoading">
+            <td colspan="4" class="text-center">
+              <div
+                class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+                role="status"
+              >
+                <span
+                  class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]"
+                  >Loading...</span
+                >
+              </div>
+            </td>
+          </tr>
+          <template v-else>
+            <tr v-if="dipaStore.perBelanja.length == 0">
+              <td colspan="4" class="text-center">
+                <span>Tidak ada data</span>
+              </td>
+            </tr>
+            <tr
+              v-else
+              v-for="(item, index) in dipaStore.perBelanja"
+              :key="item.id"
+            >
+              <td>
+                {{ ++index }}
+              </td>
+              <td>
+                {{ item.name }}
+              </td>
+              <!-- <td>
+                {{ item.group.name }}
+              </td> -->
+              <td>
+                {{ IDRCurrency.format(item.pagu) }}
+              </td>
+              <td class="before:hidden lg:w-1 whitespace-nowrap">
+                <div>
+                  <Menu as="div" class="relative inline-block text-left">
+                    <div>
+                      <MenuButton
+                        :disabled="
+                          dipaStore.isDestroyLoading && indexDestroy == item.id
+                        "
+                        :class="
+                          dipaStore.isDestroyLoading && indexDestroy == item.id
+                            ? ''
+                            : 'hover:scale-125 ease-in-out duration-300'
+                        "
+                        class="flex w-full rounded-md font-medium text-black dark:text-white"
+                      >
+                        <ArrowPathIcon
+                          v-if="
+                            dipaStore.isDestroyLoading &&
+                            indexDestroy == item.id
+                          "
+                          class="animate-spin h-5 w-5 text-black dark:text-white"
+                          aria-hidden="true"
+                        />
+                        <EllipsisVerticalIcon
+                          v-else
+                          class="h-5 w-5 text-black dark:text-white"
+                          aria-hidden="true"
+                        />
+                      </MenuButton>
+                    </div>
+
+                    <transition
+                      enter-active-class="transition duration-100 ease-out"
+                      enter-from-class="transform scale-95 opacity-0"
+                      enter-to-class="transform scale-100 opacity-100"
+                      leave-active-class="transition duration-75 ease-in"
+                      leave-from-class="transform scale-100 opacity-100"
+                      leave-to-class="transform scale-95 opacity-0"
+                    >
+                      <MenuItems
+                        class="z-50 py-1 absolute right-0 mt-2 w-40 origin-top-right divide-y divide-gray-100 rounded-md bg-white dark:bg-gray-800 dark:text-gray-100 shadow-lg ring-1 ring-black dark:ring-gray-700 ring-opacity-5 focus:outline-none"
+                      >
+                        <div class="px-2 py-1">
+                          <MenuItem
+                            v-for="menu in itemMenu"
+                            :key="menu.label"
+                            v-slot="{ active }"
+                          >
+                            <button
+                              @click="menu.function(item)"
+                              :class="[
+                                active
+                                  ? 'bg-blue-500 text-white'
+                                  : 'text-gray-900 dark:text-white',
+                                'group flex w-full items-center rounded-md px-2 py-2 text-sm',
+                              ]"
+                            >
+                              <component :is="menu.icon" class="w-5 h-5 mr-3" />
+                              {{ menu.label }}
+                            </button>
+                          </MenuItem>
+                        </div>
+                      </MenuItems>
+                    </transition>
+                  </Menu>
+                </div>
+              </td>
+            </tr>
+          </template>
+        </tbody>
+        <tfoot>
+          <tr>
+            <th scope="row" colspan="2">Total Pagu</th>
+            <th>{{ IDRCurrency.format(dipaStore.totalPaguBelanja) }}</th>
+            <td></td>
+          </tr>
+        </tfoot>
+      </table>
     </CardBox>
 
     <!-- Modal -->

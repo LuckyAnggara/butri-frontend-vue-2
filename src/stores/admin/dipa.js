@@ -16,6 +16,7 @@ export const useDipaStore = defineStore("dipa", {
     isUpdateLoading: false,
     isDestroyLoading: false,
     form: {
+      jenis: "kegiatan",
       kode: null,
       name: null,
       pagu: null,
@@ -34,8 +35,24 @@ export const useDipaStore = defineStore("dipa", {
     items(state) {
       return state.responses ?? [];
     },
-    totalPagu(state) {
-      const totalPagu = state.items.reduce((acc, item) => acc + item.pagu, 0);
+    perKegiatan(state) {
+      return state.items.filter((x) => x.jenis == "kegiatan");
+    },
+    perBelanja(state) {
+      return state.items.filter((x) => x.jenis == "belanja");
+    },
+    totalPaguKegiatan(state) {
+      const totalPagu = state.perKegiatan.reduce(
+        (acc, item) => acc + item.pagu,
+        0
+      );
+      return totalPagu;
+    },
+    totalPaguBelanja(state) {
+      const totalPagu = state.perBelanja.reduce(
+        (acc, item) => acc + item.pagu,
+        0
+      );
       return totalPagu;
     },
     searchQuery(state) {

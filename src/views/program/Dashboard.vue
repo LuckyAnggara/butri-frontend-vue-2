@@ -88,12 +88,29 @@ const route = useRoute();
       </div>
       <div>
         <CardBox class="mb-6 shadow-md" has-table>
-          <h1 class="text-4xl mb-4 p-4">Anggaran</h1>
-
+          <h1 class="text-4xl mb-4 pt-4 pl-4">Anggaran</h1>
+          <div class="w-2/12 p-4">
+            <FormField label="Jenis">
+              <select
+                :disabled="dashboardStore.isStoreLoading"
+                v-model="dashboardStore.filter.jenisAnggaran"
+                class="h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
+              >
+                <option value="kegiatan">Kegiatan</option>
+                <option value="belanja">Belanja</option>
+              </select>
+            </FormField>
+          </div>
           <table>
             <thead>
               <tr>
-                <td rowspan="2" class="text-center">Kode</td>
+                <td
+                  rowspan="2"
+                  class="text-center"
+                  v-if="dashboardStore.filter.jenisAnggaran == 'kegiatan'"
+                >
+                  Kode
+                </td>
                 <td rowspan="2" class="text-center">Kegiatan</td>
                 <td rowspan="2" class="text-center">DIPA Existing</td>
                 <td colspan="2" class="text-center">
@@ -104,7 +121,12 @@ const route = useRoute();
             </thead>
             <tbody>
               <tr v-if="dashboardStore.isLoading">
-                <td colspan="9" class="text-center">
+                <td
+                  :colspan="
+                    dashboardStore.filter.jenisAnggaran == 'kegiatan' ? 9 : 8
+                  "
+                  class="text-center"
+                >
                   <div
                     class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
                     role="status"
@@ -118,7 +140,12 @@ const route = useRoute();
               </tr>
               <template v-else>
                 <tr v-if="dashboardStore.dataRealisasi.length == 0">
-                  <td colspan="9" class="text-center">
+                  <td
+                    :colspan="
+                      dashboardStore.filter.jenisAnggaran == 'kegiatan' ? 9 : 8
+                    "
+                    class="text-center"
+                  >
                     <span>Tidak ada data</span>
                   </td>
                 </tr>
@@ -127,7 +154,7 @@ const route = useRoute();
                   v-for="item in dashboardStore.dataRealisasi"
                   :key="item.id"
                 >
-                  <td>
+                  <td v-if="dashboardStore.filter.jenisAnggaran == 'kegiatan'">
                     {{ item.kode }}
                   </td>
                   <td>
@@ -150,7 +177,14 @@ const route = useRoute();
             </tbody>
             <tfoot>
               <tr>
-                <th scope="row" colspan="2">Total Pagu</th>
+                <th
+                  scope="row"
+                  :colspan="
+                    dashboardStore.filter.jenisAnggaran == 'kegiatan' ? 2 : 1
+                  "
+                >
+                  Total Pagu
+                </th>
                 <th>
                   {{ IDRCurrency.format(dashboardStore.totalPagu) }}
                 </th>
