@@ -27,7 +27,7 @@ export const all = [
     },
     path: "/capaian/program-unggulan/list",
     name: "list-capaian-program-unggulan",
-    component: () => import("@/views/all/Programunggulan/Data.vue"),
+    component: () => import("@/views/all/programunggulan/Data.vue"),
   },
   {
     meta: {
