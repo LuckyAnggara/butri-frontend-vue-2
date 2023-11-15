@@ -330,7 +330,7 @@ const route = useRoute();
             </thead>
             <tbody>
               <tr v-if="dashboardStore.isLoading">
-                <td colspan="9" class="text-center">
+                <td colspan="4" class="text-center">
                   <div
                     class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
                     role="status"
@@ -343,42 +343,27 @@ const route = useRoute();
                 </td>
               </tr>
               <template v-else>
-                <tr v-if="dashboardStore.dataKinerjaKeuangan.length == 0">
-                  <td colspan="9" class="text-center">
+                <tr v-if="dashboardStore.dataIkpa.length == 0">
+                  <td colspan="4" class="text-center">
                     <span>Tidak ada data</span>
                   </td>
                 </tr>
                 <tr
                   v-else
-                  v-for="item in dashboardStore.dataKinerjaKeuangan"
+                  v-for="item in dashboardStore.dataIkpa"
                   :key="item.bulan"
                 >
                   <td>
                     {{ getMonthName(item.bulan) }}
                   </td>
                   <td>
-                    {{ item.capaian_sasaran_program }}
+                    {{ item.kualitas_perencanaan_anggaran.toFixed(2) }}
                   </td>
                   <td>
-                    {{ item.penyerapan }}
+                    {{ item.kualitas_pelaksanaan_anggaran.toFixed(2) }}
                   </td>
                   <td>
-                    {{ item.konsistensi }}
-                  </td>
-                  <td>
-                    {{ item.capaian_output_program }}
-                  </td>
-                  <td>
-                    {{ item.efisiensi }}
-                  </td>
-                  <td>
-                    {{ item.nilai_efisiensi }}
-                  </td>
-                  <td>
-                    {{ item.rata_nka_satker }}
-                  </td>
-                  <td>
-                    {{ nilaiKinerja(item) }}
+                    {{ item.kualitas_hasil.toFixed(2) }}
                   </td>
                 </tr>
               </template>
