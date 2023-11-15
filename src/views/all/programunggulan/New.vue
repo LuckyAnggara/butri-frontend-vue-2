@@ -200,29 +200,27 @@ onUnmounted(() => {
           </FormField>
 
           <FormField label="Output">
-            <QuillEditor
-              class="h-24"
-              toolbar="full"
-              :readOnly="
+            <textarea
+              :disabled="
                 capaianProgramUnggulanStore.isStoreLoading || dariKegiatan
               "
-              :contentType="'html'"
-              :options="quilOptions"
-              v-model:content="capaianProgramUnggulanStore.form.output"
-            />
+              rows="5"
+              class="px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
+              style="white-space: pre-wrap"
+              v-model="capaianProgramUnggulanStore.form.output"
+            ></textarea>
           </FormField>
 
           <FormField label="Catatan">
-            <QuillEditor
-              class="h-24"
-              toolbar="full"
-              :readOnly="
+            <textarea
+              :disabled="
                 capaianProgramUnggulanStore.isStoreLoading || dariKegiatan
               "
-              :contentType="'html'"
-              :options="quilOptions"
-              v-model:content="capaianProgramUnggulanStore.form.hambatan"
-            />
+              rows="5"
+              class="px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
+              style="white-space: pre-wrap"
+              v-model="capaianProgramUnggulanStore.form.hambatan"
+            ></textarea>
           </FormField>
           <div class="flex flex-col space-y-4">
             <BaseButton
