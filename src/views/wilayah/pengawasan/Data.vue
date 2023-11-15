@@ -103,6 +103,14 @@ async function update() {
   }
 }
 
+async function updateLHP() {
+  const result = await pengawasanStore.update();
+  if (result) {
+    showDetailModal.value = false;
+    pengawasanStore.getData();
+  }
+}
+
 const previousPage = computed(() => {
   return "&page=" + (pengawasanStore.currentPage - 1);
 });
@@ -203,6 +211,7 @@ onMounted(() => {
             <td class="text-center">Nama Kegiatan</td>
             <td class="text-center">Surat Perintah</td>
             <td class="text-center">TMT & Lokasi Kegiatan</td>
+            <td class="text-center">LHP</td>
             <td class="text-center"></td>
           </tr>
         </thead>
@@ -247,6 +256,9 @@ onMounted(() => {
               <td>
                 {{ item.location }} <br />
                 {{ item.start_at }} - {{ item.end_at }}
+              </td>
+              <td>
+                {{ item.lhp ?? "-" }}
               </td>
               <td class="before:hidden lg:w-1 whitespace-nowrap">
                 <div>
@@ -378,7 +390,11 @@ onMounted(() => {
 
     <Teleport to="body">
       <!-- use the modal component, pass in the prop -->
-      <DetailModal :show="showDetailModal" @close="closeDetail()">
+      <DetailModal
+        :show="showDetailModal"
+        @close="closeDetail()"
+        @submitUpdate="updateLHP()"
+      >
       </DetailModal>
     </Teleport>
   </SectionMain>

@@ -187,14 +187,13 @@
           </div>
           <div v-else>
             <FormField label="Output / Keterangan">
-              <QuillEditor
-                style="height: 375px"
-                class="h-24"
-                toolbar="full"
-                :contentType="'html'"
-                :options="quilOptions"
-                v-model:content="pengawasanStore.singleResponses.output"
-              />
+              <textarea
+                :disabled="pengawasanStore.isStoreLoading"
+                rows="10"
+                class="px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
+                style="white-space: pre-wrap"
+                v-model="pengawasanStore.singleResponses.output"
+              ></textarea>
             </FormField>
           </div>
           <BaseDivider />
@@ -344,14 +343,13 @@
           </div>
           <div v-else>
             <FormField label="Output / Keterangan">
-              <QuillEditor
-                style="height: 375px"
-                class="h-24"
-                toolbar="full"
-                :contentType="'html'"
-                :options="quilOptions"
-                v-model:content="pengawasanStore.form.output"
-              />
+              <textarea
+                :disabled="pengawasanStore.isStoreLoading"
+                rows="10"
+                class="px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
+                style="white-space: pre-wrap"
+                v-model="pengawasanStore.form.output"
+              ></textarea>
             </FormField>
           </div>
           <BaseDivider />

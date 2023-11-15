@@ -31,6 +31,9 @@ export const useDashboardProgramStore = defineStore("dashboardProgram", {
     dataCapaianIku(state) {
       return state.responses.dataCapaianIku ?? [];
     },
+    dataKinerjaKeuangan(state) {
+      return state.responses.dataKinerjaKeuangan ?? [];
+    },
     totalPagu(state) {
       const totalPagu = state.dataRealisasi.reduce(
         (acc, item) => acc + item.pagu,

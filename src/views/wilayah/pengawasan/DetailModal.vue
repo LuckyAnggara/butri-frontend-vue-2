@@ -41,18 +41,41 @@
         <div>
           <!-- {{ pengawasanStore.singleResponses.output }} -->
           <FormField label="">
-            <QuillEditor
-              :enable="false"
-              :readOnly="true"
-              style="height: 375px"
-              class="h-24"
-              toolbar="#my-toolbar"
-              :contentType="'html'"
-              v-model:content="pengawasanStore.singleResponses.output"
-            >
-              <template #toolbar> <div id="my-toolbar"></div> </template
-            ></QuillEditor>
+            <FormControl
+              type="textarea"
+              required
+              v-model="pengawasanStore.singleResponses.output"
+              :disabled="true"
+            />
           </FormField>
+        </div>
+        <hr class="my-4" />
+        <h1 class="text-bold text-xl my-4">Update Data</h1>
+        <div>
+          <div class="relative mb-6">
+            <label class="block font-bold">Nomor dan Tanggal LHP</label>
+            <input
+              required
+              type="text"
+              class="h-12 border mt-4 px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
+              v-model="pengawasanStore.singleResponses.lhp"
+              placeholder="Isikan dengan nomor lhp dan tanggal LHP"
+            />
+          </div>
+        </div>
+
+        <div class="flex justify-start space-x-3 items-center">
+          <BaseButton
+            :disabled="pengawasanStore.isUpdateLoading"
+            type="button"
+            @click="updateLHP()"
+            color="info"
+            ><span v-if="!pengawasanStore.isUpdateLoading">Update</span
+            ><span class="flex flex-row items-center" v-else>
+              <ArrowPathIcon class="h-5 w-5 animate-spin mr-3" />
+              Processing</span
+            ></BaseButton
+          >
         </div>
       </div>
     </div>
@@ -60,15 +83,18 @@
 </template>
 
 <script setup>
+import BaseButton from "@/components/BaseButton.vue";
+import FormControl from "@/components/FormControl.vue";
 import FormField from "@/components/FormField.vue";
 import { usePengawasanStore } from "@/stores/wilayah/pengawasan";
+import { ArrowPathIcon } from "@heroicons/vue/24/outline";
 
 const props = defineProps({
   show: Boolean,
   updateData: Boolean,
 });
 
-const emit = defineEmits(["close"]);
+const emit = defineEmits(["close", "submitUpdate"]);
 
 const pengawasanStore = usePengawasanStore();
 
@@ -76,6 +102,10 @@ const quilOptions = {
   readOnly: pengawasanStore.isStoreLoading,
   theme: "snow",
 };
+
+function updateLHP() {
+  emit("submitUpdate");
+}
 
 function closeModal() {
   emit("close");

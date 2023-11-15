@@ -18,6 +18,17 @@ import { mdiAccountMultiple, mdiGenderFemale, mdiGenderMale } from "@mdi/js";
 const dashboardStore = useDashboardProgramStore();
 const mainStore = useMainStore();
 
+function nilaiKinerja(item) {
+  var nki =
+    item.penyerapan * 0.097 +
+    item.konsistensi * 0.182 +
+    item.capaian_output_program * 0.435 +
+    item.nilai_efisiensi * 0.286;
+  var nka = nki * 0.333 + item.capaian_sasaran_program * 0.667;
+  var result = (nka + item.rata_nka_satker) / 2;
+  return result.toFixed(2);
+}
+
 dashboardStore.$subscribe((mutation, state) => {
   if (mutation.events?.key == "currentYear") {
     dashboardStore.getData();
@@ -214,6 +225,180 @@ const route = useRoute();
           </div>
         </CardBox>
       </div>
+
+      <div>
+        <CardBox class="mb-6 shadow-md" has-table>
+          <h1 class="text-4xl mb-4 pt-4 pl-4">Nilai Kinerja</h1>
+
+          <table>
+            <thead>
+              <tr>
+                <td class="text-center">Bulan</td>
+                <td class="text-center">Capaian Sasaran Program</td>
+                <td class="text-center">Penyerapan</td>
+                <td class="text-center">Konsistensi</td>
+                <td class="text-center">Capaian Output Program</td>
+                <td class="text-center">Efisiensi</td>
+                <td class="text-center">Nilai Efisiensi</td>
+                <td class="text-center">Rata Rata NKA Satker</td>
+                <td class="text-center">Nilai Kinerja</td>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-if="dashboardStore.isLoading">
+                <td colspan="9" class="text-center">
+                  <div
+                    class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+                    role="status"
+                  >
+                    <span
+                      class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]"
+                      >Loading...</span
+                    >
+                  </div>
+                </td>
+              </tr>
+              <template v-else>
+                <tr v-if="dashboardStore.dataKinerjaKeuangan.length == 0">
+                  <td colspan="9" class="text-center">
+                    <span>Tidak ada data</span>
+                  </td>
+                </tr>
+                <tr
+                  v-else
+                  v-for="item in dashboardStore.dataKinerjaKeuangan"
+                  :key="item.bulan"
+                >
+                  <td>
+                    {{ getMonthName(item.bulan) }}
+                  </td>
+                  <td>
+                    {{ item.capaian_sasaran_program }}
+                  </td>
+                  <td>
+                    {{ item.penyerapan }}
+                  </td>
+                  <td>
+                    {{ item.konsistensi }}
+                  </td>
+                  <td>
+                    {{ item.capaian_output_program }}
+                  </td>
+                  <td>
+                    {{ item.efisiensi }}
+                  </td>
+                  <td>
+                    {{ item.nilai_efisiensi }}
+                  </td>
+                  <td>
+                    {{ item.rata_nka_satker }}
+                  </td>
+                  <td>
+                    {{ nilaiKinerja(item) }}
+                  </td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+          <div
+            class="p-3 lg:px-6 border-t border-gray-100 dark:border-slate-800 flex justify-end"
+          >
+            <small class="italic"
+              >data s.d
+              {{
+                mainStore.bulanOptions[dashboardStore.filter.currentMonth - 1]
+                  .label
+              }}
+              2023</small
+            >
+          </div>
+        </CardBox>
+      </div>
+
+      <div>
+        <CardBox class="mb-6 shadow-md" has-table>
+          <h1 class="text-4xl mb-4 pt-4 pl-4">Nilai IKPA</h1>
+
+          <table>
+            <thead>
+              <tr>
+                <td class="text-center">Bulan</td>
+                <td class="text-center">Kualitas Perencanaan Anggaran</td>
+                <td class="text-center">Kualitas Pelaksanaan Anggaran</td>
+                <td class="text-center">Kualitas Hasil Pelaksanaan Anggaran</td>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-if="dashboardStore.isLoading">
+                <td colspan="9" class="text-center">
+                  <div
+                    class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+                    role="status"
+                  >
+                    <span
+                      class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]"
+                      >Loading...</span
+                    >
+                  </div>
+                </td>
+              </tr>
+              <template v-else>
+                <tr v-if="dashboardStore.dataKinerjaKeuangan.length == 0">
+                  <td colspan="9" class="text-center">
+                    <span>Tidak ada data</span>
+                  </td>
+                </tr>
+                <tr
+                  v-else
+                  v-for="item in dashboardStore.dataKinerjaKeuangan"
+                  :key="item.bulan"
+                >
+                  <td>
+                    {{ getMonthName(item.bulan) }}
+                  </td>
+                  <td>
+                    {{ item.capaian_sasaran_program }}
+                  </td>
+                  <td>
+                    {{ item.penyerapan }}
+                  </td>
+                  <td>
+                    {{ item.konsistensi }}
+                  </td>
+                  <td>
+                    {{ item.capaian_output_program }}
+                  </td>
+                  <td>
+                    {{ item.efisiensi }}
+                  </td>
+                  <td>
+                    {{ item.nilai_efisiensi }}
+                  </td>
+                  <td>
+                    {{ item.rata_nka_satker }}
+                  </td>
+                  <td>
+                    {{ nilaiKinerja(item) }}
+                  </td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+          <div
+            class="p-3 lg:px-6 border-t border-gray-100 dark:border-slate-800 flex justify-end"
+          >
+            <small class="italic"
+              >data s.d
+              {{
+                mainStore.bulanOptions[dashboardStore.filter.currentMonth - 1]
+                  .label
+              }}
+              2023</small
+            >
+          </div>
+        </CardBox>
+      </div>
+
       <div>
         <h1 class="text-4xl mb-4">Kepegawaian</h1>
         <div class="grid grid-cols-1 gap-6 lg:grid-cols-3 mb-6">

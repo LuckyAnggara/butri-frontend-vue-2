@@ -134,7 +134,7 @@ onUnmounted(() => {
 
           <FormField label="Analisa">
             <textarea
-              :disabled="capaianIKUStore.isStoreLoading"
+              :disabled="capaianIKKStore.isStoreLoading"
               rows="5"
               class="px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
               style="white-space: pre-wrap"
@@ -144,7 +144,7 @@ onUnmounted(() => {
 
           <FormField label="Kegiatan">
             <textarea
-              :disabled="capaianIKUStore.isStoreLoading"
+              :disabled="capaianIKKStore.isStoreLoading"
               rows="5"
               class="px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
               style="white-space: pre-wrap"
@@ -154,7 +154,7 @@ onUnmounted(() => {
 
           <FormField label="Kendala / Hambatan">
             <textarea
-              :disabled="capaianIKUStore.isStoreLoading"
+              :disabled="capaianIKKStore.isStoreLoading"
               rows="5"
               class="px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
               style="white-space: pre-wrap"
