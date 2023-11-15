@@ -1,6 +1,6 @@
 <script setup>
 import { mdiForwardburger, mdiBackburger, mdiMenu } from "@mdi/js";
-import { computed, onMounted, ref } from "vue";
+import { onMounted, ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import menuNavBar from "@/menuNavBar.js";
 import { useStyleStore } from "@/stores/style.js";
@@ -10,14 +10,9 @@ import NavBarItemPlain from "@/components/NavBarItemPlain.vue";
 import AsideMenu from "@/components/AsideMenu.vue";
 import FooterBar from "@/components/FooterBar.vue";
 import { useAuthStore } from "@/stores/auth";
+import { useMenuStore } from "@/stores/menu";
 
-import admin from "@/router/menu/admin";
-import kepegawaian from "@/router/menu/kepegawaian";
-import sip from "@/router/menu/sip";
-import umum from "@/router/menu/umum";
-import program from "@/router/menu/program";
-import keuangan from "@/router/menu/keuangan";
-import wilayah from "@/router/menu/wilayah";
+import { useToast } from "vue-toastification";
 
 // useMainStore().setUser({
 //   name: "John Doe",
@@ -35,33 +30,37 @@ const router = useRouter();
 const isAsideMobileExpanded = ref(false);
 const isAsideLgActive = ref(false);
 const authStore = useAuthStore();
+const toast = useToast();
+const menuStore = useMenuStore();
 
 router.beforeEach(() => {
   isAsideMobileExpanded.value = false;
   isAsideLgActive.value = false;
 });
+
 const menuClick = async (event, item) => {
   if (item.isToggleLightDark) {
     styleStore.setDarkMode();
   }
 
   if (item.isLogout) {
+    toast.info("Proses logout", {
+      timeout: 1000,
+    });
+
     const success = await authStore.logout();
+
     if (success) {
+      toast.success("User berhasil Logout", {
+        timeout: 1000,
+      });
       router.push({ name: "login" });
     }
   }
 };
+
 const menu = computed(() => {
-  if (authStore.user.user?.role.id == 2) {
-    return admin;
-  }
-  if (authStore.user.user?.unit?.id == 3) return umum;
-  if (authStore.user.user?.unit?.id == 4) return program;
-  if (authStore.user.user?.unit?.id == 5) return keuangan;
-  if (authStore.user.user?.unit?.id == 6) return kepegawaian;
-  if (authStore.user.user?.unit?.id == 7) return sip;
-  if (authStore.user.user?.unit?.id > 7) return wilayah;
+  return JSON.parse(localStorage.getItem("menu")) ?? [];
 });
 
 onMounted(() => {

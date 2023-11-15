@@ -15,17 +15,7 @@ const authStore = useAuthStore();
 
 async function login() {
   const success = await authStore.login();
-  console.info(success);
-  if (success) {
-    if (authStore.user.user?.unit?.id == 4)
-      router.push({ name: "/program/dashboard" });
-    if (authStore.user.user?.unit?.id == 6)
-      router.push({ name: "/keuangan/dashboard" });
-    if (authStore.user.user?.unit?.id == 7) router.push({ name: "/" });
-    if (authStore.user.user?.unit?.id > 7)
-      router.push({ name: "/wilayah/dashboard" });
-    router.push({ name: "/" });
-  }
+  router.push({ name: "dashboard" });
 }
 </script>
 
@@ -49,7 +39,7 @@ async function login() {
           >
             Sign in
           </h1>
-          <form class="space-y-4 md:space-y-6" @submit.prevent="login">
+          <form class="space-y-2 md:space-y-6" @submit.prevent="login">
             <div>
               <label
                 for="username"
@@ -98,35 +88,32 @@ async function login() {
                 </span>
               </div>
             </div>
-            <div class="flex items-center justify-between">
+            <!-- <div class="flex items-center justify-between">
               <div class="flex items-start"></div>
               <a
                 href="#"
                 class="text-sm font-medium text-blue-600 hover:underline dark:text-blue-500"
                 >Lupa Password?</a
               >
-            </div>
+            </div> -->
             <button
               :disabled="authStore.isLoading"
               type="submit"
-              class="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              class="w-full flex justify-center text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
             >
-              <span
-                v-if="authStore.isLoading"
-                class="flex flex-row w-full mx-auto"
-              >
+              <span v-if="authStore.isLoading" class="flex flex-row w-fit">
                 <ArrowPathIcon class="h-4 w-4 mr-2 animate-spin" />
-                Processing...
+                <span>Processing...</span>
               </span>
               <span v-else> Sign in </span>
             </button>
             <p class="text-sm font-light text-gray-500 dark:text-gray-400">
               Belum punya akun? hubungi
               <a
-                href="#"
                 class="font-medium text-blue-600 hover:underline dark:text-blue-500"
                 >Admin</a
               >
+              pada Bagian Program dan Pelaporan
             </p>
           </form>
         </div>

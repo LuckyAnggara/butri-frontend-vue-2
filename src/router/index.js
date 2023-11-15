@@ -21,6 +21,7 @@ const routes = [
     name: "login",
     component: () => import("@/views/login/LoginView.vue"),
   },
+
   {
     meta: {
       title: "Dashboard",
@@ -29,21 +30,7 @@ const routes = [
     },
     path: "/",
     name: "dashboard",
-    component: () => {
-      const auth = useAuthStore();
-      if (auth.user.user?.unit?.id == 3)
-        return import("@/views/dashboard/Dashboard.vue");
-      if (auth.user.user?.unit?.id == 4)
-        return import("@/views/program/Dashboard.vue");
-      if (auth.user.user?.unit?.id == 5)
-        return import("@/views/keuangan/dashboard/Dashboard.vue");
-      if (auth.user.user?.unit?.id == 6)
-        return import("@/views/kepegawaian/Dashboard.vue");
-      if (auth.user.user?.unit?.id == 7)
-        return import("@/views/dashboard/Dashboard.vue");
-      if (auth.user.user?.unit?.id > 7)
-        return import("@/views/wilayah/Dashboard.vue");
-    },
+    component: () => import("@/views/dashboard/Dashboard.vue"),
   },
 
   {

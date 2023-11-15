@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { defineStore, getActivePinia } from "pinia";
 import axiosIns from "@/services/axios";
+import { useMenuStore } from "./menu";
 
 export const useAuthStore = defineStore("auth", {
   state: () => ({
@@ -10,14 +11,17 @@ export const useAuthStore = defineStore("auth", {
       password: null,
     },
     isLoading: false,
-    userData: null,
+    userData: {},
   }),
   getters: {
     user() {
-      return JSON.parse(localStorage.getItem("userDataLawas")) ?? {};
+      return this.userData;
+    },
+    unitID(state) {
+      return state.userData.user?.unit_id;
     },
     isAdmin(state) {
-      if (state.userData.user.role.id == 2) {
+      if (state.userData.user?.role.id == 2) {
         return true;
       }
       return false;
@@ -32,9 +36,15 @@ export const useAuthStore = defineStore("auth", {
           password: this.form.password,
         });
         const payload = response.data.data;
+        localStorage.removeItem("userDataLawas");
         localStorage.setItem("token", JSON.stringify(payload.token));
         localStorage.setItem("userDataLawas", JSON.stringify(payload));
-        setTimeout(() => {}, 500);
+
+        this.userData = payload.user;
+
+        const menuStore = useMenuStore();
+        menuStore.updateMenu(this.userData.unit_id);
+
         if (response.status == 200) {
           return true;
         }
@@ -50,17 +60,10 @@ export const useAuthStore = defineStore("auth", {
       try {
         const response = await axiosIns.get(`/logout`);
         if (response.status == 200) {
-          if (response.data == "error") {
-            localStorage.removeItem("userDataLawas");
-            localStorage.removeItem("token");
-            localStorage.clear();
-          } else {
-            localStorage.removeItem("userDataLawas");
-            localStorage.removeItem("token");
-            localStorage.clear();
-          }
-          const pinia = getActivePinia();
-          pinia._s.forEach((store) => store.$reset());
+          localStorage.removeItem("userDataLawas");
+          localStorage.removeItem("token");
+          localStorage.clear();
+
           setTimeout(() => {}, 500);
           return true;
         } else {

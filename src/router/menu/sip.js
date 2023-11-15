@@ -25,10 +25,10 @@ export default [
         to: "/pengelolaan/media/list",
         label: "Media",
       },
-      {
-        to: "/",
-        label: "Teknologi Informasi",
-      },
+      // {
+      //   to: "/",
+      //   label: "Teknologi Informasi",
+      // },
     ],
   },
 

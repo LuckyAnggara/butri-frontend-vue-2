@@ -245,19 +245,6 @@ const route = useRoute();
             label="Perempuan"
           />
         </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-          <div class="flex flex-col justify-between">
-            <CardBoxTransaction
-              :amount="dashboardStore.responses.kepangkatan"
-              :date="'BULAN INI'"
-              :business="'PENSIUN'"
-              :type="'PENSIUN'"
-              :name="'asdasdasd'"
-              :account="'PENSIUN'"
-            />
-          </div>
-        </div>
       </div>
 
       <CardBox class="mb-6 shadow-md" has-table>

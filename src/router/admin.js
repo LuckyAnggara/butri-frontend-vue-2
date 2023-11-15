@@ -39,4 +39,14 @@ export const admin = [
     name: "list-dipa",
     component: () => import("@/views/admin/dipa/DataMaster.vue"),
   },
+  {
+    meta: {
+      title: "User Management",
+      layout: "layout-authenticated",
+      requiresAuth: true,
+    },
+    path: "/user/management",
+    name: "management-user",
+    component: () => import("@/views/admin/user/DataMaster.vue"),
+  },
 ];

@@ -36,4 +36,14 @@ export default [
   },
   ...all,
   ...laporan,
+  {
+    label: "Management",
+    icon: mdiChartBoxOutline,
+    menu: [
+      {
+        label: "User",
+        to: "/user/management",
+      },
+    ],
+  },
 ];
