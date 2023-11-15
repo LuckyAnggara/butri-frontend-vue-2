@@ -199,7 +199,7 @@ onUnmounted(() => {
             />
           </FormField>
 
-          <FormField label="Output">
+          <FormField label="Nomor dan Tanggal Laporan">
             <textarea
               :disabled="
                 capaianProgramUnggulanStore.isStoreLoading || dariKegiatan

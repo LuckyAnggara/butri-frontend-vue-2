@@ -138,7 +138,7 @@ onMounted(() => {
             <th>Program</th>
             <th>Nama Kegiatan</th>
             <th>Tanggal Pelaksanaan</th>
-            <th>Output</th>
+            <th>Nomor dan Tanggal Laporan</th>
             <th />
           </tr>
         </thead>
