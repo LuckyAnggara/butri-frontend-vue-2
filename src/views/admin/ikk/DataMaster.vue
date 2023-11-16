@@ -5,10 +5,10 @@ import CardBox from "@/components/CardBox.vue";
 import SectionTitleLineWithButton from "@/components/SectionTitleLineWithButton.vue";
 
 import { useRoute } from "vue-router";
-import { computed, defineAsyncComponent, onMounted, ref } from "vue";
+import { computed, defineAsyncComponent, onMounted, ref, watch } from "vue";
 import FormField from "@/components/FormField.vue";
 import FormControl from "@/components/FormControl.vue";
-import { useDebounceFn } from "@vueuse/core";
+import { useDebounceFn, watchDeep } from "@vueuse/core";
 import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue";
 import {
   EllipsisVerticalIcon,
@@ -90,14 +90,32 @@ async function update() {
   }
 }
 
-ikkStore.$subscribe((mutation, state) => {
-  if (mutation.events?.key == "currentYear") {
-    ikkStore.getData();
-  }
-  if (mutation.events?.key == "unit") {
-    ikkStore.getData();
-  }
+watchDeep(ikkStore.filter, (obj) => {
+  ikkStore.getData();
 });
+
+watch(
+  () => ikkStore.currentYear,
+  () => {
+    ikkStore.getData();
+  }
+);
+
+watch(
+  () => ikkStore.currentMonth,
+  () => {
+    ikkStore.getData();
+  }
+);
+
+// ikkStore.$subscribe((mutation, state) => {
+//   if (mutation.events?.key == "currentYear") {
+//     ikkStore.getData();
+//   }
+//   if (mutation.events?.key == "unit") {
+//     ikkStore.getData();
+//   }
+// });
 
 onMounted(() => {
   ikkStore.$patch((state) => {

@@ -24,8 +24,8 @@ export const useIKUStore = defineStore("indikatorKinerjaUtama", {
     filter: {
       date: new Date().getFullYear(),
       searchQuery: "",
+      currentYear: new Date().getFullYear(),
     },
-    currentYear: new Date().getFullYear(),
   }),
   getters: {
     items(state) {
@@ -62,7 +62,7 @@ export const useIKUStore = defineStore("indikatorKinerjaUtama", {
       this.isLoading = true;
       try {
         const response = await axiosIns.get(
-          `/indikator-kinerja-utama?tahun=${this.currentYear}${this.searchQuery}`
+          `/indikator-kinerja-utama?tahun=${this.filter.currentYear}${this.searchQuery}`
         );
         this.responses = response.data.data;
       } catch (error) {

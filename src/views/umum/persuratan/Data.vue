@@ -7,7 +7,7 @@ import SectionTitleLineWithButton from "@/components/SectionTitleLineWithButton.
 import { useRoute, useRouter } from "vue-router";
 import { computed, defineAsyncComponent, onMounted, ref } from "vue";
 import FormField from "@/components/FormField.vue";
-import { useDebounceFn } from "@vueuse/core";
+import { useDebounceFn, watchDeep } from "@vueuse/core";
 import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue";
 import {
   EllipsisVerticalIcon,
@@ -88,17 +88,21 @@ async function update() {
   }
 }
 
-persuratanStore.$subscribe((mutation, state) => {
-  if (mutation.events?.key == "currentYear") {
-    persuratanStore.getData();
-  }
-  if (mutation.events?.key == "currentMonth") {
-    persuratanStore.getData();
-  }
-  if (mutation.events?.key == "group") {
-    persuratanStore.getData();
-  }
+watchDeep(persuratanStore.filter, (obj) => {
+  persuratanStore.getData();
 });
+
+// persuratanStore.$subscribe((mutation, state) => {
+//   if (mutation.events?.key == "currentYear") {
+//     persuratanStore.getData();
+//   }
+//   if (mutation.events?.key == "currentMonth") {
+//     persuratanStore.getData();
+//   }
+//   if (mutation.events?.key == "group") {
+//     persuratanStore.getData();
+//   }
+// });
 
 onMounted(() => {
   if (authStore.user.user.role.id == 2) {

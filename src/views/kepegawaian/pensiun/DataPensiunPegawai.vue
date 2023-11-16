@@ -6,10 +6,10 @@ import SectionTitleLineWithButton from "@/components/SectionTitleLineWithButton.
 
 import { useRoute, useRouter } from "vue-router";
 import { usePensiunStore } from "@/stores/pegawai/pensiun";
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import FormField from "@/components/FormField.vue";
 import FormControl from "@/components/FormControl.vue";
-import { useDebounceFn } from "@vueuse/core";
+import { useDebounceFn, watchDeep } from "@vueuse/core";
 import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue";
 import {
   EllipsisVerticalIcon,
@@ -58,14 +58,25 @@ function destroy(item) {
   indexDestroy.value = item.id;
 }
 
-pensiunStore.$subscribe((mutation, state) => {
-  if (mutation.events?.key == "currentLimit") {
-    pensiunStore.getData();
-  }
-  if (mutation.events?.key == "date") {
-    pensiunStore.getData();
-  }
+watchDeep(pensiunStore.filter, (obj) => {
+  pensiunStore.getData();
 });
+
+watch(
+  () => pensiunStore.currentLimit,
+  () => {
+    pensiunStore.getData();
+  }
+);
+
+// pensiunStore.$subscribe((mutation, state) => {
+//   if (mutation.events?.key == "currentLimit") {
+//     pensiunStore.getData();
+//   }
+//   if (mutation.events?.key == "date") {
+//     pensiunStore.getData();
+//   }
+// });
 
 onMounted(() => {
   pensiunStore.getData();

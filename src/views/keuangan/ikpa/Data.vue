@@ -8,7 +8,7 @@ import { useRoute, useRouter } from "vue-router";
 import { computed, defineAsyncComponent, onMounted, ref } from "vue";
 import FormField from "@/components/FormField.vue";
 import FormControl from "@/components/FormControl.vue";
-import { useDebounceFn } from "@vueuse/core";
+import { useDebounceFn, watchDeep } from "@vueuse/core";
 import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue";
 import {
   EllipsisVerticalIcon,
@@ -46,14 +46,18 @@ function cancel() {
   isInput.value = !isInput.value;
 }
 
-ikpaStore.$subscribe((mutation, state) => {
-  if (mutation.events?.key == "currentYear") {
-    ikpaStore.getData();
-  }
-  if (mutation.events?.key == "currentMonth") {
-    ikpaStore.getData();
-  }
+watchDeep(ikpaStore.filter, (obj) => {
+  ikpaStore.getData();
 });
+
+// ikpaStore.$subscribe((mutation, state) => {
+//   if (mutation.events?.key == "currentYear") {
+//     ikpaStore.getData();
+//   }
+//   if (mutation.events?.key == "currentMonth") {
+//     ikpaStore.getData();
+//   }
+// });
 
 onMounted(() => {
   ikpaStore.getData();

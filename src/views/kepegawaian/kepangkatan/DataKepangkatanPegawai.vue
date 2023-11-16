@@ -8,7 +8,7 @@ import { useRoute, useRouter } from "vue-router";
 import { computed, onMounted, ref } from "vue";
 import FormField from "@/components/FormField.vue";
 import FormControl from "@/components/FormControl.vue";
-import { useDebounceFn } from "@vueuse/core";
+import { useDebounceFn, watchDeep } from "@vueuse/core";
 import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue";
 import {
   EllipsisVerticalIcon,
@@ -54,14 +54,25 @@ function destroy(item) {
   indexDestroy.value = item.id;
 }
 
-kepangkatanStore.$subscribe((mutation, state) => {
-  if (mutation.events?.key == "currentLimit") {
-    kepangkatanStore.getData();
-  }
-  if (mutation.events?.key == "date") {
-    kepangkatanStore.getData();
-  }
+watchDeep(kepangkatanStore.filter, (obj) => {
+  kepangkatanStore.getData();
 });
+
+watch(
+  () => kepangkatanStore.currentLimit,
+  () => {
+    kepangkatanStore.getData();
+  }
+);
+
+// kepangkatanStore.$subscribe((mutation, state) => {
+//   if (mutation.events?.key == "currentLimit") {
+//     kepangkatanStore.getData();
+//   }
+//   if (mutation.events?.key == "date") {
+//     kepangkatanStore.getData();
+//   }
+// });
 
 onMounted(() => {
   kepangkatanStore.getData();

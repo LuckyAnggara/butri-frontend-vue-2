@@ -5,10 +5,10 @@ import CardBox from "@/components/CardBox.vue";
 import SectionTitleLineWithButton from "@/components/SectionTitleLineWithButton.vue";
 
 import { useRoute, useRouter } from "vue-router";
-import { computed, defineAsyncComponent, onMounted, ref } from "vue";
+import { computed, defineAsyncComponent, onMounted, ref, watch } from "vue";
 import FormField from "@/components/FormField.vue";
 import FormControl from "@/components/FormControl.vue";
-import { useDebounceFn } from "@vueuse/core";
+import { useDebounceFn, watchDeep } from "@vueuse/core";
 import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue";
 import {
   EllipsisVerticalIcon,
@@ -119,18 +119,29 @@ const nextPage = computed(() => {
   return "&page=" + (pengawasanStore.currentPage + 1);
 });
 
-pengawasanStore.$subscribe((mutation, state) => {
-  if (mutation.events?.key == "currentLimit") {
-    pengawasanStore.getData();
-  }
-
-  if (mutation.events?.key == "currentYear") {
-    pengawasanStore.getData();
-  }
-  if (mutation.events?.key == "currentMonth") {
-    pengawasanStore.getData();
-  }
+watchDeep(pengawasanStore.filter, (obj) => {
+  pengawasanStore.getData();
 });
+
+watch(
+  () => pengawasanStore.currentLimit,
+  () => {
+    pengawasanStore.getData();
+  }
+);
+
+// pengawasanStore.$subscribe((mutation, state) => {
+//   if (mutation.events?.key == "currentLimit") {
+//     pengawasanStore.getData();
+//   }
+
+//   if (mutation.events?.key == "currentYear") {
+//     pengawasanStore.getData();
+//   }
+//   if (mutation.events?.key == "currentMonth") {
+//     pengawasanStore.getData();
+//   }
+// });
 
 onMounted(() => {
   pengawasanStore.getData();

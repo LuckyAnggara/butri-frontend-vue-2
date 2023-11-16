@@ -8,7 +8,7 @@ import { useRoute, useRouter } from "vue-router";
 import { computed, defineAsyncComponent, onMounted, ref } from "vue";
 import FormField from "@/components/FormField.vue";
 import FormControl from "@/components/FormControl.vue";
-import { useDebounceFn } from "@vueuse/core";
+import { useDebounceFn, watchDeep } from "@vueuse/core";
 import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue";
 import {
   EllipsisVerticalIcon,
@@ -86,11 +86,15 @@ async function update() {
   }
 }
 
-ikuStore.$subscribe((mutation, state) => {
-  if (mutation.events?.key == "currentYear") {
-    ikuStore.getData();
-  }
+watchDeep(ikuStore.filter, (obj) => {
+  ikuStore.getData();
 });
+
+// ikuStore.$subscribe((mutation, state) => {
+//   if (mutation.events?.key == "currentYear") {
+//     ikuStore.getData();
+//   }
+// });
 
 onMounted(() => {
   ikuStore.getData();
@@ -107,7 +111,7 @@ onMounted(() => {
           <FormField label="Tahun">
             <select
               :disabled="ikuStore.isLoading"
-              v-model="ikuStore.currentYear"
+              v-model="ikuStore.filter.currentYear"
               class="h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
             >
               <option

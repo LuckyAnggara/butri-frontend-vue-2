@@ -6,10 +6,10 @@ import SectionTitleLineWithButton from "@/components/SectionTitleLineWithButton.
 
 import { useRoute, useRouter } from "vue-router";
 import { useKegiatanStore } from "@/stores/all/kegiatan";
-import { computed, inject, onMounted, ref } from "vue";
+import { computed, inject, onMounted, ref, watch } from "vue";
 import FormField from "@/components/FormField.vue";
 import FormControl from "@/components/FormControl.vue";
-import { useDebounceFn } from "@vueuse/core";
+import { useDebounceFn, watchDeep, whenever } from "@vueuse/core";
 import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue";
 import {
   EllipsisVerticalIcon,
@@ -78,14 +78,25 @@ function destroy(item) {
   }
 }
 
-kegiatanStore.$subscribe((mutation, state) => {
-  if (mutation.events?.key == "currentLimit") {
-    kegiatanStore.getData();
-  }
-  if (mutation.events?.key == "date") {
-    kegiatanStore.getData();
-  }
+watchDeep(kegiatanStore.filter, (obj) => {
+  kegiatanStore.getData();
 });
+
+watch(
+  () => kegiatanStore.currentLimit,
+  () => {
+    kegiatanStore.getData();
+  }
+);
+
+// kegiatanStore.$subscribe((mutation, state) => {
+//   if (mutation.events?.key == "currentLimit") {
+//     kegiatanStore.getData();
+//   }
+//   if (mutation.events?.key == "date") {
+//     kegiatanStore.getData();
+//   }
+// });
 
 onMounted(() => {
   kegiatanStore.getData();

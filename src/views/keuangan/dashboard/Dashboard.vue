@@ -16,18 +16,23 @@ import BaseButton from "@/components/BaseButton.vue";
 import { mdiChartPie } from "@mdi/js";
 import { useMainStore } from "@/stores/main";
 import FormField from "@/components/FormField.vue";
+import { watchDeep } from "@vueuse/core";
 
 const dashboardStore = useDashboardKeuanganStore();
 const mainStore = useMainStore();
 
-dashboardStore.$subscribe((mutation, state) => {
-  if (mutation.events?.key == "currentYear") {
-    dashboardStore.getData();
-  }
-  if (mutation.events?.key == "currentMonth") {
-    dashboardStore.getData();
-  }
+watchDeep(dashboardStore.filter, (obj) => {
+  dashboardStore.getData();
 });
+
+// dashboardStore.$subscribe((mutation, state) => {
+//   if (mutation.events?.key == "currentYear") {
+//     dashboardStore.getData();
+//   }
+//   if (mutation.events?.key == "currentMonth") {
+//     dashboardStore.getData();
+//   }
+// });
 
 onMounted(() => {
   dashboardStore.getData();

@@ -6,7 +6,7 @@ import SectionMain from "@/components/SectionMain.vue";
 
 import SectionTitleLineWithButton from "@/components/SectionTitleLineWithButton.vue";
 import { ArrowPathIcon } from "@heroicons/vue/24/outline";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { useDashboardProgramStore } from "@/stores/program/dashboardProgram";
 import CardBox from "@/components/CardBox.vue";
@@ -14,6 +14,7 @@ import { useMainStore } from "@/stores/main";
 import FormField from "@/components/FormField.vue";
 import { IDRCurrency, getMonthName } from "@/utilities/formatter";
 import { mdiAccountMultiple, mdiGenderFemale, mdiGenderMale } from "@mdi/js";
+import { watchDeep, whenever } from "@vueuse/core";
 
 const dashboardStore = useDashboardProgramStore();
 const mainStore = useMainStore();
@@ -29,14 +30,44 @@ function nilaiKinerja(item) {
   return result.toFixed(2);
 }
 
-dashboardStore.$subscribe((mutation, state) => {
-  if (mutation.events?.key == "currentYear") {
-    dashboardStore.getData();
-  }
-  if (mutation.events?.key == "currentMonth") {
-    dashboardStore.getData();
-  }
+watchDeep(dashboardStore.filter, (obj) => {
+  dashboardStore.getData();
 });
+
+// whenever(
+//   () => dashboardStore.filter.currentMonth,
+//   () => {
+//     dashboardStore.getData();
+//   }
+// );
+
+// whenever(
+//   () => dashboardStore.filter.currentYear,
+//   () => {
+//     dashboardStore.getData();
+//   }
+// );
+
+// watch(
+//   () => dashboardStore.filter,
+//   () => {
+//     console.info("move");
+//     dashboardStore.getData();
+//   }
+// );
+
+// dashboardStore.$subscribe(
+//   (mutation, state) => {
+//     console.info(mutation?.events);
+//     if (mutation.events?.key == "currentYear") {
+
+//     }
+//     if (mutation.events?.key == "currentMonth") {
+//       dashboardStore.getData();
+//     }
+//   },
+//   { flush: "sync" }
+// );
 
 onMounted(() => {
   dashboardStore.getData();

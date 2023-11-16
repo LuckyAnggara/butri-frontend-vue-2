@@ -5,10 +5,10 @@ import CardBox from "@/components/CardBox.vue";
 import SectionTitleLineWithButton from "@/components/SectionTitleLineWithButton.vue";
 
 import { useRoute, useRouter } from "vue-router";
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import FormField from "@/components/FormField.vue";
 import FormControl from "@/components/FormControl.vue";
-import { useDebounceFn } from "@vueuse/core";
+import { useDebounceFn, watchDeep } from "@vueuse/core";
 import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue";
 import {
   EllipsisVerticalIcon,
@@ -55,14 +55,25 @@ function destroy(item) {
   indexDestroy.value = item.id;
 }
 
-mutasiStore.$subscribe((mutation, state) => {
-  if (mutation.events?.key == "currentLimit") {
-    mutasiStore.getData();
-  }
-  if (mutation.events?.key == "date") {
-    mutasiStore.getData();
-  }
+watchDeep(mutasiStore.filter, (obj) => {
+  mutasiStore.getData();
 });
+
+watch(
+  () => mutasiStore.currentLimit,
+  () => {
+    mutasiStore.getData();
+  }
+);
+
+// mutasiStore.$subscribe((mutation, state) => {
+//   if (mutation.events?.key == "currentLimit") {
+//     mutasiStore.getData();
+//   }
+//   if (mutation.events?.key == "date") {
+//     mutasiStore.getData();
+//   }
+// });
 
 onMounted(() => {
   mutasiStore.getData();

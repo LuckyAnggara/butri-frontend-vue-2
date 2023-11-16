@@ -8,7 +8,7 @@ import { useRoute, useRouter } from "vue-router";
 import { computed, defineAsyncComponent, onMounted, ref } from "vue";
 import FormField from "@/components/FormField.vue";
 import FormControl from "@/components/FormControl.vue";
-import { useDebounceFn } from "@vueuse/core";
+import { useDebounceFn, watchDeep } from "@vueuse/core";
 import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue";
 import {
   EllipsisVerticalIcon,
@@ -44,14 +44,18 @@ function deviasi(item) {
   return (header / item.dp_saat_ini).toFixed(2);
 }
 
-realisasiAnggaranStore.$subscribe((mutation, state) => {
-  if (mutation.events?.key == "currentYear") {
-    realisasiAnggaranStore.getData();
-  }
-  if (mutation.events?.key == "currentMonth") {
-    realisasiAnggaranStore.getData();
-  }
+watchDeep(realisasiAnggaranStore.filter, (obj) => {
+  realisasiAnggaranStore.getData();
 });
+
+// realisasiAnggaranStore.$subscribe((mutation, state) => {
+//   if (mutation.events?.key == "currentYear") {
+//     realisasiAnggaranStore.getData();
+//   }
+//   if (mutation.events?.key == "currentMonth") {
+//     realisasiAnggaranStore.getData();
+//   }
+// });
 
 onMounted(() => {
   realisasiAnggaranStore.getData();

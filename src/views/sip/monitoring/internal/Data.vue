@@ -8,7 +8,7 @@ import { useRoute, useRouter } from "vue-router";
 import { computed, defineAsyncComponent, onMounted, ref } from "vue";
 import FormField from "@/components/FormField.vue";
 import FormControl from "@/components/FormControl.vue";
-import { useDebounceFn } from "@vueuse/core";
+import { useDebounceFn, watchDeep } from "@vueuse/core";
 import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue";
 import {
   EllipsisVerticalIcon,
@@ -68,14 +68,18 @@ async function submit() {
   }
 }
 
-monitoringInternalStore.$subscribe((mutation, state) => {
-  if (mutation.events?.key == "currentYear") {
-    monitoringInternalStore.getData();
-  }
-  if (mutation.events?.key == "currentMonth") {
-    monitoringInternalStore.getData();
-  }
+watchDeep(monitoringInternalStore.filter, (obj) => {
+  monitoringInternalStore.getData();
 });
+
+// monitoringInternalStore.$subscribe((mutation, state) => {
+//   if (mutation.events?.key == "currentYear") {
+//     monitoringInternalStore.getData();
+//   }
+//   if (mutation.events?.key == "currentMonth") {
+//     monitoringInternalStore.getData();
+//   }
+// });
 
 onMounted(() => {
   monitoringInternalStore.getData();

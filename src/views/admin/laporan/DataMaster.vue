@@ -7,7 +7,7 @@ import SectionTitleLineWithButton from "@/components/SectionTitleLineWithButton.
 import { useRoute } from "vue-router";
 import FormField from "@/components/FormField.vue";
 import FormControl from "@/components/FormControl.vue";
-import { useDebounceFn } from "@vueuse/core";
+import { useDebounceFn, watchDeep } from "@vueuse/core";
 import {
   EllipsisVerticalIcon,
   TrashIcon,
@@ -58,11 +58,15 @@ async function update() {
   }
 }
 
-laporanStore.$subscribe((mutation, state) => {
-  if (mutation.events?.key == "currentYear") {
-    laporanStore.getData();
-  }
+watchDeep(laporanStore.filter, (obj) => {
+  laporanStore.getData();
 });
+
+// laporanStore.$subscribe((mutation, state) => {
+//   if (mutation.events?.key == "currentYear") {
+//     laporanStore.getData();
+//   }
+// });
 
 onMounted(() => {
   laporanStore.getData();

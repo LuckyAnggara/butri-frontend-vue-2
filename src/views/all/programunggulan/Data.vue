@@ -5,10 +5,10 @@ import CardBox from "@/components/CardBox.vue";
 import SectionTitleLineWithButton from "@/components/SectionTitleLineWithButton.vue";
 
 import { useRoute, useRouter } from "vue-router";
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import FormField from "@/components/FormField.vue";
 import FormControl from "@/components/FormControl.vue";
-import { useDebounceFn } from "@vueuse/core";
+import { useDebounceFn, watchDeep } from "@vueuse/core";
 import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue";
 import {
   EllipsisVerticalIcon,
@@ -59,14 +59,25 @@ function destroy(item) {
   indexDestroy.value = item.id;
 }
 
-capaianProgramUnggulanStore.$subscribe((mutation, state) => {
-  if (mutation.events?.key == "currentLimit") {
-    capaianProgramUnggulanStore.getData();
-  }
-  if (mutation.events?.key == "date") {
-    capaianProgramUnggulanStore.getData();
-  }
+watchDeep(capaianProgramUnggulanStore.filter, (obj) => {
+  capaianProgramUnggulanStore.getData();
 });
+
+watch(
+  () => capaianProgramUnggulanStore.currentLimit,
+  () => {
+    capaianProgramUnggulanStore.getData();
+  }
+);
+
+// capaianProgramUnggulanStore.$subscribe((mutation, state) => {
+//   if (mutation.events?.key == "currentLimit") {
+//     capaianProgramUnggulanStore.getData();
+//   }
+//   if (mutation.events?.key == "date") {
+//     capaianProgramUnggulanStore.getData();
+//   }
+// });
 
 onMounted(() => {
   capaianProgramUnggulanStore.getData();

@@ -44,10 +44,10 @@ export default [
         to: "/monitoring/eksternal/list",
         label: "Temuan Eksternal",
       },
-      {
-        to: "/monitoring/pengaduan/list",
-        label: "Pengaduan",
-      },
+      // {
+      //   to: "/monitoring/pengaduan/list",
+      //   label: "Pengaduan",
+      // },
     ],
   },
   ...programUnggulan,

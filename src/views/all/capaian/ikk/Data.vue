@@ -5,10 +5,10 @@ import CardBox from "@/components/CardBox.vue";
 import SectionTitleLineWithButton from "@/components/SectionTitleLineWithButton.vue";
 
 import { useRoute, useRouter } from "vue-router";
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import FormField from "@/components/FormField.vue";
 import FormControl from "@/components/FormControl.vue";
-import { useDebounceFn } from "@vueuse/core";
+import { useDebounceFn, watchDeep } from "@vueuse/core";
 import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue";
 import {
   EllipsisVerticalIcon,
@@ -70,17 +70,28 @@ function destroy(item) {
   capaianIKKStore.getData();
 }
 
-capaianIKKStore.$subscribe((mutation, state) => {
-  if (mutation.events?.key == "currentYear") {
-    capaianIKKStore.getData();
-  }
-  if (mutation.events?.key == "currentMonth") {
-    capaianIKKStore.getData();
-  }
-  if (mutation.events?.key == "unit") {
-    capaianIKKStore.getData();
-  }
+watchDeep(capaianIKKStore.filter, (obj) => {
+  capaianIKKStore.getData();
 });
+
+watch(
+  () => capaianIKKStore.currentYear,
+  () => {
+    capaianIKKStore.getData();
+  }
+);
+
+// capaianIKKStore.$subscribe((mutation, state) => {
+//   if (mutation.events?.key == "currentYear") {
+//     capaianIKKStore.getData();
+//   }
+//   if (mutation.events?.key == "currentMonth") {
+//     capaianIKKStore.getData();
+//   }
+//   if (mutation.events?.key == "unit") {
+//     capaianIKKStore.getData();
+//   }
+// });
 
 onMounted(() => {
   capaianIKKStore.$patch((state) => {

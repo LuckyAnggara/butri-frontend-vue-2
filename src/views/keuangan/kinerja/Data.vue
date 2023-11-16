@@ -8,7 +8,7 @@ import { useRoute, useRouter } from "vue-router";
 import { computed, defineAsyncComponent, onMounted, ref } from "vue";
 import FormField from "@/components/FormField.vue";
 import FormControl from "@/components/FormControl.vue";
-import { useDebounceFn } from "@vueuse/core";
+import { useDebounceFn, watchDeep } from "@vueuse/core";
 import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue";
 import {
   ArrowPathIcon,
@@ -83,11 +83,15 @@ function nilaiKinerja(item) {
   return result.toFixed(2);
 }
 
-kinerjaKeuanganStore.$subscribe((mutation, state) => {
-  if (mutation.events?.key == "currentYear") {
-    kinerjaKeuanganStore.getData();
-  }
+watchDeep(kinerjaKeuanganStore.filter, (obj) => {
+  kinerjaKeuanganStore.getData();
 });
+
+// kinerjaKeuanganStore.$subscribe((mutation, state) => {
+//   if (mutation.events?.key == "currentYear") {
+//     kinerjaKeuanganStore.getData();
+//   }
+// });
 
 onMounted(() => {
   kinerjaKeuanganStore.getData();

@@ -6,10 +6,10 @@ import SectionTitleLineWithButton from "@/components/SectionTitleLineWithButton.
 
 import { useRoute, useRouter } from "vue-router";
 import { usePegawaiStore } from "@/stores/pegawai/pegawai";
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import FormField from "@/components/FormField.vue";
 import FormControl from "@/components/FormControl.vue";
-import { useDebounceFn } from "@vueuse/core";
+import { useDebounceFn, watchDeep } from "@vueuse/core";
 import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue";
 import {
   EllipsisVerticalIcon,
@@ -63,11 +63,22 @@ function destroy(item) {
   pegawaiStore.destroy(item.id);
 }
 
-pegawaiStore.$subscribe((mutation, state) => {
-  if (mutation.events?.key == "currentLimit") {
+watchDeep(pegawaiStore.filter, (obj) => {
+  pegawaiStore.getData();
+});
+
+watch(
+  () => pegawaiStore.currentLimit,
+  () => {
     pegawaiStore.getData();
   }
-});
+);
+
+// pegawaiStore.$subscribe((mutation, state) => {
+//   if (mutation.events?.key == "currentLimit") {
+//     pegawaiStore.getData();
+//   }
+// });
 
 onMounted(() => {
   pegawaiStore.getData();

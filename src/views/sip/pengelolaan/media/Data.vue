@@ -8,7 +8,7 @@ import { useRoute, useRouter } from "vue-router";
 import { computed, defineAsyncComponent, onMounted, ref } from "vue";
 import FormField from "@/components/FormField.vue";
 import FormControl from "@/components/FormControl.vue";
-import { useDebounceFn } from "@vueuse/core";
+import { useDebounceFn, watchDeep } from "@vueuse/core";
 import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue";
 import {
   EllipsisVerticalIcon,
@@ -88,14 +88,18 @@ async function update() {
   }
 }
 
-pengelolaanMediaStore.$subscribe((mutation, state) => {
-  if (mutation.events?.key == "currentYear") {
-    pengelolaanMediaStore.getData();
-  }
-  if (mutation.events?.key == "currentMonth") {
-    pengelolaanMediaStore.getData();
-  }
+watchDeep(pengelolaanMediaStore.filter, (obj) => {
+  pengelolaanMediaStore.getData();
 });
+
+// pengelolaanMediaStore.$subscribe((mutation, state) => {
+//   if (mutation.events?.key == "currentYear") {
+//     pengelolaanMediaStore.getData();
+//   }
+//   if (mutation.events?.key == "currentMonth") {
+//     pengelolaanMediaStore.getData();
+//   }
+// });
 
 onMounted(() => {
   pengelolaanMediaStore.getData();

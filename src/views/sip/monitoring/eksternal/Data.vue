@@ -8,7 +8,7 @@ import { useRoute, useRouter } from "vue-router";
 import { computed, defineAsyncComponent, onMounted, ref } from "vue";
 import FormField from "@/components/FormField.vue";
 import FormControl from "@/components/FormControl.vue";
-import { useDebounceFn } from "@vueuse/core";
+import { useDebounceFn, watchDeep } from "@vueuse/core";
 import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue";
 import {
   EllipsisVerticalIcon,
@@ -87,16 +87,21 @@ async function submitORI() {
   }
 }
 
-monitoringEksternalStore.$subscribe((mutation, state) => {
-  if (mutation.events?.key == "currentYear") {
-    isUpdateBPK.value = false;
-    callData();
-  }
-  if (mutation.events?.key == "currentMonth") {
-    isUpdateBPK.value = false;
-    callData();
-  }
+watchDeep(monitoringEksternalStore.filter, (obj) => {
+  isUpdateBPK.value = false;
+  callData();
 });
+
+// monitoringEksternalStore.$subscribe((mutation, state) => {
+//   if (mutation.events?.key == "currentYear") {
+//     isUpdateBPK.value = false;
+//     callData();
+//   }
+//   if (mutation.events?.key == "currentMonth") {
+//     isUpdateBPK.value = false;
+//     callData();
+//   }
+// });
 
 function callData() {
   monitoringEksternalStore.getDataBPK();
