@@ -1,4 +1,5 @@
 <script setup>
+import CardBox from "@/components/CardBox.vue";
 import CardBoxTransaction from "@/components/CardBoxTransaction.vue";
 import CardBoxWidget from "@/components/CardBoxWidget.vue";
 import NotificationBar from "@/components/NotificationBar.vue";
@@ -42,7 +43,7 @@ onMounted(() => {
           trend-type="alert"
           color="text-emerald-500"
           :icon="mdiAccountMultiple"
-          :number="dashboardStore.responses.pegawai"
+          :number="dashboardStore.dataUmum.pegawai"
           suffix=" orang"
           label="Total Pegawai"
         />
@@ -51,7 +52,7 @@ onMounted(() => {
           trend-type="alert"
           color="text-blue-500"
           :icon="mdiGenderMale"
-          :number="dashboardStore.responses.laki"
+          :number="dashboardStore.dataUmum.laki"
           suffix=" orang"
           label="Laki - Laki"
         />
@@ -60,23 +61,109 @@ onMounted(() => {
           trend-type="alert"
           color="text-red-500"
           :icon="mdiGenderFemale"
-          :number="dashboardStore.responses.perempuan"
+          :number="dashboardStore.dataUmum.perempuan"
           suffix=" orang"
           label="Perempuan"
         />
       </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        <div class="flex flex-col justify-between">
-          <CardBoxTransaction
-            :amount="dashboardStore.responses.kepangkatan"
-            :date="'BULAN INI'"
-            :business="'PENSIUN'"
-            :type="'PENSIUN'"
-            :name="'asdasdasd'"
-            :account="'PENSIUN'"
-          />
-        </div>
+      <div class="grid grid-cols-1 gap-6 lg:grid-cols-2 mb-6">
+        <CardBox class="mb-6 shadow-md w-full" has-table>
+          <h1 class="text-4xl mb-4 p-4">Data Kepangkatan</h1>
+          <table>
+            <thead>
+              <tr>
+                <th>Pangkat</th>
+                <th>Jumlah Pegawai</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr v-if="dashboardStore.isLoading">
+                <td colspan="2" class="text-center">
+                  <div
+                    class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+                    role="status"
+                  >
+                    <span
+                      class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]"
+                      >Loading...</span
+                    >
+                  </div>
+                </td>
+              </tr>
+              <template v-else>
+                <tr v-for="item in dashboardStore.dataPangkat" :key="item.id">
+                  <td>{{ item.pangkat }} - {{ item.ruang }}</td>
+                  <td>
+                    {{ item.jumlah }}
+                  </td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+
+          <!-- <div
+            class="p-3 lg:px-6 border-t border-gray-100 dark:border-slate-800 flex justify-end"
+          >
+            <small class="italic"
+              >data s.d
+              {{
+                mainStore.bulanOptions[dashboardStore.filter.currentMonth - 1]
+                  .label
+              }}
+              2023</small
+            >
+          </div> -->
+        </CardBox>
+        <CardBox class="mb-6 shadow-md w-full" has-table>
+          <h1 class="text-4xl mb-4 p-4">Data Jabatan</h1>
+          <table>
+            <thead>
+              <tr>
+                <th>Pangkat</th>
+                <th>Jumlah Pegawai</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr v-if="dashboardStore.isLoading">
+                <td colspan="2" class="text-center">
+                  <div
+                    class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+                    role="status"
+                  >
+                    <span
+                      class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]"
+                      >Loading...</span
+                    >
+                  </div>
+                </td>
+              </tr>
+              <template v-else>
+                <tr v-for="item in dashboardStore.dataJabatan" :key="item.id">
+                  <td>{{ item.name }}</td>
+                  <td>
+                    {{ item.jumlah }}
+                  </td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+
+          <!-- <div
+            class="p-3 lg:px-6 border-t border-gray-100 dark:border-slate-800 flex justify-end"
+          >
+            <small class="italic"
+              >data s.d
+              {{
+                mainStore.bulanOptions[dashboardStore.filter.currentMonth - 1]
+                  .label
+              }}
+              2023</small
+            >
+          </div> -->
+        </CardBox>
       </div>
     </div>
   </SectionMain>

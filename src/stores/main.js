@@ -38,7 +38,7 @@ export const useMainStore = defineStore("main", {
       "DINAS LUAR",
       "KOORDINASI",
       "KONSINYERING",
-      "FASILITASI",
+      "SOSIALISASI",
       "FASILITASI KEGIATAN",
       "HELPDESK TI",
     ],

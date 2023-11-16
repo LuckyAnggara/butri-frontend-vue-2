@@ -9,6 +9,17 @@ export const useDashboardKepegawaianStore = defineStore(
       responses: null,
       isLoading: false,
     }),
+    getters: {
+      dataUmum(state) {
+        return state.responses.data ?? [];
+      },
+      dataPangkat(state) {
+        return state.responses.pangkat.filter((x) => x.jumlah != 0) ?? [];
+      },
+      dataJabatan(state) {
+        return state.responses.jabatan.filter((x) => x.jumlah != 0) ?? [];
+      },
+    },
     actions: {
       async getData() {
         this.isLoading = true;
