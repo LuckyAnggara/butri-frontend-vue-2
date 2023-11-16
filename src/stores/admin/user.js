@@ -173,6 +173,10 @@ export const useUserStore = defineStore("user", {
         name: "",
         target: "",
         created_by: authStore.user.user.id,
+        password: "12345678",
+        pass: "Standar Password (12345678)",
+        role_id: 1,
+        created_by: authStore.user.user.id,
       };
     },
     readyEdit(item) {
