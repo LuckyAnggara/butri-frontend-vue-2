@@ -81,6 +81,13 @@ watch(
   }
 );
 
+watch(
+  () => capaianIKKStore.currentMonth,
+  () => {
+    capaianIKKStore.getData();
+  }
+);
+
 // capaianIKKStore.$subscribe((mutation, state) => {
 //   if (mutation.events?.key == "currentYear") {
 //     capaianIKKStore.getData();
