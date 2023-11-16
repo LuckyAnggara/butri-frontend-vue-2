@@ -18,7 +18,7 @@ import {
 import { useMainStore } from "@/stores/main";
 import BaseButton from "@/components/BaseButton.vue";
 import { useLaporanWilayahStore } from "@/stores/wilayah/laporanwilayah";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import NewModal from "./Modal.vue";
 
 const search = useDebounceFn(() => {
@@ -61,6 +61,13 @@ async function update() {
 watchDeep(laporanStore.filter, (obj) => {
   laporanStore.getData();
 });
+
+watch(
+  () => laporanStore.currentYear,
+  () => {
+    laporanStore.getData();
+  }
+);
 
 // laporanStore.$subscribe((mutation, state) => {
 //   if (mutation.events?.key == "currentYear") {
