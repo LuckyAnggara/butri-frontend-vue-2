@@ -6,6 +6,7 @@ import {
   mdiBriefcaseAccountOutline,
   mdiBriefcaseOutline,
   mdiCashMultiple,
+  mdiChartBoxOutline,
   mdiPoll,
   mdiShieldAccount,
   mdiViewDashboard,
@@ -39,6 +40,16 @@ export default [
       {
         to: "/capaian/program-unggulan/list",
         label: "Program Unggulan",
+      },
+    ],
+  },
+  {
+    label: "Laporan",
+    icon: mdiChartBoxOutline,
+    menu: [
+      {
+        label: "Download",
+        to: "/wilayah/laporan/download/list",
       },
     ],
   },

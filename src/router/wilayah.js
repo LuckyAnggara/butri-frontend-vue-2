@@ -21,4 +21,14 @@ export const wilayah = [
     name: "list-arsip",
     component: () => import("@/views/umum/arsip/Data.vue"),
   },
+  {
+    meta: {
+      title: "Laporan",
+      layout: "layout-authenticated",
+      requiresAuth: true,
+    },
+    path: "/wilayah/laporan/download/list",
+    name: "list-laporan-wilayah-download",
+    component: () => import("@/views/wilayah/laporan/DataMaster.vue"),
+  },
 ];
