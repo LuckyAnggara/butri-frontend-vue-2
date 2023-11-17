@@ -49,4 +49,35 @@ export const admin = [
     name: "management-user",
     component: () => import("@/views/admin/user/DataMaster.vue"),
   },
+  {
+    meta: {
+      title: "Monitoring Capaian Indikator Kinerja Kegiatan",
+      layout: "layout-authenticated",
+      requiresAuth: true,
+    },
+    path: "/monitoring/capaian/ikk/list",
+    name: "list-monitoring-capaian-ikk",
+    component: () => import("@/views/admin/monitoring/ikk/DataCapaianIkk.vue"),
+  },
+  {
+    meta: {
+      title: "Detail Capaian Indikator Kinerja Kegiatan",
+      layout: "layout-authenticated",
+      requiresAuth: true,
+    },
+    path: "/monitoring/detail/capaian/ikk/:id",
+    name: "monitoring-detail-capaian-ikk",
+    component: () =>
+      import("@/views/admin/monitoring/ikk/DetailCapaianIkk.vue"),
+  },
+  {
+    meta: {
+      title: "Monitoring Data Pengawasan",
+      layout: "layout-authenticated",
+      requiresAuth: true,
+    },
+    path: "/monitoring/capaian-pengawasan",
+    name: "monitoring-capaian-pengawasan",
+    component: () => import("@/views/admin/monitoring/pengawasan/Data.vue"),
+  },
 ];

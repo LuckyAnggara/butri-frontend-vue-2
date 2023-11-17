@@ -118,7 +118,7 @@ onMounted(() => {
           <FormField label="Tahun">
             <select
               :disabled="capaianIKKStore.isLoading"
-              v-model="capaianIKKStore.currentYear"
+              v-model="capaianIKKStore.filter.currentYear"
               class="h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
             >
               <option
@@ -135,7 +135,7 @@ onMounted(() => {
           <FormField label="Bulan">
             <select
               :disabled="capaianIKKStore.isLoading"
-              v-model="capaianIKKStore.currentMonth"
+              v-model="capaianIKKStore.filter.currentMonth"
               class="h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
             >
               <option

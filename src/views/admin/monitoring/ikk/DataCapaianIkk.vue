@@ -4,7 +4,7 @@ import SectionMain from "@/components/SectionMain.vue";
 import CardBox from "@/components/CardBox.vue";
 import SectionTitleLineWithButton from "@/components/SectionTitleLineWithButton.vue";
 
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { computed, defineAsyncComponent, onMounted, ref, watch } from "vue";
 import FormField from "@/components/FormField.vue";
 import FormControl from "@/components/FormControl.vue";
@@ -18,90 +18,45 @@ import {
 } from "@heroicons/vue/24/outline";
 import { useMainStore } from "@/stores/main";
 import BaseButton from "@/components/BaseButton.vue";
-import { useIKKStore } from "@/stores/admin/ikk";
+// import { useIKKStore } from "@/stores/admin/ikk";
 import { useUnitGroupStore } from "@/stores/unitGroup";
+import { useCapaianIkk } from "@/stores/all/capaianIkk";
 
 const search = useDebounceFn(() => {
-  ikkStore.getData();
+  capaianIKKStore.getData();
 }, 500);
 const route = useRoute();
-const ikkStore = useIKKStore();
 const mainStore = useMainStore();
 const unitGroupStore = useUnitGroupStore();
-
-const showNewModal = ref(false);
+const capaianIKKStore = useCapaianIkk();
 const updateData = ref(false);
-
 const indexDestroy = ref(0);
+const router = useRouter();
 
 const itemMenu = [
   {
-    function: edit,
-    label: "Edit",
+    function: detail,
+    label: "Detail",
     icon: PencilSquareIcon,
-  },
-  {
-    function: destroy,
-    label: "Hapus",
-    icon: TrashIcon,
   },
 ];
 
-const previousPage = computed(() => {
-  return "&page=" + (ikkStore.currentPage - 1);
-});
-
-const nextPage = computed(() => {
-  return "&page=" + (ikkStore.currentPage + 1);
-});
-
-function toNew() {
-  showNewModal.value = true;
+function detail(item) {
+  router.push({
+    name: "monitoring-detail-capaian-ikk",
+    params: { id: item.id },
+  });
 }
-
-const NewMasterModal = defineAsyncComponent(() =>
-  import("@/views/admin/ikk/NewMasterModal.vue")
-);
-
-function destroy(item) {
-  ikkStore.destroy(item.id);
-  indexDestroy.value = item.id;
-}
-
-function edit(item) {
-  showNewModal.value = true;
-  updateData.value = true;
-  ikkStore.readyEdit(item);
-}
-
-async function submit() {
-  const result = await ikkStore.store();
-  if (result) {
-    showNewModal.value = false;
-    ikkStore.getData();
-  }
-}
-
-async function update() {
-  const result = await ikkStore.update();
-  if (result) {
-    showNewModal.value = false;
-    ikkStore.getData();
-  }
-}
-
-watchDeep(ikkStore.filter, (obj) => {
-  ikkStore.getData();
+watchDeep(capaianIKKStore.filter, (obj) => {
+  capaianIKKStore.getData();
 });
 
 onMounted(() => {
-  ikkStore.$patch((state) => {
+  capaianIKKStore.$patch((state) => {
     state.filter.unit = 0;
   });
-  ikkStore.getData();
-  if (unitGroupStore.items.length <= 0) {
-    unitGroupStore.getData();
-  }
+  capaianIKKStore.getData();
+  unitGroupStore.getData();
 });
 </script>
 
@@ -111,11 +66,11 @@ onMounted(() => {
 
     <CardBox class="mb-4 px-4" has-table>
       <div class="w-full my-4 flex flex-row space-x-4">
-        <div class="w-3/12">
+        <div class="w-1/12">
           <FormField label="Tahun">
             <select
-              :disabled="ikkStore.isLoading"
-              v-model="ikkStore.filter.currentYear"
+              :disabled="capaianIKKStore.isLoading"
+              v-model="capaianIKKStore.filter.currentYear"
               class="h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
             >
               <option
@@ -128,11 +83,28 @@ onMounted(() => {
             </select>
           </FormField>
         </div>
-        <div class="w-4/12">
+        <div class="w-1/12">
+          <FormField label="Bulan">
+            <select
+              :disabled="capaianIKKStore.isLoading"
+              v-model="capaianIKKStore.filter.currentMonth"
+              class="h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
+            >
+              <option
+                v-for="option in mainStore.bulanOptions"
+                :key="option.id"
+                :value="option.id"
+              >
+                {{ option.label }}
+              </option>
+            </select>
+          </FormField>
+        </div>
+        <div class="w-2/12">
           <FormField label="Unit">
             <select
-              :disabled="ikkStore.isLoading"
-              v-model="ikkStore.filter.unit"
+              :disabled="capaianIKKStore.isLoading"
+              v-model="capaianIKKStore.filter.unit"
               class="h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
             >
               <option :value="0">SEMUA</option>
@@ -146,24 +118,15 @@ onMounted(() => {
             </select>
           </FormField>
         </div>
-        <div class="w-5/12">
+        <div class="w-8/12">
           <FormField label="Search">
             <FormControl
               @keyup="search"
-              v-model="ikkStore.filter.searchQuery"
+              v-model="capaianIKKStore.filter.searchQuery"
               type="tel"
               placeholder="Cari berdasarkan indikator"
             />
           </FormField>
-        </div>
-
-        <div class="w-2/12 flex justify-end">
-          <BaseButton
-            @click="toNew()"
-            class="mt-8"
-            color="info"
-            label="Tambah"
-          />
         </div>
       </div>
     </CardBox>
@@ -172,15 +135,16 @@ onMounted(() => {
         <thead>
           <tr>
             <th>No</th>
+            <th>Unit</th>
             <th>Indikator</th>
             <th>Target</th>
-            <th>Unit</th>
+            <th>Realisasi</th>
             <th />
           </tr>
         </thead>
         <tbody>
-          <tr v-if="ikkStore.isLoading">
-            <td colspan="5" class="text-center">
+          <tr v-if="capaianIKKStore.isLoading">
+            <td colspan="6" class="text-center">
               <div
                 class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
                 role="status"
@@ -193,14 +157,21 @@ onMounted(() => {
             </td>
           </tr>
           <template v-else>
-            <tr v-if="ikkStore.items.length == 0">
-              <td colspan="5" class="text-center">
+            <tr v-if="capaianIKKStore.items.length == 0">
+              <td colspan="6" class="text-center">
                 <span>Tidak ada data</span>
               </td>
             </tr>
-            <tr v-else v-for="(item, index) in ikkStore.items" :key="item.id">
+            <tr
+              v-else
+              v-for="(item, index) in capaianIKKStore.items"
+              :key="item.id"
+            >
               <td class="text-center">
-                {{ ikkStore.from + index }}
+                {{ ++index }}
+              </td>
+              <td>
+                {{ item.group.name }}
               </td>
               <td>
                 {{ item.name }}
@@ -209,7 +180,7 @@ onMounted(() => {
                 {{ item.target }}
               </td>
               <td>
-                {{ item.group.name }}
+                {{ item.realisasi?.realisasi ?? "-" }}
               </td>
               <td class="before:hidden lg:w-1 whitespace-nowrap">
                 <div>
@@ -217,10 +188,12 @@ onMounted(() => {
                     <div>
                       <MenuButton
                         :disabled="
-                          ikkStore.isDestroyLoading && indexDestroy == item.id
+                          capaianIKKStore.isDestroyLoading &&
+                          indexDestroy == item.id
                         "
                         :class="
-                          ikkStore.isDestroyLoading && indexDestroy == item.id
+                          capaianIKKStore.isDestroyLoading &&
+                          indexDestroy == item.id
                             ? ''
                             : 'hover:scale-125 ease-in-out duration-300'
                         "
@@ -228,7 +201,8 @@ onMounted(() => {
                       >
                         <ArrowPathIcon
                           v-if="
-                            ikkStore.isDestroyLoading && indexDestroy == item.id
+                            capaianIKKStore.isDestroyLoading &&
+                            indexDestroy == item.id
                           "
                           class="animate-spin h-5 w-5 text-black dark:text-white"
                           aria-hidden="true"
@@ -281,58 +255,6 @@ onMounted(() => {
           </template>
         </tbody>
       </table>
-      <div
-        class="p-3 lg:px-6 border-t border-gray-100 dark:border-slate-800 flex justify-end"
-      >
-        <ul class="inline-flex items-stretch -space-x-px">
-          <li>
-            <a
-              @click="
-                ikkStore.currentPage == 1 ? '' : ikkStore.getData(previousPage)
-              "
-              :disabled="ikkStore.currentPage == 1 ? true : false"
-              :class="
-                ikkStore.currentPage == 1
-                  ? 'cursor-not-allowed'
-                  : 'cursor-pointer dark:hover:bg-blue-700 dark:hover:text-white hover:bg-blue-100 hover:text-gray-700'
-              "
-              class="w-32 px-3 py-2 ml-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
-              >Previous</a
-            >
-          </li>
-
-          <li>
-            <a
-              @click="
-                ikkStore.lastPage == ikkStore.currentPage
-                  ? ''
-                  : ikkStore.getData(nextPage)
-              "
-              :class="
-                ikkStore.lastPage == ikkStore.currentPage
-                  ? 'cursor-not-allowed'
-                  : 'cursor-pointer dark:hover:bg-blue-700 dark:hover:text-white hover:bg-blue-100 hover:text-gray-700'
-              "
-              class="w-32 px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
-              >Next {{
-            }}</a>
-          </li>
-        </ul>
-      </div>
     </CardBox>
-
-    <!-- Modal -->
-    <Teleport to="body">
-      <!-- use the modal component, pass in the prop -->
-      <NewMasterModal
-        :updateData="updateData"
-        :show="showNewModal"
-        @close="showNewModal = false"
-        @submitStore="submit()"
-        @submitUpdate="update()"
-      >
-      </NewMasterModal>
-    </Teleport>
   </SectionMain>
 </template>
-@/stores/admin/ikk

@@ -37,6 +37,7 @@ export const usePengawasanStore = defineStore("pengawasan", {
       currentMonth: new Date().getMonth() + 1,
       currentYear: new Date().getFullYear(),
       unit: authStore.user.user.unit_id,
+      searchQuery: "",
     },
     currentLimit: 5,
   }),
@@ -68,6 +69,12 @@ export const usePengawasanStore = defineStore("pengawasan", {
         return true;
       }
       return false;
+    },
+    searchQuery(state) {
+      if (state.filter.searchQuery == "" || state.filter.searchQuery == null) {
+        return "";
+      }
+      return "&query=" + state.filter.searchQuery;
     },
     unitQuery(state) {
       if (state.filter.unit == 0) {

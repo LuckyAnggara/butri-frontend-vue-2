@@ -197,6 +197,7 @@
           </FormField>
           <FormField label="Penyerapan">
             <FormControl
+              :allowStep="true"
               type="number"
               v-model="kinerjaKeuanganStore.form.penyerapan"
               :disabled="kinerjaKeuanganStore.isStoreLoading"
@@ -204,6 +205,7 @@
           </FormField>
           <FormField label="Konsistensi">
             <FormControl
+              :allowStep="true"
               type="number"
               v-model="kinerjaKeuanganStore.form.konsistensi"
               :disabled="kinerjaKeuanganStore.isStoreLoading"
@@ -211,6 +213,7 @@
           </FormField>
           <FormField label="Capaian Output Program">
             <FormControl
+              :allowStep="true"
               type="number"
               v-model="kinerjaKeuanganStore.form.capaian_output_program"
               :disabled="kinerjaKeuanganStore.isStoreLoading"
@@ -218,6 +221,7 @@
           </FormField>
           <FormField label="Efisiensi">
             <FormControl
+              :allowStep="true"
               type="number"
               v-model="kinerjaKeuanganStore.form.efisiensi"
               :disabled="kinerjaKeuanganStore.isStoreLoading"
@@ -225,7 +229,7 @@
           </FormField>
           <FormField label="Nilai Efisiensi">
             <FormControl
-              step=".01"
+              :allowStep="true"
               type="number"
               v-model="kinerjaKeuanganStore.form.nilai_efisiensi"
               :disabled="kinerjaKeuanganStore.isStoreLoading"
@@ -233,6 +237,7 @@
           </FormField>
           <FormField label="Rata Rata NKA Satker">
             <FormControl
+              :allowStep="true"
               type="number"
               v-model="kinerjaKeuanganStore.form.rata_nka_satker"
               :disabled="kinerjaKeuanganStore.isStoreLoading"

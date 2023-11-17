@@ -1,6 +1,7 @@
 import {
   mdiChartBarStacked,
   mdiChartBoxOutline,
+  mdiMonitorDashboard,
   mdiViewDashboard,
 } from "@mdi/js";
 import all from "./all";
@@ -32,6 +33,28 @@ export default [
         label: "DIPA",
         to: "/dipa/list",
       },
+    ],
+  },
+  {
+    label: "Monitoring",
+    icon: mdiMonitorDashboard,
+    menu: [
+      // {
+      //   label: "Kegiatan",
+      //   to: "/monitoring/kegiatan/list",
+      // },
+      {
+        label: "Capaian IKK",
+        to: "/monitoring/capaian/ikk/list",
+      },
+      {
+        label: "Pengawasan",
+        to: "/monitoring/capaian-pengawasan",
+      },
+      // {
+      //   label: "DIPA",
+      //   to: "/dipa/list",
+      // },
     ],
   },
   ...all,

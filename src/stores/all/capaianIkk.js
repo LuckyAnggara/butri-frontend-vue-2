@@ -31,15 +31,19 @@ export const useCapaianIkk = defineStore("capaianIkk", {
     },
     filter: {
       currentYear: new Date().getFullYear(),
+      currentMonth: new Date().getMonth() + 1,
       searchQuery: "",
       unit: authStore.user.user.unit.group_id,
     },
-    currentYear: new Date().getFullYear(),
-    currentMonth: new Date().getMonth() + 1,
   }),
   getters: {
     items(state) {
       return state.responses?.data ?? [];
+    },
+    monitoringCapaian(state) {
+      return state.singleResponses?.capaian.filter(
+        (x) => x.bulan == filter.currentMonth
+      );
     },
     currentPage(state) {
       return state.responses?.current_page;
@@ -77,7 +81,7 @@ export const useCapaianIkk = defineStore("capaianIkk", {
       this.isLoading = true;
       try {
         const response = await axiosIns.get(
-          `/capaian-ikk?tahun=${this.currentYear}&bulan=${this.currentMonth}${this.searchQuery}${page}${this.unitQuery}`
+          `/capaian-ikk?tahun=${this.filter.currentYear}&bulan=${this.filter.currentMonth}${this.searchQuery}${page}${this.unitQuery}`
         );
         this.responses = response.data;
       } catch (error) {

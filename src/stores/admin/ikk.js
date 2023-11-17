@@ -24,11 +24,10 @@ export const useIKKStore = defineStore("indikatorKinerjaKegiatan", {
     },
     filter: {
       currentYear: new Date().getFullYear(),
+      currentMonth: new Date().getMonth() + 1,
       searchQuery: "",
       unit: 0,
     },
-    currentYear: new Date().getFullYear(),
-    currentYear: new Date().getFullYear(),
   }),
   getters: {
     items(state) {
@@ -70,7 +69,7 @@ export const useIKKStore = defineStore("indikatorKinerjaKegiatan", {
       this.isLoading = true;
       try {
         const response = await axiosIns.get(
-          `/indikator-kinerja-kegiatan?tahun=${this.currentYear}${this.searchQuery}${page}${this.unitQuery}`
+          `/indikator-kinerja-kegiatan?tahun=${this.filter.currentYear}&bulan=${this.filter.currentMonth}${this.searchQuery}${page}${this.unitQuery}`
         );
         this.responses = response.data.data;
       } catch (error) {
