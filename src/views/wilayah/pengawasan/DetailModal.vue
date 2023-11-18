@@ -14,7 +14,7 @@
           class="flex justify-between items-center pb-4 mb-4 rounded-t border-b sm:mb-5 dark:border-gray-600"
         >
           <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-            Output / Keterangan
+            Nomor dan Tanggal Laporan
           </h3>
           <button
             @click="closeModal"
@@ -49,7 +49,7 @@
             />
           </FormField>
         </div>
-        <hr class="my-4" />
+        <!-- <hr class="my-4" />
         <h1 class="text-bold text-xl my-4">Update Data</h1>
         <div>
           <div class="relative mb-6">
@@ -76,7 +76,7 @@
               Processing</span
             ></BaseButton
           >
-        </div>
+        </div> -->
       </div>
     </div>
   </div>

@@ -105,13 +105,23 @@ onUnmounted(() => {
               />
             </FormField>
 
-            <FormField label="Realisasi">
-              <FormControl
-                :disabled="capaianIKUStore.isUpdateLoading"
-                v-model="capaianIKUStore.singleResponses.realisasi"
-                required
-              />
-            </FormField>
+            <div class="flex space-x-4">
+              <FormField class="w-full" label="Realisasi">
+                <FormControl
+                  :disabled="capaianIKUStore.isUpdateLoading"
+                  v-model="capaianIKUStore.singleResponses.realisasi"
+                  required
+                />
+              </FormField>
+
+              <FormField class="w-full" label="Presentase Capaian">
+                <FormControl
+                  :disabled="capaianIKUStore.isUpdateLoading"
+                  v-model="capaianIKUStore.singleResponses.capaian"
+                  required
+                />
+              </FormField>
+            </div>
 
             <FormField label="Analisa">
               <QuillEditor

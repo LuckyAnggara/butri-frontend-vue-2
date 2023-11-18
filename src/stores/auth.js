@@ -64,8 +64,6 @@ export const useAuthStore = defineStore("auth", {
           localStorage.removeItem("token");
           localStorage.clear();
 
-          getActivePinia()._s.forEach((store) => store.$reset());
-
           setTimeout(() => {}, 500);
           return true;
         } else {

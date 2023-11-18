@@ -43,7 +43,7 @@ const isInput = ref(false);
 const itemMenu = [
   {
     function: output,
-    label: "Output",
+    label: "Detail",
     icon: ChatBubbleLeftIcon,
   },
   {
@@ -222,13 +222,13 @@ onMounted(() => {
             <td class="text-center">Nama Kegiatan</td>
             <td class="text-center">Surat Perintah</td>
             <td class="text-center">TMT & Lokasi Kegiatan</td>
-            <td class="text-center">LHP</td>
+            <!-- <td class="text-center">LHP</td> -->
             <td class="text-center"></td>
           </tr>
         </thead>
         <tbody>
           <tr v-if="pengawasanStore.isLoading">
-            <td colspan="9" class="text-center">
+            <td colspan="8" class="text-center">
               <div
                 class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
                 role="status"
@@ -242,7 +242,7 @@ onMounted(() => {
           </tr>
           <template v-else>
             <tr v-if="pengawasanStore.items.length == 0">
-              <td colspan="9" class="text-center">
+              <td colspan="8" class="text-center">
                 <span>Tidak ada data</span>
               </td>
             </tr>
@@ -268,9 +268,9 @@ onMounted(() => {
                 {{ item.location }} <br />
                 {{ item.start_at }} - {{ item.end_at }}
               </td>
-              <td>
+              <!-- <td>
                 {{ item.lhp ?? "-" }}
-              </td>
+              </td> -->
               <td class="before:hidden lg:w-1 whitespace-nowrap">
                 <div>
                   <Menu as="div" class="relative inline-block text-left">

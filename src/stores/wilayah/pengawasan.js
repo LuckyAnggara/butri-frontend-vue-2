@@ -39,7 +39,7 @@ export const usePengawasanStore = defineStore("pengawasan", {
       unit: authStore.user.user.unit_id,
       searchQuery: "",
     },
-    currentLimit: 5,
+    currentLimit: 50,
   }),
   getters: {
     items(state) {

@@ -186,7 +186,7 @@
             </FormField>
           </div>
           <div v-else>
-            <FormField label="Output / Keterangan">
+            <FormField label="Nomor dan Tanggal LHP">
               <textarea
                 :disabled="pengawasanStore.isStoreLoading"
                 rows="10"
@@ -342,7 +342,7 @@
             </FormField>
           </div>
           <div v-else>
-            <FormField label="Output / Keterangan">
+            <FormField label="Nomor dan Tanggal LHP">
               <textarea
                 :disabled="pengawasanStore.isStoreLoading"
                 rows="10"

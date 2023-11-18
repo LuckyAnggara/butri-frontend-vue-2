@@ -22,6 +22,7 @@ export const useCapaianIkk = defineStore("capaianIkk", {
         target: null,
       },
       realisasi: null,
+      capaian: null,
       analisa: null,
       kegiatan: null,
       kendala: null,

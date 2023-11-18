@@ -17,11 +17,11 @@ export default [
     label: "Persuratan",
     icon: mdiEmailFastOutline,
   },
-  {
-    to: "/arsip/list",
-    label: "Arsip",
-    icon: mdiArchiveOutline,
-  },
+  // {
+  //   to: "/arsip/list",
+  //   label: "Arsip",
+  //   icon: mdiArchiveOutline,
+  // },
   ...programUnggulan,
   // {
   //   label: "BMN",

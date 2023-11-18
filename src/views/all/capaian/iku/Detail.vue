@@ -53,6 +53,7 @@ onUnmounted(() => {
           <tr>
             <!-- <th>Bulan</th> -->
             <th>Realisasi</th>
+            <th>% Capaian</th>
             <th>Analisa</th>
             <th>Kegiatan</th>
             <th>Kendala / Hambatan</th>
@@ -61,7 +62,7 @@ onUnmounted(() => {
         </thead>
         <tbody>
           <tr v-if="capaianIKUStore.singleResponses?.capaian?.length == 0">
-            <td colspan="4" class="text-center">
+            <td colspan="5" class="text-center">
               <span>Tidak ada data</span>
             </td>
           </tr>
@@ -75,6 +76,9 @@ onUnmounted(() => {
             </td> -->
             <td>
               <div v-html="item.realisasi"></div>
+            </td>
+            <td>
+              <div v-html="item.capaian"></div>
             </td>
             <td>
               <div v-html="item.analisa"></div>

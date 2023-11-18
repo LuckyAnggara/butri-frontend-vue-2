@@ -139,12 +139,13 @@ onMounted(() => {
             <th>Indikator</th>
             <th>Target</th>
             <th>Realisasi</th>
+            <th>% Capaian</th>
             <th />
           </tr>
         </thead>
         <tbody>
           <tr v-if="capaianIKKStore.isLoading">
-            <td colspan="6" class="text-center">
+            <td colspan="7" class="text-center">
               <div
                 class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
                 role="status"
@@ -158,7 +159,7 @@ onMounted(() => {
           </tr>
           <template v-else>
             <tr v-if="capaianIKKStore.items.length == 0">
-              <td colspan="6" class="text-center">
+              <td colspan="7" class="text-center">
                 <span>Tidak ada data</span>
               </td>
             </tr>
@@ -181,6 +182,9 @@ onMounted(() => {
               </td>
               <td>
                 {{ item.realisasi?.realisasi ?? "-" }}
+              </td>
+              <td>
+                {{ item.realisasi?.capaian ?? "-" }}
               </td>
               <td class="before:hidden lg:w-1 whitespace-nowrap">
                 <div>

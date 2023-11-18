@@ -159,7 +159,7 @@ onMounted(() => {
             <td class="text-center w-1/12">Jenis</td>
             <td class="text-center w-4/12">Nama Kegiatan</td>
             <td class="text-center w-2/12">TMT & Lokasi Kegiatan</td>
-            <td class="text-center w-2/12">LHP</td>
+            <td class="text-center w-2/12">No & Tgl LHP</td>
           </tr>
         </thead>
         <tbody>
@@ -219,7 +219,7 @@ onMounted(() => {
                 {{ item.start_at }} - {{ item.end_at }}
               </td>
               <td>
-                {{ item.lhp ?? "-" }}
+                {{ item.output ?? "-" }}
               </td>
             </tr>
           </template>

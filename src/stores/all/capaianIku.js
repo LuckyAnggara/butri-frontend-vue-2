@@ -22,6 +22,7 @@ export const useCapaianIKU = defineStore("capaianIKU", {
         target: null,
       },
       realisasi: null,
+      capaian: null,
       analisa: null,
       kegiatan: null,
       kendala: null,
