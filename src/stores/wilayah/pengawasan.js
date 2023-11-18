@@ -88,7 +88,7 @@ export const usePengawasanStore = defineStore("pengawasan", {
       this.isLoading = true;
       try {
         const response = await axiosIns.get(
-          `/data-pengawasan?tahun=${this.filter.currentYear}&bulan=${this.filter.currentMonth}${this.unitQuery}`
+          `/data-pengawasan?limit=${this.currentLimit}&tahun=${this.filter.currentYear}&bulan=${this.filter.currentMonth}${this.unitQuery}${this.searchQuery}${page}`
         );
         this.responses = response.data.data;
       } catch (error) {
