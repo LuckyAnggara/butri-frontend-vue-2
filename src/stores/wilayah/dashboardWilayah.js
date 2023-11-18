@@ -11,7 +11,7 @@ export const useDashboardWilayahStore = defineStore("dashboardWilayah", {
     filter: {
       currentMonth: new Date().getMonth() + 1,
       currentYear: new Date().getFullYear(),
-      unit: authStore.user.user.unit_id,
+      unit: authStore.user?.user?.unit_id,
     },
   }),
   getters: {
@@ -19,7 +19,7 @@ export const useDashboardWilayahStore = defineStore("dashboardWilayah", {
       if (state.filter.unit == 0) {
         return "";
       }
-      return "&unit=" + state.filter.unit;
+      return "&unit=" + authStore.user?.user?.unit_id ?? 0;
     },
   },
   actions: {

@@ -5,6 +5,7 @@ const props = defineProps({
   username: {
     type: String,
     required: true,
+    default: "User",
   },
   avatar: {
     type: String,

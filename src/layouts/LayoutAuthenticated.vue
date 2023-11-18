@@ -1,5 +1,13 @@
 <script setup>
-import { mdiForwardburger, mdiBackburger, mdiMenu } from "@mdi/js";
+import {
+  mdiForwardburger,
+  mdiBackburger,
+  mdiMenu,
+  mdiAccount,
+  mdiCogOutline,
+  mdiLogout,
+  mdiThemeLightDark,
+} from "@mdi/js";
 import { onMounted, ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import menuNavBar from "@/menuNavBar.js";
@@ -31,7 +39,6 @@ const isAsideMobileExpanded = ref(false);
 const isAsideLgActive = ref(false);
 const authStore = useAuthStore();
 const toast = useToast();
-const menuStore = useMenuStore();
 
 router.beforeEach(() => {
   isAsideMobileExpanded.value = false;

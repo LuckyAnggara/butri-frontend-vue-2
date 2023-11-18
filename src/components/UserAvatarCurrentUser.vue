@@ -6,7 +6,7 @@ const authStore = useAuthStore();
 </script>
 
 <template>
-  <UserAvatar :username="authStore.user.user.name">
+  <UserAvatar :username="authStore.user?.user?.name">
     <slot />
   </UserAvatar>
 </template>

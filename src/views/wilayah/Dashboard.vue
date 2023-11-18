@@ -19,11 +19,13 @@ import { useRoute } from "vue-router";
 import { useMainStore } from "@/stores/main";
 import FormField from "@/components/FormField.vue";
 import { watchDeep } from "@vueuse/core";
+import { useAuthStore } from "@/stores/auth";
 
 const route = useRoute();
 
 const dashboardStore = useDashboardWilayahStore();
 const mainStore = useMainStore();
+const authStore = useAuthStore();
 
 watchDeep(dashboardStore.filter, (obj) => {
   dashboardStore.getData();
