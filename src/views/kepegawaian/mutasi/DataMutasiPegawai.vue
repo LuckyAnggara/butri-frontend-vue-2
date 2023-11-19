@@ -183,14 +183,18 @@ onMounted(() => {
               <td>
                 {{ item.nomor_sk ?? "-" }}
               </td>
-              <td>{{ item.pegawai.name ?? "-" }}</td>
-              <td>{{ item.jabatan.name ?? "-" }}</td>
+              <td>{{ item.pegawai?.name ?? "-" }}</td>
+              <td>{{ item.jabatan?.name ?? "-" }}</td>
               <td>{{ item.jabatan_new.name ?? "-" }}</td>
               <td>
                 {{ item.unit.name ?? "-" }}
               </td>
               <td>
-                {{ item.unit_new.name ?? "-" }}
+                {{
+                  item.keluar == false
+                    ? item.unit_new.name ?? "-"
+                    : "Mutasi Keluar"
+                }}
               </td>
               <td>
                 {{ item.tmt_jabatan ?? "-" }}

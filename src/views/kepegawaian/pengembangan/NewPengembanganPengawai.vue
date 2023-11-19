@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, onUnmounted, ref } from "vue";
+import { onMounted, onUnmounted, ref, watch } from "vue";
 import SectionMain from "@/components/SectionMain.vue";
 import CardBox from "@/components/CardBox.vue";
 import SectionTitleLineWithButton from "@/components/SectionTitleLineWithButton.vue";
@@ -15,6 +15,7 @@ import BaseDivider from "@/components/BaseDivider.vue";
 import BaseButton from "@/components/BaseButton.vue";
 import { useToast } from "vue-toastification";
 import { usePengembanganStore } from "@/stores/pegawai/pengembangan";
+import FormCheckRadioGroup from "@/components/FormCheckRadioGroup.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -41,8 +42,16 @@ async function submit() {
       router.push({ name: "list-pengembangan-pegawai" });
     }
   } else {
-    toast.error("Data belum lengkap", { timeout: 2000 });
-    return false;
+    if (pengembanganStore.form.semuaPegawai == true) {
+      const result = await pengembanganStore.store();
+      if (result) {
+        router.push({ name: "list-pengembangan-pegawai" });
+      }
+      return true;
+    } else {
+      toast.error("Data belum lengkap", { timeout: 2000 });
+      return false;
+    }
   }
 }
 
@@ -76,6 +85,7 @@ onUnmounted(() => {
         <div class="relative mb-6">
           <label class="block font-bold mb-2">Cari Pegawai</label>
           <Select2
+            :disabled="pengembanganStore.form.semuaPegawai == true"
             :use-SSR="true"
             @ssr="find"
             :is-loading="pegawaiStore.isLoading"
@@ -86,6 +96,15 @@ onUnmounted(() => {
             @chosen="handleChosen"
           ></Select2>
         </div>
+
+        <FormField label="Semua Pegawai">
+          <FormCheckRadioGroup
+            v-model="pengembanganStore.form.semuaPegawai"
+            name="buttons-switch"
+            type="switch"
+            :options="{ outline: 'Semua Pegawai' }"
+          />
+        </FormField>
 
         <FormField label="Nama Kegiatan">
           <FormControl
@@ -104,7 +123,7 @@ onUnmounted(() => {
         </FormField>
 
         <FormField label="Jumlah Peserta">
-          <Input
+          <input
             :disabled="true"
             :value="pengembanganStore.form.list.length"
             class="h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"

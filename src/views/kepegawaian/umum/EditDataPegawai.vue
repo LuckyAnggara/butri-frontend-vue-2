@@ -185,9 +185,8 @@ onMounted(async () => {
                 </option>
               </select>
             </FormField>
-            <FormField label="TMT Pensiun *" class="w-1/2">
+            <FormField label="TMT Pensiun" class="w-1/2">
               <vue-tailwind-datepicker
-                required
                 :disabled="pegawaiStore.isUpdateLoading"
                 v-model="pegawaiStore.singleResponses.tmt_pensiun"
                 :formatter="formatter"

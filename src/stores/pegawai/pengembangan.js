@@ -18,6 +18,7 @@ export const usePengembanganStore = defineStore("pengembangan", {
     userData: null,
     form: {
       kegiatan: "",
+      semuaPegawai: false,
       waktu: {
         startDate: "",
         endDate: "",

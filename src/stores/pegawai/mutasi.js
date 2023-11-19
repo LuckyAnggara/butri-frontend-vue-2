@@ -27,7 +27,7 @@ export const useMutasiStore = defineStore("mutasi", {
       date: [],
       searchQuery: "",
     },
-    currentLimit: 5,
+    currentLimit: 50,
   }),
   getters: {
     items(state) {
