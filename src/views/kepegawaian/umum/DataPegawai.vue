@@ -19,6 +19,7 @@ import {
 } from "@heroicons/vue/24/outline";
 import { useMainStore } from "@/stores/main";
 import BaseButton from "@/components/BaseButton.vue";
+import { useUnitStore } from "@/stores/unit";
 
 const search = useDebounceFn(() => {
   pegawaiStore.getData();
@@ -27,6 +28,7 @@ const route = useRoute();
 const router = useRouter();
 const pegawaiStore = usePegawaiStore();
 const mainStore = useMainStore();
+const unitStore = useUnitStore();
 
 const indexDestroy = ref(0);
 
@@ -74,6 +76,13 @@ watch(
   }
 );
 
+watch(
+  () => pegawaiStore.filter.unit,
+  () => {
+    pegawaiStore.getData();
+  }
+);
+
 // pegawaiStore.$subscribe((mutation, state) => {
 //   if (mutation.events?.key == "currentLimit") {
 //     pegawaiStore.getData();
@@ -81,17 +90,19 @@ watch(
 // });
 
 onMounted(() => {
+  pegawaiStore.currentLimit = 50;
   pegawaiStore.getData();
+  unitStore.getData();
 });
 </script>
 
 <template>
-  <SectionMain>
+  <SectionMain :max-w="false">
     <SectionTitleLineWithButton :title="route.meta.title" main />
 
     <CardBox class="mb-4 px-4" has-table>
       <div class="w-full my-4 flex flex-row space-x-4">
-        <div class="w-3/12">
+        <div class="w-1/12">
           <FormField label="Show">
             <select
               :disabled="pegawaiStore.isStoreLoading"
@@ -104,6 +115,24 @@ onMounted(() => {
                 :value="option"
               >
                 {{ option == 100000 ? "SEMUA" : option }}
+              </option>
+            </select>
+          </FormField>
+        </div>
+        <div class="w-4/12">
+          <FormField label="Unit">
+            <select
+              :disabled="pegawaiStore.isLoading"
+              v-model="pegawaiStore.filter.unit"
+              class="h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
+            >
+              <option :value="0">SEMUA</option>
+              <option
+                v-for="option in unitStore.items"
+                :key="option.id"
+                :value="option.id"
+              >
+                {{ option.name.toUpperCase() }}
               </option>
             </select>
           </FormField>
@@ -163,22 +192,22 @@ onMounted(() => {
               {{ pegawaiStore.from + index }}
             </td>
             <td>
-              {{ item.nip }}
+              {{ item.nip ?? "-" }}
             </td>
             <td>
-              {{ item.name.toUpperCase() ?? "" }}
+              {{ item.name.toUpperCase() ?? "-" }}
             </td>
             <td>
-              {{ item.gender.toUpperCase() ?? "" }}
+              {{ item.gender.toUpperCase() ?? "-" }}
             </td>
             <td>
-              {{ item.pangkat.pangkat.toUpperCase() ?? "" }}
+              {{ item.pangkat?.pangkat.toUpperCase() ?? "-" }}
             </td>
             <td>
-              {{ item.jabatan.name.toUpperCase() ?? "" }}
+              {{ item.jabatan?.name.toUpperCase() ?? "-" }}
             </td>
             <td>
-              {{ item.unit.name.toUpperCase() ?? "" }}
+              {{ item.unit?.name.toUpperCase() ?? "-" }}
             </td>
 
             <td class="before:hidden lg:w-1 whitespace-nowrap">

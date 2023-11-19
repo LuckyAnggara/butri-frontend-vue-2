@@ -21,6 +21,7 @@ import { useLaporanStore } from "@/stores/admin/laporan";
 import { getMonthName } from "@/utilities/formatter";
 import { ref, onMounted, watch } from "vue";
 import NewModal from "./Modal.vue";
+import { usePegawaiStore } from "@/stores/pegawai/pegawai";
 
 const search = useDebounceFn(() => {
   laporanStore.getData();
@@ -28,6 +29,7 @@ const search = useDebounceFn(() => {
 const route = useRoute();
 const laporanStore = useLaporanStore();
 const mainStore = useMainStore();
+const pegawaiStore = usePegawaiStore();
 
 const showNewModal = ref(false);
 const updateData = ref(false);
@@ -77,6 +79,7 @@ watch(
 // });
 
 onMounted(() => {
+  pegawaiStore.getData();
   laporanStore.getData();
 });
 </script>

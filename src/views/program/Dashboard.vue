@@ -492,7 +492,7 @@ const route = useRoute();
           class="p-3 lg:px-6 border-t border-gray-100 dark:border-slate-800 flex justify-end"
         >
           <small class="italic"
-            >data s.d
+            >data bulan
             {{
               mainStore.bulanOptions[dashboardStore.filter.currentMonth - 1]
                 .label

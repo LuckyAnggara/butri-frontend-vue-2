@@ -30,8 +30,11 @@ export const usePegawaiStore = defineStore("pegawai", {
       tmt_pensiun: "",
       created_by: authStore.user.user.id,
     },
+    filter: {
+      unit: 0,
+    },
     searchName: "",
-    currentLimit: 50,
+    currentLimit: 5,
   }),
   getters: {
     items(state) {
@@ -61,13 +64,19 @@ export const usePegawaiStore = defineStore("pegawai", {
       }
       return "&name=" + state.searchName;
     },
+    unitQueryAdmin(state) {
+      if (state.filter.unit == 0) {
+        return "";
+      }
+      return "&unit=" + state.filter.unit;
+    },
   },
   actions: {
     async getData(page = "") {
       this.isLoading = true;
       try {
         const response = await axiosIns.get(
-          `/employee?limit=${this.currentLimit}${this.searchQuery}${page}`
+          `/employee?limit=${this.currentLimit}${this.searchQuery}${page}${this.unitQueryAdmin}`
         );
 
         this.responses = response.data.data;

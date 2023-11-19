@@ -77,6 +77,21 @@
           <hr />
           <h4 class="font-bold my-2">Data Tanda Tangan</h4>
 
+          <div class="relative mb-6">
+            <label class="block font-bold mb-2">Cari Pegawai</label>
+            <Select2
+              :use-SSR="true"
+              @ssr="find"
+              :is-loading="pegawaiStore.isLoading"
+              :use-loader="true"
+              :data="pegawaiStore.items"
+              v-model="search"
+              placeholder="Cari data pegawai .."
+              @chosen="handleChosen"
+            ></Select2>
+            <small>Cari dari data Pegawai / Input Manual</small>
+          </div>
+
           <FormField label="Nama">
             <FormControl
               v-model="laporanStore.form.ttd_name"
@@ -152,6 +167,9 @@ import { useLaporanStore } from "@/stores/admin/laporan";
 import { useMainStore } from "@/stores/main";
 import { ArrowPathIcon } from "@heroicons/vue/24/outline";
 import { ref } from "vue";
+import Select2 from "@/components/Select2.vue";
+import { usePegawaiStore } from "@/stores/pegawai/pegawai";
+import { useDebounceFn } from "@vueuse/core";
 
 const props = defineProps({
   show: Boolean,
@@ -162,10 +180,22 @@ const formatter = ref({
   date: "DD MMMM YYYY",
 });
 
+const search = ref("");
+
+const find = useDebounceFn((x) => {
+  pegawaiStore.searchName = search.value;
+  pegawaiStore.getData();
+}, 500);
+
+function handleChosen(payload) {
+  laporanStore.addFromExisting(payload);
+}
+
 const emit = defineEmits(["close", "submitStore", "submitUpdate"]);
 
 const laporanStore = useLaporanStore();
 const mainStore = useMainStore();
+const pegawaiStore = usePegawaiStore();
 
 async function prosesRequest() {
   emit("submitStore");

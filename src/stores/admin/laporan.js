@@ -190,6 +190,11 @@ export const useLaporanStore = defineStore("laporan", {
         created_by: authStore.user.user.id,
       };
     },
+    addFromExisting(payload) {
+      this.form.ttd_jabatan = payload.jabatan?.name ?? "-";
+      this.form.ttd_name = payload.name;
+      this.form.ttd_nip = payload.nip;
+    },
     readyEdit(item) {
       this.singleResponses = JSON.parse(JSON.stringify(item));
       this.originalSingleResponses = JSON.parse(JSON.stringify(item));

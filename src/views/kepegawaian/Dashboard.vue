@@ -102,26 +102,13 @@ onMounted(() => {
               </template>
             </tbody>
           </table>
-
-          <!-- <div
-            class="p-3 lg:px-6 border-t border-gray-100 dark:border-slate-800 flex justify-end"
-          >
-            <small class="italic"
-              >data s.d
-              {{
-                mainStore.bulanOptions[dashboardStore.filter.currentMonth - 1]
-                  .label
-              }}
-              2023</small
-            >
-          </div> -->
         </CardBox>
         <CardBox class="mb-6 shadow-md w-full" has-table>
           <h1 class="text-4xl mb-4 p-4">Data Jabatan</h1>
           <table>
             <thead>
               <tr>
-                <th>Pangkat</th>
+                <th>Jabatan</th>
                 <th>Jumlah Pegawai</th>
               </tr>
             </thead>
