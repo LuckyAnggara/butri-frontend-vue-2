@@ -21,7 +21,9 @@ export const useLaporanStore = defineStore("laporan", {
     form: {
       ttd_name: "",
       ttd_nip: "",
+      ttd_jabatan: "",
       ttd_location: "",
+      ttd_tanggal: "",
       parameter: {
         tahun: new Date().getFullYear(),
         bulan: new Date().getMonth() + 1,
@@ -178,6 +180,8 @@ export const useLaporanStore = defineStore("laporan", {
         ttd_name: "",
         ttd_nip: "",
         ttd_location: "",
+        ttd_jabatan: "",
+        ttd_tanggal: "",
         parameter: {
           tahun: new Date().getFullYear(),
           bulan: new Date().getMonth() + 1,

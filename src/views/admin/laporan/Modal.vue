@@ -40,38 +40,40 @@
 
         <form @submit.prevent="prosesRequest()">
           <h4 class="font-bold mb-2">Data</h4>
-          <FormField label="Tahun">
-            <select
-              :disabled="laporanStore.isStoreLoading"
-              required
-              v-model="laporanStore.form.parameter.tahun"
-              class="h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
-            >
-              <option
-                v-for="option in mainStore.tahunOptions"
-                :key="option"
-                :value="option"
+          <div class="flex space-x-4">
+            <FormField label="Tahun" class="w-full">
+              <select
+                :disabled="laporanStore.isStoreLoading"
+                required
+                v-model="laporanStore.form.parameter.tahun"
+                class="h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
               >
-                {{ option }}
-              </option>
-            </select>
-          </FormField>
-          <FormField label="Bulan">
-            <select
-              required
-              :disabled="laporanStore.isStoreLoading"
-              v-model="laporanStore.form.parameter.bulan"
-              class="h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
-            >
-              <option
-                v-for="option in mainStore.bulanOptions"
-                :key="option.id"
-                :value="option.id"
+                <option
+                  v-for="option in mainStore.tahunOptions"
+                  :key="option"
+                  :value="option"
+                >
+                  {{ option }}
+                </option>
+              </select>
+            </FormField>
+            <FormField label="Bulan" class="w-full">
+              <select
+                required
+                :disabled="laporanStore.isStoreLoading"
+                v-model="laporanStore.form.parameter.bulan"
+                class="h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
               >
-                {{ option.label }}
-              </option>
-            </select>
-          </FormField>
+                <option
+                  v-for="option in mainStore.bulanOptions"
+                  :key="option.id"
+                  :value="option.id"
+                >
+                  {{ option.label }}
+                </option>
+              </select>
+            </FormField>
+          </div>
           <hr />
           <h4 class="font-bold my-2">Data Tanda Tangan</h4>
 
@@ -82,23 +84,45 @@
               required
             />
           </FormField>
+          <div class="flex space-x-4">
+            <FormField class="w-full" label="Jabatan">
+              <FormControl
+                v-model="laporanStore.form.ttd_jabatan"
+                :disabled="laporanStore.isStoreLoading"
+                required
+              />
+            </FormField>
 
-          <FormField label="NIP">
-            <FormControl
-              v-model="laporanStore.form.ttd_nip"
-              :disabled="laporanStore.isStoreLoading"
-              required
-            />
-          </FormField>
+            <FormField class="w-full" label="NIP">
+              <FormControl
+                v-model="laporanStore.form.ttd_nip"
+                :disabled="laporanStore.isStoreLoading"
+                required
+              />
+            </FormField>
+          </div>
+          <div class="flex space-x-4">
+            <FormField label="Tempat" class="w-full">
+              <FormControl
+                v-model="laporanStore.form.ttd_location"
+                :disabled="laporanStore.isStoreLoading"
+                required
+              />
+            </FormField>
 
-          <FormField label="Lokasi">
-            <FormControl
-              v-model="laporanStore.form.ttd_location"
-              :disabled="laporanStore.isStoreLoading"
-              required
-            />
-          </FormField>
-
+            <FormField label="Tanggal" class="w-full">
+              <vue-tailwind-datepicker
+                :disabled="laporanStore.isStoreLoading"
+                :shortcuts="false"
+                as-single
+                required
+                placeholder="Tanggal Surat Perintah"
+                v-model="laporanStore.form.ttd_tanggal"
+                :formatter="formatter"
+                input-classes="h-12 border  px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
+              />
+            </FormField>
+          </div>
           <BaseDivider />
 
           <div class="flex justify-start space-x-3 items-center">
@@ -127,10 +151,15 @@ import BaseButton from "@/components/BaseButton.vue";
 import { useLaporanStore } from "@/stores/admin/laporan";
 import { useMainStore } from "@/stores/main";
 import { ArrowPathIcon } from "@heroicons/vue/24/outline";
+import { ref } from "vue";
 
 const props = defineProps({
   show: Boolean,
   updateData: Boolean,
+});
+
+const formatter = ref({
+  date: "DD MMMM YYYY",
 });
 
 const emit = defineEmits(["close", "submitStore", "submitUpdate"]);

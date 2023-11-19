@@ -10,10 +10,10 @@ export default [
         label: "Download",
         to: "/laporan/download/list",
       },
-      {
-        label: "Template",
-        to: "/laporan/download/list",
-      },
+      // {
+      //   label: "Template",
+      //   to: "/laporan/download/list",
+      // },
     ],
   },
 ];
