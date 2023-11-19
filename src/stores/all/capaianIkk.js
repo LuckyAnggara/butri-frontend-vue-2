@@ -9,6 +9,8 @@ export const useCapaianIkk = defineStore("capaianIkk", {
   state: () => ({
     responses: null,
     singleResponses: null,
+    capaianResponses: null,
+    originalCapaianResponses: null,
     originalSingleResponses: null,
     isUpdateLoading: false,
     isLoading: false,
@@ -34,10 +36,13 @@ export const useCapaianIkk = defineStore("capaianIkk", {
       currentYear: new Date().getFullYear(),
       currentMonth: new Date().getMonth() + 1,
       searchQuery: "",
-      unit: authStore.user.user.unit.group_id,
+      unit: 0,
     },
   }),
   getters: {
+    unit(state) {
+      return authStore.unitID;
+    },
     items(state) {
       return state.responses?.data ?? [];
     },
@@ -71,6 +76,12 @@ export const useCapaianIkk = defineStore("capaianIkk", {
       return "&query=" + state.filter.searchQuery;
     },
     unitQuery(state) {
+      if (state.unit == 0) {
+        return "";
+      }
+      return "&unit=" + state.unit;
+    },
+    unitQueryAdmin(state) {
       if (state.filter.unit == 0) {
         return "";
       }
@@ -83,6 +94,20 @@ export const useCapaianIkk = defineStore("capaianIkk", {
       try {
         const response = await axiosIns.get(
           `/capaian-ikk?tahun=${this.filter.currentYear}&bulan=${this.filter.currentMonth}${this.searchQuery}${page}${this.unitQuery}`
+        );
+        this.responses = response.data;
+      } catch (error) {
+        alert(error.message);
+      } finally {
+        this.isLoading = false;
+      }
+      return false;
+    },
+    async getDataAdmin(page = "") {
+      this.isLoading = true;
+      try {
+        const response = await axiosIns.get(
+          `/capaian-ikk?tahun=${this.filter.currentYear}&bulan=${this.filter.currentMonth}${this.searchQuery}${page}${this.unitQueryAdmin}`
         );
         this.responses = response.data;
       } catch (error) {
@@ -129,6 +154,21 @@ export const useCapaianIkk = defineStore("capaianIkk", {
       }
       this.isLoading = false;
     },
+    async showCapaian(id = "", isCapaian = false) {
+      this.isLoading = true;
+      try {
+        const response = await axiosIns.get(`/capaian-ikk/capaian/${id}`);
+        this.capaianResponses = JSON.parse(JSON.stringify(response.data.data));
+        this.originalCapaianResponses = JSON.parse(
+          JSON.stringify(response.data.data)
+        );
+      } catch (error) {
+        toast.error("Data not found", {
+          position: "bottom-right",
+        });
+      }
+      this.isLoading = false;
+    },
     async destroy(id) {
       this.isDestroyLoading = true;
       setTimeout(() => {}, 500);
@@ -153,6 +193,29 @@ export const useCapaianIkk = defineStore("capaianIkk", {
         const response = await axiosIns.put(
           `/capaian-ikk/${this.singleResponses.id}`,
           this.singleResponses
+        );
+        if (response.status == 200) {
+          toast.success(response.data.message, {
+            timeout: 2000,
+          });
+          return true;
+        } else {
+          return false;
+        }
+      } catch (error) {
+        toast.error(error.message, {
+          timeout: 2000,
+        });
+      } finally {
+        this.isUpdateLoading = false;
+      }
+    },
+    async updateCapaian() {
+      this.isUpdateLoading = true;
+      try {
+        const response = await axiosIns.put(
+          `/capaian-ikk/${this.capaianResponses.id}`,
+          this.capaianResponses
         );
         if (response.status == 200) {
           toast.success(response.data.message, {

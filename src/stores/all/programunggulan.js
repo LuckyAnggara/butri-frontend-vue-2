@@ -28,11 +28,13 @@ export const useProgramUnggulanStore = defineStore("programUnggulan", {
     filter: {
       date: new Date().getFullYear(),
       searchQuery: "",
-      unit: authStore.user.user.unit_id,
     },
     currentLimit: new Date().getFullYear(),
   }),
   getters: {
+    unit(state) {
+      return authStore.unitID;
+    },
     items(state) {
       return state.responses?.data ?? [];
     },
@@ -77,7 +79,7 @@ export const useProgramUnggulanStore = defineStore("programUnggulan", {
       this.isLoading = true;
       try {
         const response = await axiosIns.get(
-          `/program-unggulan?date=${this.currentLimit}${this.searchQuery}${page}`
+          `/program-unggulan?date=${this.currentLimit}&unit=${this.unit}${this.searchQuery}${page}`
         );
         this.responses = response.data.data;
       } catch (error) {

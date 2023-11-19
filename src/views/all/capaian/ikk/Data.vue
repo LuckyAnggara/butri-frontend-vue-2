@@ -39,35 +39,14 @@ const itemMenu = [
     label: "Detail",
     icon: PencilSquareIcon,
   },
-  {
-    function: destroy,
-    label: "Hapus",
-    icon: TrashIcon,
-  },
 ];
 
-function edit(item) {
-  router.push({ name: "edit-capaian-ikk", params: { id: item.id } });
-}
 function detail(item) {
   router.push({ name: "detail-capaian-ikk", params: { id: item.id } });
 }
+
 function toNew() {
   router.push({ name: "new-capaian-ikk" });
-}
-
-const previousPage = computed(() => {
-  return "&page=" + (capaianIKKStore.currentPage - 1);
-});
-
-const nextPage = computed(() => {
-  return "&page=" + (capaianIKKStore.currentPage + 1);
-});
-
-function destroy(item) {
-  capaianIKKStore.destroy(item.realisasi.id);
-  indexDestroy.value = item.realisasi.id;
-  capaianIKKStore.getData();
 }
 
 watchDeep(capaianIKKStore.filter, (obj) => {
@@ -75,30 +54,18 @@ watchDeep(capaianIKKStore.filter, (obj) => {
 });
 
 watch(
-  () => capaianIKKStore.currentYear,
+  () => capaianIKKStore.filter.currentYear,
   () => {
     capaianIKKStore.getData();
   }
 );
 
 watch(
-  () => capaianIKKStore.currentMonth,
+  () => capaianIKKStore.filter.currentMonth,
   () => {
     capaianIKKStore.getData();
   }
 );
-
-// capaianIKKStore.$subscribe((mutation, state) => {
-//   if (mutation.events?.key == "currentYear") {
-//     capaianIKKStore.getData();
-//   }
-//   if (mutation.events?.key == "currentMonth") {
-//     capaianIKKStore.getData();
-//   }
-//   if (mutation.events?.key == "unit") {
-//     capaianIKKStore.getData();
-//   }
-// });
 
 onMounted(() => {
   capaianIKKStore.$patch((state) => {

@@ -199,4 +199,3 @@ onUnmounted(() => {
     </div>
   </SectionMain>
 </template>
-@/stores/admin/ikk

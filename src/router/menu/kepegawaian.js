@@ -1,12 +1,6 @@
 import {
-  mdiAccountArrowLeftOutline,
-  mdiAccountGroupOutline,
   mdiAccountMultipleOutline,
-  mdiBriefcaseAccountOutline,
-  mdiBriefcaseOutline,
-  mdiCashMultiple,
-  mdiPoll,
-  mdiShieldAccount,
+  mdiChartBoxOutline,
   mdiViewDashboard,
 } from "@mdi/js";
 import all from "./all";
@@ -17,6 +11,16 @@ export default [
     to: "/",
     label: "Dashboard",
     icon: mdiViewDashboard,
+  },
+  {
+    label: "Master Data",
+    icon: mdiChartBoxOutline,
+    menu: [
+      {
+        label: "Jabatan",
+        to: "/admin/jabatan/list",
+      },
+    ],
   },
   {
     label: "Kepegawaian",

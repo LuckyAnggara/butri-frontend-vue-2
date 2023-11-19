@@ -13,7 +13,7 @@ export const all = [
     meta: {
       title: "Kegiatan",
       layout: "layout-authenticated",
-      requiresAuth: false,
+      requiresAuth: true,
     },
     path: "/kegiatan/new",
     name: "new-kegiatan",
@@ -33,7 +33,7 @@ export const all = [
     meta: {
       title: "Program Unggulan",
       layout: "layout-authenticated",
-      requiresAuth: false,
+      requiresAuth: true,
     },
     path: "/capaian/program-unggulan/new",
     name: "new-capaian-program-unggulan",
@@ -43,7 +43,7 @@ export const all = [
     meta: {
       title: "Capaian Indikator Kinerja Utama",
       layout: "layout-authenticated",
-      requiresAuth: false,
+      requiresAuth: true,
     },
     path: "/capaian/iku/list",
     name: "list-capaian-iku",
@@ -53,7 +53,7 @@ export const all = [
     meta: {
       title: "Capaian Indikator Kinerja Utama",
       layout: "layout-authenticated",
-      requiresAuth: false,
+      requiresAuth: true,
     },
     path: "/capaian/iku/new",
     name: "new-capaian-iku",
@@ -63,7 +63,7 @@ export const all = [
     meta: {
       title: "Capaian Indikator Kinerja Utama",
       layout: "layout-authenticated",
-      requiresAuth: false,
+      requiresAuth: true,
     },
     path: "/capaian/iku/:id/edit",
     name: "edit-capaian-iku",
@@ -73,7 +73,7 @@ export const all = [
     meta: {
       title: "Capaian Indikator Kinerja Utama",
       layout: "layout-authenticated",
-      requiresAuth: false,
+      requiresAuth: true,
     },
     path: "/capaian/iku/:id/detail",
     name: "detail-capaian-iku",
@@ -83,7 +83,7 @@ export const all = [
     meta: {
       title: "Capaian Indikator Kinerja Kegiatan",
       layout: "layout-authenticated",
-      requiresAuth: false,
+      requiresAuth: true,
     },
     path: "/capaian/ikk/list",
     name: "list-capaian-ikk",
@@ -93,7 +93,7 @@ export const all = [
     meta: {
       title: "Capaian Indikator Kinerja Kegiatan",
       layout: "layout-authenticated",
-      requiresAuth: false,
+      requiresAuth: true,
     },
     path: "/capaian/ikk/new",
     name: "new-capaian-ikk",
@@ -103,7 +103,7 @@ export const all = [
     meta: {
       title: "Detail Capaian Indikator Kinerja Kegiatan",
       layout: "layout-authenticated",
-      requiresAuth: false,
+      requiresAuth: true,
     },
     path: "/capaian/ikk/:id/edit",
     name: "edit-capaian-ikk",
@@ -113,7 +113,7 @@ export const all = [
     meta: {
       title: "Detail Capaian Indikator Kinerja Kegiatan",
       layout: "layout-authenticated",
-      requiresAuth: false,
+      requiresAuth: true,
     },
     path: "/capaian/ikk/:id/detail",
     name: "detail-capaian-ikk",
@@ -123,7 +123,7 @@ export const all = [
   //   meta: {
   //     title: "Capaian Lainnya",
   //     layout: "layout-authenticated",
-  //     requiresAuth: false,
+  //     requiresAuth: true,
   //   },
   //   path: "/capaian/lainnya/list",
   //   name: "list-capaian-lainnya",
@@ -133,7 +133,7 @@ export const all = [
   //   meta: {
   //     title: "Capaian Lainnya",
   //     layout: "layout-authenticated",
-  //     requiresAuth: false,
+  //     requiresAuth: true,
   //   },
   //   path: "/capaian/lainnya/new",
   //   name: "new-capaian-lainnya",

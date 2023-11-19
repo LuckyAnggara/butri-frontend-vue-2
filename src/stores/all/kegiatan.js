@@ -23,17 +23,19 @@ export const useKegiatanStore = defineStore("kegiatan", {
       },
       output: "",
       notes: "",
-      unit_id: authStore.user.user.unit_id,
+      unit_id: authStore.unitID,
       created_by: authStore.user.user.id,
     },
     filter: {
       date: [],
       searchQuery: "",
-      unit: authStore.user.user.unit_id,
     },
     currentLimit: 50,
   }),
   getters: {
+    unit(state) {
+      return authStore.unitID;
+    },
     items(state) {
       return state.responses?.data ?? [];
     },
@@ -78,7 +80,7 @@ export const useKegiatanStore = defineStore("kegiatan", {
       this.isLoading = true;
       try {
         const response = await axiosIns.get(
-          `/kegiatan?limit=${this.currentLimit}&unit=${this.filter.unit}${this.searchQuery}${page}${this.dateQuery}`
+          `/kegiatan?limit=${this.currentLimit}&unit=${this.unit}${this.searchQuery}${page}${this.dateQuery}`
         );
         this.responses = response.data.data;
       } catch (error) {

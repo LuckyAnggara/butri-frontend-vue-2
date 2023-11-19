@@ -18,6 +18,7 @@ import {
 import { useMainStore } from "@/stores/main";
 import BaseButton from "@/components/BaseButton.vue";
 import { useLaporanStore } from "@/stores/admin/laporan";
+import { getMonthName } from "@/utilities/formatter";
 import { ref, onMounted, watch } from "vue";
 import NewModal from "./Modal.vue";
 
@@ -104,14 +105,14 @@ onMounted(() => {
           </FormField>
         </div>
         <div class="w-5/12">
-          <FormField label="Search">
+          <!-- <FormField label="Search">
             <FormControl
               @keyup="search"
               v-model="laporanStore.filter.searchQuery"
               type="tel"
-              placeholder="Cari berdasarkan indikator"
+              placeholder="Cari data"
             />
-          </FormField>
+          </FormField> -->
         </div>
         <div class="w-2/12"></div>
 
@@ -130,6 +131,7 @@ onMounted(() => {
         <thead>
           <tr>
             <th>No</th>
+            <th>Bulan</th>
             <th>Name</th>
             <th>Created At</th>
             <th>Action</th>
@@ -162,6 +164,9 @@ onMounted(() => {
             >
               <td class="text-center">
                 {{ ++index }}
+              </td>
+              <td>
+                {{ getMonthName(item.bulan) }}
               </td>
               <td>
                 {{ item.name }}

@@ -3,7 +3,7 @@ export const kepegawaian = [
     meta: {
       title: "Data Pegawai",
       layout: "layout-authenticated",
-      requiresAuth: false,
+      requiresAuth: true,
     },
     path: "/pegawai/list",
     name: "list-pegawai",
@@ -13,7 +13,7 @@ export const kepegawaian = [
     meta: {
       title: "Tambah Data Pegawai",
       layout: "layout-authenticated",
-      requiresAuth: false,
+      requiresAuth: true,
     },
     path: "/pegawai/new",
     name: "new-pegawai",
@@ -23,7 +23,7 @@ export const kepegawaian = [
     meta: {
       title: "Edit Data Pegawai",
       layout: "layout-authenticated",
-      requiresAuth: false,
+      requiresAuth: true,
     },
     path: "/pegawai/:id/edit",
     name: "edit-pegawai",
@@ -33,7 +33,7 @@ export const kepegawaian = [
     meta: {
       title: "Pensiun Pegawai",
       layout: "layout-authenticated",
-      requiresAuth: false,
+      requiresAuth: true,
     },
     path: "/pegawai/pensiun/list",
     name: "list-pensiun-pegawai",
@@ -44,7 +44,7 @@ export const kepegawaian = [
     meta: {
       title: "Pensiun Pegawai",
       layout: "layout-authenticated",
-      requiresAuth: false,
+      requiresAuth: true,
     },
     path: "/pegawai/pensiun/new",
     name: "new-pensiun-pegawai",
@@ -55,7 +55,7 @@ export const kepegawaian = [
     meta: {
       title: "Pengembangan Pegawai",
       layout: "layout-authenticated",
-      requiresAuth: false,
+      requiresAuth: true,
     },
     path: "/pegawai/pengembangan/list",
     name: "list-pengembangan-pegawai",
@@ -66,7 +66,7 @@ export const kepegawaian = [
     meta: {
       title: "Pengembangan Pegawai",
       layout: "layout-authenticated",
-      requiresAuth: false,
+      requiresAuth: true,
     },
     path: "/pegawai/pengembangan/new",
     name: "new-pengembangan-pegawai",
@@ -77,7 +77,7 @@ export const kepegawaian = [
     meta: {
       title: "Edit Data Pengembangan Pegawai",
       layout: "layout-authenticated",
-      requiresAuth: false,
+      requiresAuth: true,
     },
     path: "/pegawai/pengembangan/:id/edit",
     name: "edit-pengembangan-pegawai",
@@ -88,7 +88,7 @@ export const kepegawaian = [
     meta: {
       title: "Mutasi Pegawai",
       layout: "layout-authenticated",
-      requiresAuth: false,
+      requiresAuth: true,
     },
     path: "/pegawai/mutasi/list",
     name: "list-mutasi-pegawai",
@@ -98,7 +98,7 @@ export const kepegawaian = [
     meta: {
       title: "Mutasi Pegawai",
       layout: "layout-authenticated",
-      requiresAuth: false,
+      requiresAuth: true,
     },
     path: "/pegawai/mutasi/new",
     name: "new-mutasi-pegawai",
@@ -108,7 +108,7 @@ export const kepegawaian = [
     meta: {
       title: "Kepangkatan Pegawai",
       layout: "layout-authenticated",
-      requiresAuth: false,
+      requiresAuth: true,
     },
     path: "/pegawai/kepangkatan/list",
     name: "list-kepangkatan-pegawai",
@@ -119,7 +119,7 @@ export const kepegawaian = [
     meta: {
       title: "Kepangkatan Pegawai",
       layout: "layout-authenticated",
-      requiresAuth: false,
+      requiresAuth: true,
     },
     path: "/pegawai/kepangkatan/new",
     name: "new-kepangkatan-pegawai",
@@ -130,7 +130,7 @@ export const kepegawaian = [
     meta: {
       title: "Kenaikan Gaji Berkala Pegawai",
       layout: "layout-authenticated",
-      requiresAuth: false,
+      requiresAuth: true,
     },
     path: "/pegawai/kgb/list",
     name: "list-kgb-pegawai",
@@ -140,10 +140,30 @@ export const kepegawaian = [
     meta: {
       title: "Kenaikan Gaji Berkala Pegawai",
       layout: "layout-authenticated",
-      requiresAuth: false,
+      requiresAuth: true,
     },
     path: "/pegawai/kgb/new",
     name: "new-kgb-pegawai",
     component: () => import("@/views/kepegawaian/kgb/NewKGBPegawai.vue"),
+  },
+  {
+    meta: {
+      title: "Master Data Jabatan",
+      layout: "layout-authenticated",
+      requiresAuth: true,
+    },
+    path: "/admin/jabatan/list",
+    name: "list-jabatan",
+    component: () => import("@/views/kepegawaian/admin/jabatan/DataMaster.vue"),
+  },
+  {
+    meta: {
+      title: "Tambah Data Jabatan",
+      layout: "layout-authenticated",
+      requiresAuth: true,
+    },
+    path: "/admin/jabatan/new",
+    name: "new-jabatan",
+    component: () => import("@/views/kepegawaian/admin/jabatan/NewModal.vue"),
   },
 ];

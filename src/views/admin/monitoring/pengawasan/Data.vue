@@ -43,13 +43,13 @@ const nextPage = computed(() => {
 });
 
 watchDeep(pengawasanStore.filter, (obj) => {
-  pengawasanStore.getData();
+  pengawasanStore.getDataAdmin();
 });
 
 watch(
   () => pengawasanStore.currentLimit,
   () => {
-    pengawasanStore.getData();
+    pengawasanStore.getDataAdmin();
   }
 );
 
@@ -57,7 +57,7 @@ onMounted(() => {
   pengawasanStore.$patch((state) => {
     state.filter.unit = 0;
   });
-  pengawasanStore.getData();
+  pengawasanStore.getDataAdmin();
   jenisPengawasanStore.getData();
   unitStore.getData();
 });
@@ -234,7 +234,7 @@ onMounted(() => {
               @click="
                 pengawasanStore.currentPage == 1
                   ? ''
-                  : pengawasanStore.getData(previousPage)
+                  : pengawasanStore.getDataAdmin(previousPage)
               "
               :disabled="pengawasanStore.currentPage == 1 ? true : false"
               :class="
@@ -252,7 +252,7 @@ onMounted(() => {
               @click="
                 pengawasanStore.lastPage == pengawasanStore.currentPage
                   ? ''
-                  : pengawasanStore.getData(nextPage)
+                  : pengawasanStore.getDataAdmin(nextPage)
               "
               :class="
                 pengawasanStore.lastPage == pengawasanStore.currentPage

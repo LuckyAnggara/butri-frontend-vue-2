@@ -2,6 +2,7 @@
 import { defineStore, getActivePinia } from "pinia";
 import axiosIns from "@/services/axios";
 import { useMenuStore } from "./menu";
+import { useStorage } from "@vueuse/core";
 
 export const useAuthStore = defineStore("auth", {
   state: () => ({
@@ -11,11 +12,11 @@ export const useAuthStore = defineStore("auth", {
       password: null,
     },
     isLoading: false,
-    userData: {},
+    userData: JSON.parse(localStorage.getItem("userDataLawas")),
   }),
   getters: {
-    user() {
-      return this.userData;
+    user(state) {
+      return state.userData;
     },
     unitID(state) {
       return state.userData.user?.unit_id;
@@ -36,7 +37,11 @@ export const useAuthStore = defineStore("auth", {
           password: this.form.password,
         });
         const payload = response.data.data;
+
+        sessionStorage.setItem("userDataLawas", JSON.stringify(payload));
+
         localStorage.removeItem("userDataLawas");
+
         localStorage.setItem("token", JSON.stringify(payload.token));
         localStorage.setItem("userDataLawas", JSON.stringify(payload));
 
@@ -63,6 +68,21 @@ export const useAuthStore = defineStore("auth", {
           localStorage.removeItem("userDataLawas");
           localStorage.removeItem("token");
           localStorage.clear();
+
+          const pinia = getActivePinia();
+
+          pinia._s.forEach((store) => {
+            if (
+              store.$id !== "auth" &&
+              store.$id !== "style" &&
+              store.$id !== "main"
+            ) {
+              console.info(store);
+              store.$reset();
+            }
+
+            // store.$reset();
+          });
 
           setTimeout(() => {}, 500);
           return true;

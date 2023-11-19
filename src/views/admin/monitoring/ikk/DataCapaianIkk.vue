@@ -23,7 +23,7 @@ import { useUnitGroupStore } from "@/stores/unitGroup";
 import { useCapaianIkk } from "@/stores/all/capaianIkk";
 
 const search = useDebounceFn(() => {
-  capaianIKKStore.getData();
+  capaianIKKStore.getDataAdmin();
 }, 500);
 const route = useRoute();
 const mainStore = useMainStore();
@@ -47,15 +47,30 @@ function detail(item) {
     params: { id: item.id },
   });
 }
-watchDeep(capaianIKKStore.filter, (obj) => {
-  capaianIKKStore.getData();
-});
+watch(
+  () => capaianIKKStore.filter.currentMonth,
+  () => {
+    capaianIKKStore.getDataAdmin();
+  }
+);
+watch(
+  () => capaianIKKStore.filter.currentYear,
+  () => {
+    capaianIKKStore.getDataAdmin();
+  }
+);
+watch(
+  () => capaianIKKStore.filter.unit,
+  () => {
+    capaianIKKStore.getDataAdmin();
+  }
+);
 
 onMounted(() => {
   capaianIKKStore.$patch((state) => {
     state.filter.unit = 0;
   });
-  capaianIKKStore.getData();
+  capaianIKKStore.getDataAdmin();
   unitGroupStore.getData();
 });
 </script>

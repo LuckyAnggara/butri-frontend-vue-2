@@ -5,35 +5,41 @@ import CardBox from "@/components/CardBox.vue";
 import SectionTitleLineWithButton from "@/components/SectionTitleLineWithButton.vue";
 
 import { useRoute, useRouter } from "vue-router";
-import { computed, onMounted, ref } from "vue";
+import { computed, defineAsyncComponent, onMounted, ref } from "vue";
 import FormField from "@/components/FormField.vue";
 import FormControl from "@/components/FormControl.vue";
-import { useDebounceFn } from "@vueuse/core";
+import { useDebounceFn, watchDeep } from "@vueuse/core";
 import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue";
 import {
   EllipsisVerticalIcon,
   TrashIcon,
   ArrowPathIcon,
+  PencilSquareIcon,
 } from "@heroicons/vue/24/outline";
 import { useMainStore } from "@/stores/main";
 import BaseButton from "@/components/BaseButton.vue";
-import { useKepangkatanStore } from "@/stores/pegawai/kepangkatan";
+import { useJabatanStore } from "@/stores/pegawai/jabatan";
+import NewModal from "./NewModal.vue";
 
 const search = useDebounceFn(() => {
-  kepangkatanStore.getData();
+  jabatanStore.getData();
 }, 500);
 const route = useRoute();
 const router = useRouter();
-const kepangkatanStore = useKepangkatanStore();
+const jabatanStore = useJabatanStore();
 const mainStore = useMainStore();
+
+const showNewModal = ref(false);
+const updateData = ref(false);
 
 const indexDestroy = ref(0);
 
-const formatter = ref({
-  date: "DD MMMM YYYY",
-});
-
 const itemMenu = [
+  {
+    function: edit,
+    label: "Edit",
+    icon: PencilSquareIcon,
+  },
   {
     function: destroy,
     label: "Hapus",
@@ -42,82 +48,75 @@ const itemMenu = [
 ];
 
 const previousPage = computed(() => {
-  return "&page=" + (kepangkatanStore.currentPage - 1);
+  return "&page=" + (jabatanStore.currentPage - 1);
 });
 
 const nextPage = computed(() => {
-  return "&page=" + (kepangkatanStore.currentPage + 1);
+  return "&page=" + (jabatanStore.currentPage + 1);
 });
 
+function toNew() {
+  showNewModal.value = true;
+}
+
 function destroy(item) {
-  kepangkatanStore.destroy(item.id);
+  jabatanStore.destroy(item.id);
   indexDestroy.value = item.id;
 }
 
-kepangkatanStore.$subscribe((mutation, state) => {
-  if (mutation.events?.key == "currentLimit") {
-    kepangkatanStore.getData();
+function edit(item) {
+  showNewModal.value = true;
+  updateData.value = true;
+  jabatanStore.readyEdit(item);
+}
+
+async function submit() {
+  const result = await jabatanStore.store();
+  if (result) {
+    showNewModal.value = false;
+    jabatanStore.getData();
   }
-  if (mutation.events?.key == "date") {
-    kepangkatanStore.getData();
+}
+
+async function update() {
+  const result = await jabatanStore.update();
+  if (result) {
+    showNewModal.value = false;
+    jabatanStore.getData();
   }
+}
+
+watchDeep(jabatanStore.filter, (obj) => {
+  jabatanStore.getData();
 });
 
 onMounted(() => {
-  kepangkatanStore.getData();
+  jabatanStore.getData();
 });
 </script>
 
 <template>
   <SectionMain>
     <SectionTitleLineWithButton :title="route.meta.title" main />
+
     <CardBox class="mb-4 px-4" has-table>
-      <div class="w-full my-4 flex flex-row space-x-4">
-        <div class="w-1/12">
-          <FormField label="Show">
-            <select
-              :disabled="kepangkatanStore.isStoreLoading"
-              v-model="kepangkatanStore.currentLimit"
-              class="border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
-            >
-              <option
-                v-for="option in mainStore.limitDataOptions"
-                :key="option"
-                :value="option"
-              >
-                {{ option == 100000 ? "SEMUA" : option }}
-              </option>
-            </select>
-          </FormField>
-        </div>
+      <div class="flex flex-row p-4">
         <div class="w-5/12">
           <FormField label="Search">
             <FormControl
               @keyup="search"
-              v-model="kepangkatanStore.filter.searchQuery"
+              v-model="jabatanStore.filter.searchName"
               type="tel"
-              placeholder="Cari berdasarkan nama / nip / nomor sk"
+              placeholder="Cari berdasarkan indikator"
             />
           </FormField>
         </div>
-        <div class="w-4/12">
-          <FormField label="Tanggal">
-            <vue-tailwind-datepicker
-              :disabled="kepangkatanStore.isStoreLoading"
-              required
-              separator=" s/d "
-              placeholder="Tanggal Data"
-              v-model="kepangkatanStore.filter.date"
-              :formatter="formatter"
-              input-classes="h-12 border  px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
-            />
-          </FormField>
-        </div>
+        <div class="w-5/12"></div>
+
         <div class="w-2/12 flex justify-end">
           <BaseButton
-            @click="router.push({ name: 'new-kepangkatan-pegawai' })"
+            @click="toNew()"
             class="mt-8"
-            type="submit"
             color="info"
             label="Tambah"
           />
@@ -125,21 +124,19 @@ onMounted(() => {
       </div>
     </CardBox>
     <CardBox class="mb-6" has-table>
-      <table class="text-sm">
+      <table>
         <thead>
           <tr>
             <th>No</th>
-            <th>Nomor SK</th>
-            <th>Nama Pegawai</th>
-            <th>Pangkat Lama</th>
-            <th>Pangkat Baru</th>
-            <th>Efektif</th>
+            <th>Nama Jabatan</th>
+            <th>Group</th>
+            <th>Jumlah Pegawai</th>
             <th />
           </tr>
         </thead>
         <tbody>
-          <tr v-if="kepangkatanStore.isLoading">
-            <td colspan="7" class="text-center">
+          <tr v-if="jabatanStore.isLoading">
+            <td colspan="5" class="text-center">
               <div
                 class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
                 role="status"
@@ -152,45 +149,40 @@ onMounted(() => {
             </td>
           </tr>
           <template v-else>
-            <tr v-if="kepangkatanStore.items.length == 0">
-              <td colspan="7" class="text-center">
+            <tr v-if="jabatanStore.items.length == 0">
+              <td colspan="5" class="text-center">
                 <span>Tidak ada data</span>
               </td>
             </tr>
             <tr
               v-else
-              v-for="(item, index) in kepangkatanStore.items"
+              v-for="(item, index) in jabatanStore.items"
               :key="item.id"
             >
               <td class="text-center">
-                {{ kepangkatanStore.from + index }}
+                {{ index + 1 }}
               </td>
               <td>
-                {{ item.nomor_sk ?? "-" }}
-              </td>
-              <td>{{ item.pegawai.name.toUpperCase() ?? "-" }}</td>
-              <td>
-                {{ item.pangkat.pangkat.toUpperCase() ?? "-" }} -
-                {{ item.pangkat.ruang.toUpperCase() ?? "" }}
+                {{ item.name }}
               </td>
               <td>
-                {{ item.pangkat_new.pangkat.toUpperCase() ?? "-" }}
-                {{ item.pangkat.ruang.toUpperCase() ?? "" }}
+                {{ item.group }}
               </td>
               <td>
-                {{ item.tmt_pangkat ?? "-" }}
+                {{ item.jumlah_pegawai }}
               </td>
+
               <td class="before:hidden lg:w-1 whitespace-nowrap">
                 <div>
                   <Menu as="div" class="relative inline-block text-left">
                     <div>
                       <MenuButton
                         :disabled="
-                          kepangkatanStore.isDestroyLoading &&
+                          jabatanStore.isDestroyLoading &&
                           indexDestroy == item.id
                         "
                         :class="
-                          kepangkatanStore.isDestroyLoading &&
+                          jabatanStore.isDestroyLoading &&
                           indexDestroy == item.id
                             ? ''
                             : 'hover:scale-125 ease-in-out duration-300'
@@ -199,7 +191,7 @@ onMounted(() => {
                       >
                         <ArrowPathIcon
                           v-if="
-                            kepangkatanStore.isDestroyLoading &&
+                            jabatanStore.isDestroyLoading &&
                             indexDestroy == item.id
                           "
                           class="animate-spin h-5 w-5 text-black dark:text-white"
@@ -227,6 +219,7 @@ onMounted(() => {
                         <div class="px-2 py-1">
                           <MenuItem
                             v-for="menu in itemMenu"
+                            :key="menu.label"
                             v-slot="{ active }"
                           >
                             <button
@@ -252,46 +245,19 @@ onMounted(() => {
           </template>
         </tbody>
       </table>
-      <div
-        class="p-3 lg:px-6 border-t border-gray-100 dark:border-slate-800 flex justify-end"
-      >
-        <ul class="inline-flex items-stretch -space-x-px">
-          <li>
-            <a
-              @click="
-                kepangkatanStore.currentPage == 1
-                  ? ''
-                  : kepangkatanStore.getData(previousPage)
-              "
-              :disabled="kepangkatanStore.currentPage == 1 ? true : false"
-              :class="
-                kepangkatanStore.currentPage == 1
-                  ? 'cursor-not-allowed'
-                  : 'cursor-pointer dark:hover:bg-blue-700 dark:hover:text-white hover:bg-blue-100 hover:text-gray-700'
-              "
-              class="w-32 px-3 py-2 ml-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
-              >Previous</a
-            >
-          </li>
-
-          <li>
-            <a
-              @click="
-                kepangkatanStore.lastPage == kepangkatanStore.currentPage
-                  ? ''
-                  : kepangkatanStore.getData(nextPage)
-              "
-              :class="
-                kepangkatanStore.lastPage == kepangkatanStore.currentPage
-                  ? 'cursor-not-allowed'
-                  : 'cursor-pointer dark:hover:bg-blue-700 dark:hover:text-white hover:bg-blue-100 hover:text-gray-700'
-              "
-              class="w-32 px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
-              >Next {{
-            }}</a>
-          </li>
-        </ul>
-      </div>
     </CardBox>
+
+    <!-- Modal -->
+    <Teleport to="body">
+      <!-- use the modal component, pass in the prop -->
+      <NewModal
+        :updateData="updateData"
+        :show="showNewModal"
+        @close="showNewModal = false"
+        @submitStore="submit()"
+        @submitUpdate="update()"
+      >
+      </NewModal>
+    </Teleport>
   </SectionMain>
 </template>

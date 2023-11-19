@@ -6,7 +6,7 @@ import SectionTitleLineWithButton from "@/components/SectionTitleLineWithButton.
 
 import { useRoute, useRouter } from "vue-router";
 import { useKegiatanStore } from "@/stores/all/kegiatan";
-import { computed, inject, onMounted, ref, watch } from "vue";
+import { computed, inject, onMounted, onUnmounted, ref, watch } from "vue";
 import FormField from "@/components/FormField.vue";
 import FormControl from "@/components/FormControl.vue";
 import { useDebounceFn, watchDeep, whenever } from "@vueuse/core";
@@ -100,6 +100,10 @@ watch(
 
 onMounted(() => {
   kegiatanStore.getData();
+});
+
+onUnmounted(() => {
+  kegiatanStore.$reset();
 });
 </script>
 

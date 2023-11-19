@@ -31,7 +31,7 @@ export const usePegawaiStore = defineStore("pegawai", {
       created_by: authStore.user.user.id,
     },
     searchName: "",
-    currentLimit: 5,
+    currentLimit: 50,
   }),
   getters: {
     items(state) {

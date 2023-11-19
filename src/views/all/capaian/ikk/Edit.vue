@@ -14,6 +14,7 @@ import { useCapaianIkk } from "@/stores/all/capaianIkk";
 import { useIKKStore } from "@/stores/admin/ikk";
 import { useAuthStore } from "@/stores/auth";
 import NotificationBar from "@/components/NotificationBar.vue";
+import { useMainStore } from "@/stores/main";
 
 const route = useRoute();
 const router = useRouter();
@@ -22,6 +23,7 @@ const toast = useToast();
 const ikkStore = useIKKStore();
 const capaianIKKStore = useCapaianIkk();
 const authStore = useAuthStore();
+const mainStore = useMainStore();
 
 const quilOptions = {
   readOnly: capaianIKKStore.isUpdateLoading,
@@ -34,10 +36,14 @@ function toList() {
 
 async function submit() {
   if (
-    capaianIKKStore.singleResponses.ikk_id ||
-    capaianIKKStore.singleResponses.realisasi
+    capaianIKKStore.capaianResponses.ikk_id ||
+    capaianIKKStore.capaianResponses.realisasi
   ) {
-    await capaianIKKStore.update();
+    await capaianIKKStore.updateCapaian();
+    router.push({
+      name: "detail-capaian-ikk",
+      params: { id: capaianIKKStore.capaianResponses.ikk_id },
+    });
   } else {
     toast.error("Data belum lengkap", { timeout: 2000 });
     return false;
@@ -49,11 +55,14 @@ const id = computed(() => {
 });
 
 onMounted(async () => {
-  await capaianIKKStore.showData(id.value);
   ikkStore.$patch((state) => {
     state.filter.unit = authStore.user.user.unit.group_id;
   });
   ikkStore.getData();
+  capaianIKKStore.showCapaian(id.value);
+  ikkStore.$patch((state) => {
+    state.filter.unit = authStore.user.user.unit.group_id;
+  });
 });
 
 onUnmounted(() => {
@@ -65,7 +74,7 @@ onUnmounted(() => {
   <SectionMain>
     <SectionTitleLineWithButton :title="route.meta.title" main />
     <NotificationBar
-      v-if="capaianIKKStore.singleResponses == null"
+      v-if="capaianIKKStore.capaianResponses == null"
       color="info"
     >
       <span class="flex flex-row items-center">
@@ -75,38 +84,65 @@ onUnmounted(() => {
     </NotificationBar>
     <template v-else>
       <div class="flex space-x-2">
-        <CardBox class="w-full">
+        <CardBox class="w-full shadow-md">
           <form @submit.prevent="submit()">
+            <div class="flex space-x-2">
+              <FormField label="Tahun" class="w-1/3">
+                <select
+                  :disabled="capaianIKKStore.isUpdateLoading"
+                  required
+                  v-model="capaianIKKStore.capaianResponses.tahun"
+                  class="border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
+                >
+                  <option
+                    v-for="option in mainStore.tahunOptions"
+                    :key="option"
+                    :value="option"
+                  >
+                    {{ option }}
+                  </option>
+                </select>
+              </FormField>
+              <FormField label="Bulan" class="w-1/3">
+                <select
+                  :disabled="capaianIKKStore.isUpdateLoading"
+                  required
+                  v-model="capaianIKKStore.capaianResponses.bulan"
+                  class="border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
+                >
+                  <option
+                    v-for="option in mainStore.bulanOptions"
+                    :key="option.id"
+                    :value="option.id"
+                  >
+                    {{ option.label }}
+                  </option>
+                </select>
+              </FormField>
+            </div>
+
             <FormField label="Indikator Kinerja Kegiatan">
               <select
                 :disabled="capaianIKKStore.isUpdateLoading"
                 required
-                v-model="capaianIKKStore.singleResponses.ikk"
+                v-model="capaianIKKStore.capaianResponses.ikk_id"
                 class="border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
               >
                 <option
                   v-for="option in ikkStore.items"
                   :key="option.id"
-                  :value="option"
+                  :value="option.id"
                 >
                   {{ option.name }}
                 </option>
               </select>
             </FormField>
 
-            <FormField label="Target">
-              <FormControl
-                :disabled="true"
-                v-model="capaianIKKStore.singleResponses.ikk.target"
-                required
-              />
-            </FormField>
-
             <div class="flex space-x-4">
               <FormField class="w-full" label="Realisasi">
                 <FormControl
                   :disabled="capaianIKKStore.isUpdateLoading"
-                  v-model="capaianIKKStore.singleResponses.realisasi"
+                  v-model="capaianIKKStore.capaianResponses.realisasi"
                   required
                 />
               </FormField>
@@ -114,71 +150,49 @@ onUnmounted(() => {
               <FormField class="w-full" label="Presentase Capaian">
                 <FormControl
                   :disabled="capaianIKKStore.isUpdateLoading"
-                  v-model="capaianIKKStore.singleResponses.capaian"
+                  v-model="capaianIKKStore.capaianResponses.capaian"
                   required
                 />
               </FormField>
             </div>
 
             <FormField label="Analisa">
-              <QuillEditor
-                class="h-24"
-                toolbar="full"
-                :contentType="'html'"
-                :options="quilOptions"
-                v-model:content="capaianIKKStore.singleResponses.analisa"
-              />
+              <textarea
+                :disabled="capaianIKKStore.isUpdateLoading"
+                rows="5"
+                class="px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
+                style="white-space: pre-wrap"
+                v-model="capaianIKKStore.capaianResponses.analisa"
+              ></textarea>
             </FormField>
 
             <FormField label="Kegiatan">
-              <QuillEditor
-                class="h-24"
-                toolbar="full"
-                :contentType="'html'"
-                :options="quilOptions"
-                v-model:content="capaianIKKStore.singleResponses.kegiatan"
-              />
+              <textarea
+                :disabled="capaianIKKStore.isUpdateLoading"
+                rows="5"
+                class="px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
+                style="white-space: pre-wrap"
+                v-model="capaianIKKStore.capaianResponses.kegiatan"
+              ></textarea>
             </FormField>
 
             <FormField label="Kendala / Hambatan">
-              <QuillEditor
-                class="h-24"
-                toolbar="full"
-                :contentType="'html'"
-                :options="quilOptions"
-                v-model:content="capaianIKKStore.singleResponses.kendala"
-              />
+              <textarea
+                :disabled="capaianIKKStore.isUpdateLoading"
+                rows="5"
+                class="px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
+                style="white-space: pre-wrap"
+                v-model="capaianIKKStore.capaianResponses.kendala"
+              ></textarea>
             </FormField>
 
-            <!-- <FormField label="Hambatan">
-              <QuillEditor
-                class="h-24"
-                toolbar="full"
-                :contentType="'html'"
-                :options="quilOptions"
-                v-model:content="capaianIKKStore.singleResponses.hambatan"
-              />
-            </FormField> -->
-
-            <div class="flex flex-row space-x-2">
+            <div class="flex flex-col space-y-4">
               <BaseButton
                 class="w-fit"
                 type="submit"
                 :disabled="capaianIKKStore.isUpdateLoading"
                 color="info"
-                ><span v-if="!capaianIKKStore.isUpdateLoading">Update</span
-                ><span class="flex flex-row items-center px-3" v-else>
-                  <ArrowPathIcon class="h-5 w-5 animate-spin mr-3" />
-                  Processing</span
-                ></BaseButton
-              >
-              <BaseButton
-                @click="toList()"
-                class="w-fit"
-                type="button"
-                :disabled="capaianIKKStore.isUpdateLoading"
-                color="success"
-                ><span v-if="!capaianIKKStore.isUpdateLoading">Kembali</span
+                ><span v-if="!capaianIKKStore.isUpdateLoading">Submit</span
                 ><span class="flex flex-row items-center px-3" v-else>
                   <ArrowPathIcon class="h-5 w-5 animate-spin mr-3" />
                   Processing</span

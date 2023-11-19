@@ -36,12 +36,15 @@ export const usePengawasanStore = defineStore("pengawasan", {
     filter: {
       currentMonth: new Date().getMonth() + 1,
       currentYear: new Date().getFullYear(),
-      unit: authStore.user.user.unit_id,
       searchQuery: "",
+      unit: 0,
     },
     currentLimit: 50,
   }),
   getters: {
+    unit(state) {
+      return authStore.unitID;
+    },
     items(state) {
       return state.responses?.data ?? [];
     },
@@ -77,6 +80,12 @@ export const usePengawasanStore = defineStore("pengawasan", {
       return "&query=" + state.filter.searchQuery;
     },
     unitQuery(state) {
+      if (state.unit == 0) {
+        return "";
+      }
+      return "&unit=" + state.unit;
+    },
+    unitQueryAdmin(state) {
       if (state.filter.unit == 0) {
         return "";
       }
@@ -98,7 +107,20 @@ export const usePengawasanStore = defineStore("pengawasan", {
       }
       return false;
     },
-
+    async getDataAdmin(page = "") {
+      this.isLoading = true;
+      try {
+        const response = await axiosIns.get(
+          `/data-pengawasan?limit=${this.currentLimit}&tahun=${this.filter.currentYear}&bulan=${this.filter.currentMonth}${this.unitQueryAdmin}${this.searchQuery}${page}`
+        );
+        this.responses = response.data.data;
+      } catch (error) {
+        alert(error.message);
+      } finally {
+        this.isLoading = false;
+      }
+      return false;
+    },
     async store() {
       this.isStoreLoading = true;
       try {

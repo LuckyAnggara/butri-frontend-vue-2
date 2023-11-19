@@ -90,7 +90,7 @@ const route = useRoute();
     <div v-else class="space-y-4">
       <div class="flex space-x-2">
         <div class="w-2/12">
-          <FormField label=" Tahun">
+          <FormField label="Tahun">
             <select
               :disabled="dashboardStore.isLoading"
               v-model="dashboardStore.filter.currentYear"

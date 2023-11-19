@@ -71,13 +71,14 @@ onUnmounted(() => {
             <tr>
               <th class="w-1/12">Bulan</th>
               <th class="w-1/12">Realisasi</th>
+              <th class="w-1/12">% Capaian</th>
               <th class="w-5/12">Analisis</th>
-              <th class="w-5/12">Kendala / Hambatan</th>
+              <th class="w-4/12">Kendala / Hambatan</th>
             </tr>
           </thead>
           <tbody>
             <tr v-if="capaianIKKStore.singleResponses.capaian.length == 0">
-              <td colspan="5" class="text-center">
+              <td colspan="6" class="text-center">
                 <span>Tidak ada data</span>
               </td>
             </tr>
@@ -91,6 +92,9 @@ onUnmounted(() => {
               </td>
               <td>
                 {{ item.realisasi }}
+              </td>
+              <td>
+                {{ item.capaian }}
               </td>
               <td>
                 {{ item.analisis ?? "-" }}
