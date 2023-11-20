@@ -54,11 +54,12 @@ if (
     window.matchMedia("(prefers-color-scheme: dark)").matches) ||
   localStorage[darkModeKey] === "1"
 ) {
-  styleStore.setDarkMode(true);
+  styleStore.setDarkMode(false);
 }
 
 /* Default title tag */
-const defaultDocumentTitle = "Laporan Pengawasan";
+const defaultDocumentTitle =
+  "Laporan Kinerja Pengawasan Inspektorat Jenderal Kementerian Hukum dan HAM";
 
 /* Set document title from route meta */
 router.afterEach((to) => {

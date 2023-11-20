@@ -68,9 +68,9 @@ watch(
 );
 
 onMounted(() => {
-  capaianIKKStore.$patch((state) => {
-    state.filter.unit = authStore.user.user.unit.group_id;
-  });
+  // capaianIKKStore.$patch((state) => {
+  //   state.filter.unit = authStore.user.user.unit.group_id;
+  // });
   capaianIKKStore.getData();
 });
 </script>

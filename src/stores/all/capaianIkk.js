@@ -41,7 +41,7 @@ export const useCapaianIkk = defineStore("capaianIkk", {
   }),
   getters: {
     unit(state) {
-      return authStore.unitID;
+      return authStore.groupID;
     },
     items(state) {
       return state.responses?.data ?? [];

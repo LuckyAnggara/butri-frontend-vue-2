@@ -21,6 +21,9 @@ export const useAuthStore = defineStore("auth", {
     unitID(state) {
       return state.userData.user?.unit_id;
     },
+    groupID(state) {
+      return state.userData.user?.unit.group_id;
+    },
     isAdmin(state) {
       if (state.userData.user?.role.id == 2) {
         return true;
