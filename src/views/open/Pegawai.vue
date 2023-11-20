@@ -1,21 +1,23 @@
 <script setup>
 import { usePegawaiStore } from "@/stores/pegawai/pegawai";
 import { useDebounceFn } from "@vueuse/core";
-import { onMounted } from "vue";
+import { onMounted, ref } from "vue";
 
+const data = {};
+const chartOptions = ref({
+  responsive: true,
+});
 const pegawaiStore = usePegawaiStore();
 const search = useDebounceFn(() => {
   pegawaiStore.getData();
 }, 500);
-onMounted(() => {
+onMounted(async () => {
   pegawaiStore.currentLimit = 10000;
   pegawaiStore.getData();
 });
 </script>
 
 <template>
-  <!-- component -->
-
   <div
     class="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 pr-10 lg:px-8"
   >
