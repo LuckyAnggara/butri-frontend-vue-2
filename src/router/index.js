@@ -13,6 +13,16 @@ import { laporan } from "./laporan";
 const routes = [
   {
     meta: {
+      title: "Ouput",
+      layout: "layout-guest",
+      requiresAuth: false,
+    },
+    path: "/open/pegawai",
+    name: "open-pegawai",
+    component: () => import("@/views/open/Pegawai.vue"),
+  },
+  {
+    meta: {
       title: "Login",
       layout: "layout-guest",
       requiresAuth: false,

@@ -28,7 +28,7 @@ export const usePegawaiStore = defineStore("pegawai", {
       tmt_pangkat: "",
       unit: "",
       tmt_pensiun: "",
-      created_by: authStore.user.user.id,
+      created_by: authStore.user?.user.id ?? "",
     },
     filter: {
       unit: 0,
