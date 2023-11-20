@@ -47,9 +47,10 @@ const asideLgCloseClick = (event) => {
         class="flex flex-row h-14 items-center justify-between dark:bg-slate-900"
       >
         <div
-          class="text-center flex-1 lg:text-left lg:pl-6 xl:text-center xl:pl-0"
+          class="text-center flex-1 lg:text-left lg:pl-6 xl:text-center xl:pl-0 flex space-x-4"
         >
-          <b class="font-black">One</b>
+          <img class="text-center w-6 ml-5" src="../logo/logo.png" />
+          <b class="font-black">e-Lapkin</b>
         </div>
         <button
           class="hidden lg:inline-block xl:hidden p-3"
