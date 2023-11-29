@@ -24,6 +24,7 @@ import NewModal from "./NewModal.vue";
 const search = useDebounceFn(() => {
   jabatanStore.getData();
 }, 500);
+
 const route = useRoute();
 const router = useRouter();
 const jabatanStore = useJabatanStore();
