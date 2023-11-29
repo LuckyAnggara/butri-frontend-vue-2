@@ -87,10 +87,6 @@ async function update() {
   }
 }
 
-watchDeep(jabatanStore.filter, (obj) => {
-  jabatanStore.getData();
-});
-
 onMounted(() => {
   jabatanStore.getData();
 });
