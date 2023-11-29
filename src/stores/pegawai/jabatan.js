@@ -28,7 +28,7 @@ export const useJabatanStore = defineStore("jabatan", {
       if (state.filter.searchName == "" || state.filter.searchName == null) {
         return "";
       }
-      return "&name=" + state.searchName;
+      return "?name=" + state.searchName;
     },
   },
   actions: {
