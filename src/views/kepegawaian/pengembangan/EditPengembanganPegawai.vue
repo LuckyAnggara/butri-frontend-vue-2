@@ -59,10 +59,9 @@ const id = computed(() => {
 });
 
 onMounted(async () => {
+  pegawaiStore.currentLimit = 5;
   await pengembanganStore.showData(id.value);
-  if (pegawaiStore.items.length <= 0) {
-    pegawaiStore.getData();
-  }
+  pegawaiStore.getData();
 });
 </script>
 

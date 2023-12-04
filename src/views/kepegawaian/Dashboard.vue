@@ -7,16 +7,24 @@ import SectionMain from "@/components/SectionMain.vue";
 
 import SectionTitleLineWithButton from "@/components/SectionTitleLineWithButton.vue";
 import { useDashboardKepegawaianStore } from "@/stores/pegawai/dashboard";
+import { useUnitStore } from "@/stores/unit";
 import { ArrowPathIcon } from "@heroicons/vue/24/outline";
 import { mdiAccountMultiple, mdiGenderFemale, mdiGenderMale } from "@mdi/js";
-import { onMounted } from "vue";
+import { watchDeep } from "@vueuse/core";
+import { onMounted, onUnmounted } from "vue";
 import { useRoute } from "vue-router";
 
 const route = useRoute();
 
 const dashboardStore = useDashboardKepegawaianStore();
+const unitStore = useUnitStore();
+
+watchDeep(dashboardStore.filter, (obj) => {
+  dashboardStore.getData();
+});
 
 function callData() {
+  unitStore.getData();
   dashboardStore.getData();
 }
 
@@ -36,7 +44,25 @@ onMounted(() => {
         Fetching data ... please wait ...</span
       >
     </NotificationBar>
-    <div v-else>
+    <div v-else class="space-y-4">
+      <div class="w-4/12">
+        <FormField label="Unit">
+          <select
+            :disabled="dashboardStore.isLoading"
+            v-model="dashboardStore.filter.unit"
+            class="h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
+          >
+            <option :value="0">SEMUA</option>
+            <option
+              v-for="option in unitStore.items"
+              :key="option.id"
+              :value="option.id"
+            >
+              {{ option.name.toUpperCase() }}
+            </option>
+          </select>
+        </FormField>
+      </div>
       <div class="grid grid-cols-1 gap-6 lg:grid-cols-3 mb-6">
         <CardBoxWidget
           trend="-"

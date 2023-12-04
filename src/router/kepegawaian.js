@@ -128,6 +128,28 @@ export const kepegawaian = [
   },
   {
     meta: {
+      title: "Data Kenaikan Jenjang Jabatan Pegawai",
+      layout: "layout-authenticated",
+      requiresAuth: true,
+    },
+    path: "/pegawai/kenaikan/jabatan/list",
+    name: "list-kenaikan-jabatan",
+    component: () =>
+      import("@/views/kepegawaian/jenjang/DataJenjangPegawai.vue"),
+  },
+  {
+    meta: {
+      title: "Kenaikan Jenjang Jabatan Pegawai",
+      layout: "layout-authenticated",
+      requiresAuth: true,
+    },
+    path: "/pegawai/kenaikan/jabatan/new",
+    name: "new-kenaikan-jabatan",
+    component: () =>
+      import("@/views/kepegawaian/jenjang/NewJenjangPegawai.vue"),
+  },
+  {
+    meta: {
       title: "Kenaikan Gaji Berkala Pegawai",
       layout: "layout-authenticated",
       requiresAuth: true,

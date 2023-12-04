@@ -69,15 +69,6 @@ watch(
   }
 );
 
-// pensiunStore.$subscribe((mutation, state) => {
-//   if (mutation.events?.key == "currentLimit") {
-//     pensiunStore.getData();
-//   }
-//   if (mutation.events?.key == "date") {
-//     pensiunStore.getData();
-//   }
-// });
-
 onMounted(() => {
   pensiunStore.getData();
 });
@@ -94,7 +85,7 @@ onMounted(() => {
             <select
               :disabled="pensiunStore.isStoreLoading"
               v-model="pensiunStore.currentLimit"
-              class="border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
+              class="h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
             >
               <option
                 v-for="option in mainStore.limitDataOptions"

@@ -68,6 +68,7 @@ const find = useDebounceFn((x) => {
 }, 500);
 
 onMounted(() => {
+  pegawaiStore.currentLimit = 5;
   if (pegawaiStore.items.length <= 0) {
     pegawaiStore.getData();
   }
@@ -97,7 +98,10 @@ onUnmounted(() => {
           ></Select2>
         </div>
 
-        <FormField label="Semua Pegawai">
+        <FormField
+          v-if="pengembanganStore.form.list.length == 0"
+          label="Semua Pegawai"
+        >
           <FormCheckRadioGroup
             v-model="pengembanganStore.form.semuaPegawai"
             name="buttons-switch"

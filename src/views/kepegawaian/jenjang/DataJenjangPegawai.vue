@@ -14,18 +14,17 @@ import {
   EllipsisVerticalIcon,
   TrashIcon,
   ArrowPathIcon,
-  DocumentTextIcon,
 } from "@heroicons/vue/24/outline";
 import { useMainStore } from "@/stores/main";
 import BaseButton from "@/components/BaseButton.vue";
-import { useMutasiStore } from "@/stores/pegawai/mutasi";
+import { useKenaikanJabatanStore } from "@/stores/pegawai/kenaikanJabatan";
 
 const search = useDebounceFn(() => {
-  mutasiStore.getData();
+  kenaikanJabatanStore.getData();
 }, 500);
 const route = useRoute();
 const router = useRouter();
-const mutasiStore = useMutasiStore();
+const kenaikanJabatanStore = useKenaikanJabatanStore();
 const mainStore = useMainStore();
 
 const indexDestroy = ref(0);
@@ -43,55 +42,45 @@ const itemMenu = [
 ];
 
 const previousPage = computed(() => {
-  return "&page=" + (mutasiStore.currentPage - 1);
+  return "&page=" + (kenaikanJabatanStore.currentPage - 1);
 });
 
 const nextPage = computed(() => {
-  return "&page=" + (mutasiStore.currentPage + 1);
+  return "&page=" + (kenaikanJabatanStore.currentPage + 1);
 });
 
 function destroy(item) {
-  mutasiStore.destroy(item.id);
+  kenaikanJabatanStore.destroy(item.id);
   indexDestroy.value = item.id;
 }
 
-watchDeep(mutasiStore.filter, (obj) => {
-  mutasiStore.getData();
+watchDeep(kenaikanJabatanStore.filter, (obj) => {
+  kenaikanJabatanStore.getData();
 });
 
 watch(
-  () => mutasiStore.currentLimit,
+  () => kenaikanJabatanStore.currentLimit,
   () => {
-    mutasiStore.getData();
+    kenaikanJabatanStore.getData();
   }
 );
 
-// mutasiStore.$subscribe((mutation, state) => {
-//   if (mutation.events?.key == "currentLimit") {
-//     mutasiStore.getData();
-//   }
-//   if (mutation.events?.key == "date") {
-//     mutasiStore.getData();
-//   }
-// });
-
 onMounted(() => {
-  mutasiStore.getData();
+  kenaikanJabatanStore.getData();
 });
 </script>
 
 <template>
   <SectionMain :max-w="false">
     <SectionTitleLineWithButton :title="route.meta.title" main />
-
     <CardBox class="mb-4 px-4" has-table>
       <div class="w-full my-4 flex flex-row space-x-4">
         <div class="w-1/12">
           <FormField label="Show">
             <select
-              :disabled="mutasiStore.isStoreLoading"
-              v-model="mutasiStore.currentLimit"
-              class="border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
+              :disabled="kenaikanJabatanStore.isStoreLoading"
+              v-model="kenaikanJabatanStore.currentLimit"
+              class="h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
             >
               <option
                 v-for="option in mainStore.limitDataOptions"
@@ -107,7 +96,7 @@ onMounted(() => {
           <FormField label="Search">
             <FormControl
               @keyup="search"
-              v-model="mutasiStore.filter.searchQuery"
+              v-model="kenaikanJabatanStore.filter.searchQuery"
               type="tel"
               placeholder="Cari berdasarkan nama / nip / nomor sk"
             />
@@ -116,11 +105,11 @@ onMounted(() => {
         <div class="w-4/12">
           <FormField label="Tanggal">
             <vue-tailwind-datepicker
-              :disabled="mutasiStore.isStoreLoading"
+              :disabled="kenaikanJabatanStore.isStoreLoading"
               required
               separator=" s/d "
               placeholder="Tanggal Data"
-              v-model="mutasiStore.filter.date"
+              v-model="kenaikanJabatanStore.filter.date"
               :formatter="formatter"
               input-classes="h-12 border  px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
             />
@@ -128,7 +117,7 @@ onMounted(() => {
         </div>
         <div class="w-2/12 flex justify-end">
           <BaseButton
-            @click="router.push({ name: 'new-mutasi-pegawai' })"
+            @click="router.push({ name: 'new-kenaikan-jabatan' })"
             class="mt-8"
             type="submit"
             color="info"
@@ -146,15 +135,13 @@ onMounted(() => {
             <th>Nama Pegawai</th>
             <th>Jabatan Lama</th>
             <th>Jabatan Baru</th>
-            <th>Unit Lama</th>
-            <th>Unit Baru</th>
             <th>Efektif</th>
             <th />
           </tr>
         </thead>
         <tbody>
-          <tr v-if="mutasiStore.isLoading">
-            <td colspan="9" class="text-center">
+          <tr v-if="kenaikanJabatanStore.isLoading">
+            <td colspan="7" class="text-center">
               <div
                 class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
                 role="status"
@@ -167,34 +154,28 @@ onMounted(() => {
             </td>
           </tr>
           <template v-else>
-            <tr v-if="mutasiStore.items.length == 0">
-              <td colspan="9" class="text-center">
+            <tr v-if="kenaikanJabatanStore.items.length == 0">
+              <td colspan="7" class="text-center">
                 <span>Tidak ada data</span>
               </td>
             </tr>
             <tr
               v-else
-              v-for="(item, index) in mutasiStore.items"
+              v-for="(item, index) in kenaikanJabatanStore.items"
               :key="item.id"
             >
               <td class="text-center">
-                {{ mutasiStore.from + index }}
+                {{ kenaikanJabatanStore.from + index }}
               </td>
               <td>
                 {{ item.nomor_sk ?? "-" }}
               </td>
-              <td>{{ item.pegawai?.name ?? "-" }}</td>
-              <td>{{ item.jabatan?.name ?? "-" }}</td>
-              <td>{{ item.jabatan_new.name ?? "-" }}</td>
+              <td>{{ item.pegawai.name.toUpperCase() ?? "-" }}</td>
               <td>
-                {{ item.unit.name ?? "-" }}
+                {{ item.jabatan.name.toUpperCase() ?? "-" }}
               </td>
               <td>
-                {{
-                  item.keluar == false
-                    ? item.unit_new.name ?? "-"
-                    : "Mutasi Keluar"
-                }}
+                {{ item.jabatan_new.name.toUpperCase() ?? "-" }}
               </td>
               <td>
                 {{ item.tmt_jabatan ?? "-" }}
@@ -205,11 +186,11 @@ onMounted(() => {
                     <div>
                       <MenuButton
                         :disabled="
-                          mutasiStore.isDestroyLoading &&
+                          kenaikanJabatanStore.isDestroyLoading &&
                           indexDestroy == item.id
                         "
                         :class="
-                          mutasiStore.isDestroyLoading &&
+                          kenaikanJabatanStore.isDestroyLoading &&
                           indexDestroy == item.id
                             ? ''
                             : 'hover:scale-125 ease-in-out duration-300'
@@ -218,7 +199,7 @@ onMounted(() => {
                       >
                         <ArrowPathIcon
                           v-if="
-                            mutasiStore.isDestroyLoading &&
+                            kenaikanJabatanStore.isDestroyLoading &&
                             indexDestroy == item.id
                           "
                           class="animate-spin h-5 w-5 text-black dark:text-white"
@@ -245,9 +226,9 @@ onMounted(() => {
                       >
                         <div class="px-2 py-1">
                           <MenuItem
-                            v-for="menu in itemMenu"
+                            :key="index"
+                            v-for="(menu, index) in itemMenu"
                             v-slot="{ active }"
-                            :key="menu"
                           >
                             <button
                               @click="menu.function(item)"
@@ -279,13 +260,13 @@ onMounted(() => {
           <li>
             <a
               @click="
-                mutasiStore.currentPage == 1
+                kenaikanJabatanStore.currentPage == 1
                   ? ''
-                  : mutasiStore.getData(previousPage)
+                  : kenaikanJabatanStore.getData(previousPage)
               "
-              :disabled="mutasiStore.currentPage == 1 ? true : false"
+              :disabled="kenaikanJabatanStore.currentPage == 1 ? true : false"
               :class="
-                mutasiStore.currentPage == 1
+                kenaikanJabatanStore.currentPage == 1
                   ? 'cursor-not-allowed'
                   : 'cursor-pointer dark:hover:bg-blue-700 dark:hover:text-white hover:bg-blue-100 hover:text-gray-700'
               "
@@ -297,12 +278,14 @@ onMounted(() => {
           <li>
             <a
               @click="
-                mutasiStore.lastPage == mutasiStore.currentPage
+                kenaikanJabatanStore.lastPage ==
+                kenaikanJabatanStore.currentPage
                   ? ''
-                  : mutasiStore.getData(nextPage)
+                  : kenaikanJabatanStore.getData(nextPage)
               "
               :class="
-                mutasiStore.lastPage == mutasiStore.currentPage
+                kenaikanJabatanStore.lastPage ==
+                kenaikanJabatanStore.currentPage
                   ? 'cursor-not-allowed'
                   : 'cursor-pointer dark:hover:bg-blue-700 dark:hover:text-white hover:bg-blue-100 hover:text-gray-700'
               "

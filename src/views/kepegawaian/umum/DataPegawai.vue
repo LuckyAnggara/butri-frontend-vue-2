@@ -6,7 +6,7 @@ import SectionTitleLineWithButton from "@/components/SectionTitleLineWithButton.
 
 import { useRoute, useRouter } from "vue-router";
 import { usePegawaiStore } from "@/stores/pegawai/pegawai";
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 import FormField from "@/components/FormField.vue";
 import FormControl from "@/components/FormControl.vue";
 import { useDebounceFn, watchDeep } from "@vueuse/core";
@@ -93,6 +93,10 @@ onMounted(() => {
   pegawaiStore.currentLimit = 50;
   pegawaiStore.getData();
   unitStore.getData();
+});
+onUnmounted(() => {
+  pegawaiStore.searchName = null;
+  pegawaiStore.currentLimit = 5;
 });
 </script>
 

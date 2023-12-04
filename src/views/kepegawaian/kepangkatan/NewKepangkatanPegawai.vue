@@ -65,9 +65,8 @@ const allFill = computed(() => {
 });
 
 onMounted(() => {
-  if (pegawaiStore.items.length <= 0) {
-    pegawaiStore.getData();
-  }
+  pegawaiStore.currentLimit = 5;
+  pegawaiStore.getData();
   if (pangkatStore.items.length <= 0) {
     pangkatStore.getData();
   }

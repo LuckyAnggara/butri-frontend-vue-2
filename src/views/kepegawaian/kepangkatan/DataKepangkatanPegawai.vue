@@ -80,7 +80,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <SectionMain>
+  <SectionMain :max-w="false">
     <SectionTitleLineWithButton :title="route.meta.title" main />
     <CardBox class="mb-4 px-4" has-table>
       <div class="w-full my-4 flex flex-row space-x-4">

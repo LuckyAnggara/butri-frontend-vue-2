@@ -35,6 +35,10 @@ export default [
         label: "Kepangkatan",
       },
       {
+        to: "/pegawai/kenaikan/jabatan/list",
+        label: "Kenaikan Jabatan",
+      },
+      {
         to: "/pegawai/kgb/list",
         label: "KGB",
       },

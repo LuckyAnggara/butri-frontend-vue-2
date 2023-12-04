@@ -56,9 +56,8 @@ const find = useDebounceFn((x) => {
 }, 500);
 
 onMounted(() => {
-  if (pegawaiStore.items.length <= 0) {
-    pegawaiStore.getData();
-  }
+  pegawaiStore.currentLimit = 5;
+  pegawaiStore.getData();
 });
 onUnmounted(() => {
   pensiunStore.$reset();
