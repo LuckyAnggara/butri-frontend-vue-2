@@ -170,7 +170,7 @@ import { useMainStore } from "@/stores/main";
 import { useUnitGroupStore } from "@/stores/unitGroup";
 import { ArrowPathIcon } from "@heroicons/vue/24/outline";
 import { IDRCurrency } from "@/utilities/formatter";
-import { usePengelolaanTiStore } from "@/stores/sip/PengelolaanTi";
+import { usePengelolaanTiStore } from "@/stores/sip/pengelolaanTi";
 
 const props = defineProps({
   show: Boolean,
@@ -221,3 +221,4 @@ function closeModal() {
   transform: scale(1.1);
 }
 </style>
+@/stores/sip/pengelolaanTi
