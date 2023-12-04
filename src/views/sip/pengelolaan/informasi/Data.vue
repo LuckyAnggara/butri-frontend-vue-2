@@ -19,7 +19,7 @@ import {
 import { useMainStore } from "@/stores/main";
 import BaseButton from "@/components/BaseButton.vue";
 import { useUnitGroupStore } from "@/stores/unitGroup";
-import { usePengelolaanTiStore } from "@/stores/sip/pengelolaanTi";
+import { usePengelolaanInformasiStore } from "@/stores/sip/pengelolaanInformasi";
 
 const NewMasterModal = defineAsyncComponent(() => import("./NewModal.vue"));
 
@@ -27,7 +27,7 @@ const showNewModal = ref(false);
 const updateData = ref(false);
 
 const route = useRoute();
-const pengelolaanTiStore = usePengelolaanTiStore();
+const pengelolaanTiStore = usePengelolaanInformasiStore();
 const mainStore = useMainStore();
 const groupStore = useUnitGroupStore();
 

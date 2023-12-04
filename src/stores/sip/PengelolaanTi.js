@@ -5,7 +5,7 @@ import { useAuthStore } from "../auth";
 import { useToast } from "vue-toastification";
 const toast = useToast();
 const authStore = useAuthStore();
-export const usePengelolaanTiStore = defineStore("pengelolaanTi", {
+export const usePengelolaanTiStore = defineStore("pengelolaanInformasi", {
   state: () => ({
     responses: null,
     singleResponses: null,

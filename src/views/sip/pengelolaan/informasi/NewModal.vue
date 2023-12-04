@@ -170,7 +170,7 @@ import { useMainStore } from "@/stores/main";
 import { useUnitGroupStore } from "@/stores/unitGroup";
 import { ArrowPathIcon } from "@heroicons/vue/24/outline";
 import { IDRCurrency } from "@/utilities/formatter";
-import { usePengelolaanTiStore } from "@/stores/sip/pengelolaanTi";
+import { usePengelolaanInformasiStore } from "@/stores/sip/pengelolaanInformasi";
 
 const props = defineProps({
   show: Boolean,
@@ -179,7 +179,7 @@ const props = defineProps({
 
 const emit = defineEmits(["close", "submitStore", "submitUpdate"]);
 
-const pengelolaanTiStore = usePengelolaanTiStore();
+const pengelolaanTiStore = usePengelolaanInformasiStore();
 const groupStore = useUnitGroupStore();
 const mainStore = useMainStore();
 
