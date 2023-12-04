@@ -14,19 +14,13 @@ import {
   EllipsisVerticalIcon,
   TrashIcon,
   ArrowPathIcon,
-  PencilSquareIcon,
+  DocumentTextIcon,
 } from "@heroicons/vue/24/outline";
 import { useMainStore } from "@/stores/main";
 import BaseButton from "@/components/BaseButton.vue";
-import { useMonitoringInternalStore } from "@/stores/sip/monitoringInternal";
 import { useUnitGroupStore } from "@/stores/unitGroup";
-import { useAuthStore } from "@/stores/auth";
-import {
-  IDRCurrency,
-  getMonthName,
-  OtherCurrency,
-} from "@/utilities/formatter";
-import { useSatuanKerjaStore } from "@/stores/satuanKerja";
+
+import { usePengelolaanTiStore } from "@/stores/sip/pengelolaanTi";
 
 const NewMasterModal = defineAsyncComponent(() => import("./NewModal.vue"));
 
@@ -34,10 +28,9 @@ const showNewModal = ref(false);
 const updateData = ref(false);
 
 const route = useRoute();
-const monitoringInternalStore = useMonitoringInternalStore();
+const pengelolaanTiStore = usePengelolaanTiStore();
 const mainStore = useMainStore();
 const groupStore = useUnitGroupStore();
-const satkerStore = useSatuanKerjaStore();
 
 const indexDestroy = ref(0);
 
@@ -45,57 +38,66 @@ const isInput = ref(false);
 
 const itemMenu = [
   {
+    function: edit,
+    label: "Edit",
+    icon: DocumentTextIcon,
+  },
+  {
     function: destroy,
     label: "Hapus",
     icon: TrashIcon,
   },
 ];
 
+function edit(item) {
+  showNewModal.value = true;
+  updateData.value = true;
+  pengelolaanTiStore.readyEdit(item);
+}
+
 function destroy(item) {
-  monitoringInternalStore.destroy(item.id);
+  pengelolaanTiStore.destroy(item.id);
   indexDestroy.value = item.id;
 }
 
 function open() {
-  monitoringInternalStore.clearForm();
+  pengelolaanTiStore.clearForm();
   showNewModal.value = true;
 }
 function close() {
   showNewModal.value = false;
-  monitoringInternalStore.clearForm();
+  pengelolaanTiStore.clearForm();
 }
 
 async function submit() {
-  const result = await monitoringInternalStore.store();
+  const result = await pengelolaanTiStore.store();
   if (result) {
     close();
-    monitoringInternalStore.getData();
+    pengelolaanTiStore.getData();
     isInput.value = !isInput;
   }
 }
 
-watchDeep(monitoringInternalStore.filter, (obj) => {
-  monitoringInternalStore.getData();
+async function update() {
+  const result = await pengelolaanTiStore.update();
+  if (result) {
+    showNewModal.value = false;
+    pengelolaanTiStore.getData();
+  }
+}
+
+watchDeep(pengelolaanTiStore.filter, (obj) => {
+  pengelolaanTiStore.getData();
 });
 
-// monitoringInternalStore.$subscribe((mutation, state) => {
-//   if (mutation.events?.key == "currentYear") {
-//     monitoringInternalStore.getData();
-//   }
-//   if (mutation.events?.key == "currentMonth") {
-//     monitoringInternalStore.getData();
-//   }
-// });
-
 onMounted(() => {
-  monitoringInternalStore.getData();
+  pengelolaanTiStore.getData();
   groupStore.getData();
-  satkerStore.getData();
 });
 </script>
 
 <template>
-  <SectionMain :max-w="false">
+  <SectionMain>
     <SectionTitleLineWithButton :title="route.meta.title" main />
 
     <CardBox class="mb-4 px-4" has-table>
@@ -103,8 +105,8 @@ onMounted(() => {
         <div class="w-2/12">
           <FormField label="Tahun">
             <select
-              :disabled="monitoringInternalStore.isLoading"
-              v-model="monitoringInternalStore.filter.currentYear"
+              :disabled="pengelolaanTiStore.isLoading"
+              v-model="pengelolaanTiStore.filter.currentYear"
               class="h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
             >
               <option
@@ -120,8 +122,8 @@ onMounted(() => {
         <div class="w-2/12">
           <FormField label="Bulan">
             <select
-              :disabled="monitoringInternalStore.isLoading"
-              v-model="monitoringInternalStore.filter.currentMonth"
+              :disabled="pengelolaanTiStore.isLoading"
+              v-model="pengelolaanTiStore.filter.currentMonth"
               class="h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
             >
               <option
@@ -136,12 +138,7 @@ onMounted(() => {
         </div>
         <div class="w-6/12"></div>
         <div class="w-2/12 flex justify-end">
-          <BaseButton
-            @click="open()"
-            class="mt-8"
-            color="info"
-            label="Input Data"
-          />
+          <BaseButton @click="open()" class="mt-8" color="info" label="Input" />
         </div>
       </div>
     </CardBox>
@@ -149,23 +146,13 @@ onMounted(() => {
       <table>
         <thead>
           <tr>
-            <td rowspan="2" class="text-center">Unit</td>
-            <td colspan="2" class="text-center">Temuan</td>
-            <td colspan="2" class="text-center">Sudah Tindak Lanjut</td>
-            <td colspan="2" class="text-center">Belum Tindak Lanjut</td>
-            <td colspan="2" class="text-center"></td>
-          </tr>
-          <tr>
-            <td class="text-center">Jumlah</td>
-            <td class="text-center">Nominal</td>
-            <td class="text-center">Jumlah</td>
-            <td class="text-center">Nominal</td>
-            <td class="text-center">Jumlah</td>
-            <td class="text-center">Nominal</td>
+            <td class="text-center">No</td>
+            <td class="text-center">Keterangan</td>
+            <td class="text-center"></td>
           </tr>
         </thead>
         <tbody>
-          <tr v-if="monitoringInternalStore.isLoading">
+          <tr v-if="pengelolaanTiStore.isLoading">
             <td colspan="9" class="text-center">
               <div
                 class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
@@ -179,48 +166,35 @@ onMounted(() => {
             </td>
           </tr>
           <template v-else>
-            <tr v-if="monitoringInternalStore.items.length == 0">
+            <tr v-if="pengelolaanTiStore.items.length == 0">
               <td colspan="9" class="text-center">
                 <span>Tidak ada data</span>
               </td>
             </tr>
             <tr
               v-else
-              v-for="item in monitoringInternalStore.items"
+              v-for="(item, index) in pengelolaanTiStore.items"
               :key="item.id"
             >
               <td>
-                {{ item.group.name }}
+                {{ ++index }}
               </td>
+
               <td>
-                {{ item.temuan_jumlah }}
+                {{ item.keterangan }}
               </td>
-              <td>
-                {{ OtherCurrency(item.temuan_nominal, item.currency) }}
-              </td>
-              <td>
-                {{ item.tl_jumlah }}
-              </td>
-              <td>
-                {{ OtherCurrency(item.tl_nominal, item.currency) }}
-              </td>
-              <td>
-                {{ item.btl_jumlah }}
-              </td>
-              <td>
-                {{ OtherCurrency(item.btl_nominal, item.currency) }}
-              </td>
+
               <td class="before:hidden lg:w-1 whitespace-nowrap">
                 <div>
                   <Menu as="div" class="relative inline-block text-left">
                     <div>
                       <MenuButton
                         :disabled="
-                          monitoringInternalStore.isDestroyLoading &&
+                          pengelolaanTiStore.isDestroyLoading &&
                           indexDestroy == item.id
                         "
                         :class="
-                          monitoringInternalStore.isDestroyLoading &&
+                          pengelolaanTiStore.isDestroyLoading &&
                           indexDestroy == item.id
                             ? ''
                             : 'hover:scale-125 ease-in-out duration-300'
@@ -229,7 +203,7 @@ onMounted(() => {
                       >
                         <ArrowPathIcon
                           v-if="
-                            monitoringInternalStore.isDestroyLoading &&
+                            pengelolaanTiStore.isDestroyLoading &&
                             indexDestroy == item.id
                           "
                           class="animate-spin h-5 w-5 text-black dark:text-white"
@@ -282,37 +256,6 @@ onMounted(() => {
             </tr>
           </template>
         </tbody>
-        <tfoot>
-          <tr>
-            <th class="text-center" :colspan="9">Total</th>
-          </tr>
-          <tr
-            v-for="item in monitoringInternalStore.groupByCurrency"
-            :key="item.id"
-          >
-            <th>
-              {{ item.currency }}
-            </th>
-            <th>
-              {{ item.totalTemuanJumlah }}
-            </th>
-            <th>
-              {{ OtherCurrency(item.totalTemuanNominal, item.currency) }}
-            </th>
-            <th>
-              {{ item.totalTlJumlah }}
-            </th>
-            <th>
-              {{ OtherCurrency(item.totalTlNominal, item.currency) }}
-            </th>
-            <th>
-              {{ item.totalBtlJumlah }}
-            </th>
-            <th>
-              {{ OtherCurrency(item.totalBtlNominal, item.currency) }}
-            </th>
-          </tr>
-        </tfoot>
       </table>
       <div
         class="p-3 lg:px-6 border-t border-gray-100 dark:border-slate-800 flex justify-end"

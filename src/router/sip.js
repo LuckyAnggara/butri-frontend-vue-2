@@ -47,6 +47,6 @@ export const sip = [
     },
     path: "/pengelolaan/ti",
     name: "list-pengelolaan-ti",
-    component: () => import("@/views/sip/monitoring/pengaduan/Data.vue"),
+    component: () => import("@/views/sip/pengelolaan/informasi/Data.vue"),
   },
 ];

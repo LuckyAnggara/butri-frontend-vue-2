@@ -5,7 +5,7 @@ import { useAuthStore } from "../auth";
 import { useToast } from "vue-toastification";
 const toast = useToast();
 const authStore = useAuthStore();
-export const useMonitoringInternalStore = defineStore("monitoringInternal", {
+export const usePengelolaanTiStore = defineStore("pengelolaanTi", {
   state: () => ({
     responses: null,
     singleResponses: null,
@@ -20,14 +20,7 @@ export const useMonitoringInternalStore = defineStore("monitoringInternal", {
     form: {
       tahun: new Date().getFullYear(),
       bulan: new Date().getMonth() + 1,
-      satker: null,
-      currency: null,
-      temuan_nominal: 0,
-      temuan_jumlah: 0,
-      tl_nominal: 0,
-      tl_jumlah: 0,
-      btl_nominal: "",
-      btl_jumlah: "",
+      keterangan: null,
       created_by: authStore.user.user.id,
     },
     filter: {
@@ -47,76 +40,13 @@ export const useMonitoringInternalStore = defineStore("monitoringInternal", {
       }
       return false;
     },
-    totalTemuanJumlah(state) {
-      const total = state.items.reduce(
-        (acc, item) => acc + item.temuan_jumlah,
-        0
-      );
-      return total;
-    },
-    totalTemuanNominal(state) {
-      const total = state.items.reduce(
-        (acc, item) => acc + item.temuan_nominal,
-        0
-      );
-      return total;
-    },
-    totalTlJumlah(state) {
-      const total = state.items.reduce((acc, item) => acc + item.tl_jumlah, 0);
-      return total;
-    },
-    totalTlNominal(state) {
-      const total = state.items.reduce((acc, item) => acc + item.tl_nominal, 0);
-      return total;
-    },
-    totalBtlJumlah(state) {
-      const total = state.items.reduce((acc, item) => acc + item.btl_jumlah, 0);
-      return total;
-    },
-    totalBtlNominal(state) {
-      const total = state.items.reduce(
-        (acc, item) => acc + item.btl_nominal,
-        0
-      );
-      return total;
-    },
-    groupByCurrency(state) {
-      return state.items.reduce((acc, item) => {
-        const currency = item.currency;
-        if (!acc[currency]) {
-          acc[currency] = {
-            currency,
-            totalTemuanJumlah: 0,
-            totalTemuanNominal: 0,
-            totalTlJumlah: 0,
-            totalTlNominal: 0,
-            totalBtlJumlah: 0,
-            totalBtlNominal: 0,
-            items: [],
-          };
-        }
-
-        // Menghitung total temuan_jumlah dan temuan_nominal
-        acc[currency].totalTemuanJumlah += item.temuan_jumlah;
-        acc[currency].totalTemuanNominal += item.temuan_nominal;
-        acc[currency].totalTlJumlah += item.tl_jumlah;
-        acc[currency].totalTlNominal += item.tl_nominal;
-        acc[currency].totalBtlJumlah += item.btl_jumlah;
-        acc[currency].totalBtlNominal += item.btl_nominal;
-
-        // Menambahkan item ke dalam array
-        acc[currency].items.push(item);
-
-        return acc;
-      }, {});
-    },
   },
   actions: {
     async getData(page = "") {
       this.isLoading = true;
       try {
         const response = await axiosIns.get(
-          `/monitoring-temuan-internal?tahun=${this.filter.currentYear}&bulan=${this.filter.currentMonth}`
+          `/pengelolaan-ti?tahun=${this.filter.currentYear}&bulan=${this.filter.currentMonth}`
         );
         this.responses = response.data;
       } catch (error) {
@@ -130,10 +60,7 @@ export const useMonitoringInternalStore = defineStore("monitoringInternal", {
     async store() {
       this.isStoreLoading = true;
       try {
-        const response = await axiosIns.post(
-          `/monitoring-temuan-internal`,
-          this.form
-        );
+        const response = await axiosIns.post(`/pengelolaan-ti`, this.form);
         if (response.status == 200) {
           toast.success("Data berhasil dibuat", {
             timeout: 3000,
@@ -155,7 +82,7 @@ export const useMonitoringInternalStore = defineStore("monitoringInternal", {
       this.isDestroyLoading = true;
       setTimeout(() => {}, 500);
       try {
-        await axiosIns.delete(`/monitoring-temuan-internal/${id}`);
+        await axiosIns.delete(`/pengelolaan-ti/${id}`);
         toast.success("Data berhasil di hapus", {
           timeout: 2000,
         });
@@ -173,7 +100,7 @@ export const useMonitoringInternalStore = defineStore("monitoringInternal", {
       this.isUpdateLoading = true;
       try {
         const response = await axiosIns.put(
-          `/monitoring-temuan-internal/${this.singleResponses.id}`,
+          `/pengelolaan-ti/${this.singleResponses.id}`,
           this.singleResponses
         );
         if (response.status == 200) {
@@ -195,28 +122,17 @@ export const useMonitoringInternalStore = defineStore("monitoringInternal", {
         this.isUpdateLoading = false;
       }
     },
-    addSatkerForm(payload) {
-      this.form.satker = payload;
-    },
-    isMonitoringExist(item) {
-      const d = this.items.filter((x) => x.id == item.id);
-      if (d) {
-        this.wilayahExist = true;
-      }
-      this.wilayahExist = false;
+    readyEdit(item) {
+      this.singleResponses = JSON.parse(JSON.stringify(item));
+      this.originalSingleResponses = JSON.parse(JSON.stringify(item));
     },
     clearForm() {
       this.form = {
         tahun: new Date().getFullYear(),
         bulan: new Date().getMonth() + 1,
-        group_id: 0,
-        currency: null,
-        temuan_nominal: "",
-        temuan_jumlah: "",
-        tl_nominal: "",
-        tl_jumlah: "",
-        btl_nominal: "",
-        btl_jumlah: "",
+        keterangan: null,
+        type: null,
+        link: null,
         created_by: authStore.user.user.id,
       };
     },

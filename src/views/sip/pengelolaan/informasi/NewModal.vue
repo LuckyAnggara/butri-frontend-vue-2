@@ -37,12 +37,12 @@
             <span class="sr-only">Close modal</span>
           </button>
         </div>
-        <form @submit.prevent="prosesRequest()">
-          <div class="flex space-x-4">
+        <form v-if="updateData" @submit.prevent="prosesUpdate()">
+          <div class="flex w-full space-x-2">
             <FormField label="Tahun" class="w-full">
               <select
-                :disabled="monitoringInternalStore.isStoreLoading"
-                v-model="monitoringInternalStore.form.tahun"
+                :disabled="pengelolaanTiStore.isUpdateLoading"
+                v-model="pengelolaanTiStore.singleResponses.tahun"
                 class="h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
               >
                 <option
@@ -56,8 +56,8 @@
             </FormField>
             <FormField label="Bulan" class="w-full">
               <select
-                :disabled="monitoringInternalStore.isStoreLoading"
-                v-model="monitoringInternalStore.form.bulan"
+                :disabled="pengelolaanTiStore.isUpdateLoading"
+                v-model="pengelolaanTiStore.singleResponses.bulan"
                 class="h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
               >
                 <option
@@ -71,96 +71,13 @@
             </FormField>
           </div>
 
-          <!-- <div class="relative mb-6">
-            <label class="block font-bold mb-2">Satuan Kerja</label>
-            <Select2
-              :use-SSR="true"
-              @ssr="find"
-              :is-loading="satkerStore.isLoading"
-              :use-loader="true"
-              :data="satkerStore.items"
-              v-model="search"
-              placeholder="Cari data pegawai .."
-              @chosen="handleChosen"
-            ></Select2>
-          </div> -->
-          <FormField
-            label="Wilayah"
-            :help="
-              monitoringInternalStore.exist
-                ? 'Data wilayah ini sudah di input'
-                : ''
-            "
-          >
-            <select
+          <FormField label="Keterangan">
+            <FormControl
+              type="textarea"
               required
-              :disabled="monitoringInternalStore.isStoreLoading"
-              v-model="monitoringInternalStore.form.group_id"
-              class="h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
-            >
-              <option
-                v-for="option in groupStore.teknis"
-                :key="option.id"
-                :value="option.id"
-              >
-                {{ option.name }}
-              </option>
-            </select>
-          </FormField>
-          <FormField label="Mata Uang">
-            <FormControl
-              type="text"
-              v-model="monitoringInternalStore.form.currency"
-              :disabled="monitoringInternalStore.isStoreLoading"
-              placeholder="Default : IDR"
-            />
-          </FormField>
-          <FormField label="Temuan">
-            <FormControl
-              type="number"
-              v-model="monitoringInternalStore.form.temuan_jumlah"
-              :disabled="monitoringInternalStore.isStoreLoading"
-              placeholder="Jumlah"
-            />
-            <FormControl
-              v-model="monitoringInternalStore.form.temuan_nominal"
-              type="number"
-              :disabled="monitoringInternalStore.isStoreLoading"
-              placeholder="Nominal"
-            />
-          </FormField>
-          <FormField label="Temuan Yang Sudah Tindak Lanjut ">
-            <FormControl
-              type="number"
-              v-model="monitoringInternalStore.form.tl_jumlah"
-              :disabled="monitoringInternalStore.isStoreLoading"
-              placeholder="Jumlah"
-            />
-            <FormControl
-              v-model="monitoringInternalStore.form.tl_nominal"
-              type="number"
-              :disabled="monitoringInternalStore.isStoreLoading"
-              placeholder="Nominal"
-            />
-          </FormField>
-          <FormField label="Temuan Yang Belum Tindak Lanjut">
-            <input
-              type="number"
-              :value="
-                monitoringInternalStore.form.temuan_jumlah -
-                monitoringInternalStore.form.tl_jumlah
-              "
-              :disabled="true"
-              placeholder="Jumlah"
-            />
-            <input
-              :value="
-                monitoringInternalStore.form.temuan_nominal -
-                monitoringInternalStore.form.tl_nominal
-              "
-              type="number"
-              :disabled="true"
-              placeholder="Nominal"
+              v-model="pengelolaanTiStore.singleResponses.keterangan"
+              :disabled="pengelolaanTiStore.isUpdateLoading"
+              placeholder="Nama / Judul Konten"
             />
           </FormField>
 
@@ -168,10 +85,70 @@
 
           <div class="flex justify-start space-x-3 items-center">
             <BaseButton
-              :disabled="monitoringInternalStore.isStoreLoading"
+              :disabled="pengelolaanTiStore.isUpdateLoading"
               type="submit"
               color="info"
-              ><span v-if="!monitoringInternalStore.isStoreLoading">Submit</span
+              ><span v-if="!pengelolaanTiStore.isUpdateLoading"
+                ><span>Update</span></span
+              ><span class="flex flex-row items-center" v-else>
+                <ArrowPathIcon class="h-5 w-5 animate-spin mr-3" />
+                Processing</span
+              ></BaseButton
+            >
+          </div>
+        </form>
+        <form v-else @submit.prevent="prosesRequest()">
+          <div class="flex w-full space-x-2">
+            <FormField label="Tahun" class="w-full">
+              <select
+                :disabled="pengelolaanTiStore.isStoreLoading"
+                v-model="pengelolaanTiStore.form.tahun"
+                class="h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
+              >
+                <option
+                  v-for="option in mainStore.tahunOptions"
+                  :key="option"
+                  :value="option"
+                >
+                  {{ option }}
+                </option>
+              </select>
+            </FormField>
+            <FormField label="Bulan" class="w-full">
+              <select
+                :disabled="pengelolaanTiStore.isStoreLoading"
+                v-model="pengelolaanTiStore.form.bulan"
+                class="h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
+              >
+                <option
+                  v-for="option in mainStore.bulanOptions"
+                  :key="option.id"
+                  :value="option.id"
+                >
+                  {{ option.label }}
+                </option>
+              </select>
+            </FormField>
+          </div>
+
+          <FormField label="Keterangan">
+            <FormControl
+              type="textarea"
+              required
+              v-model="pengelolaanTiStore.form.keterangan"
+              :disabled="pengelolaanTiStore.isStoreLoading"
+              placeholder="Keterangan / Kegiatan / Fasilitasi"
+            />
+          </FormField>
+
+          <BaseDivider />
+
+          <div class="flex justify-start space-x-3 items-center">
+            <BaseButton
+              :disabled="pengelolaanTiStore.isStoreLoading"
+              type="submit"
+              color="info"
+              ><span v-if="!pengelolaanTiStore.isStoreLoading">Submit</span
               ><span class="flex flex-row items-center" v-else>
                 <ArrowPathIcon class="h-5 w-5 animate-spin mr-3" />
                 Processing</span
@@ -189,38 +166,22 @@ import FormField from "@/components/FormField.vue";
 import FormControl from "@/components/FormControl.vue";
 import BaseDivider from "@/components/BaseDivider.vue";
 import BaseButton from "@/components/BaseButton.vue";
-import { useMonitoringInternalStore } from "@/stores/sip/monitoringInternal";
 import { useMainStore } from "@/stores/main";
 import { useUnitGroupStore } from "@/stores/unitGroup";
 import { ArrowPathIcon } from "@heroicons/vue/24/outline";
 import { IDRCurrency } from "@/utilities/formatter";
-import { useSatuanKerjaStore } from "@/stores/satuanKerja";
-import Select2 from "@/components/Select2.vue";
-import { ref } from "vue";
-import { useDebounceFn } from "@vueuse/core";
+import { usePengelolaanTiStore } from "@/stores/sip/PengelolaanTi";
 
 const props = defineProps({
   show: Boolean,
   updateData: Boolean,
 });
 
-const search = ref("");
-
-const find = useDebounceFn((x) => {
-  satkerStore.searchName = search.value;
-  satkerStore.getData();
-}, 500);
-
-function handleChosen(payload) {
-  monitoringInternalStore.addSatkerForm(payload);
-}
-
 const emit = defineEmits(["close", "submitStore", "submitUpdate"]);
 
-const monitoringInternalStore = useMonitoringInternalStore();
+const pengelolaanTiStore = usePengelolaanTiStore();
 const groupStore = useUnitGroupStore();
 const mainStore = useMainStore();
-const satkerStore = useSatuanKerjaStore();
 
 async function prosesRequest() {
   emit("submitStore");

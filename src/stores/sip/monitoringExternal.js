@@ -82,8 +82,8 @@ export const useMonitoringEksternalStore = defineStore("monitoringEksternal", {
       this.isStoreBPKLoading = true;
       try {
         const response = await axiosIns.post(`/monitoring-temuan-bpk`, {
-          tahun: new Date().getFullYear(),
-          bulan: new Date().getMonth() + 1,
+          tahun: this.filter.currentYear,
+          bulan: this.filter.currentMonth,
           detail: this.itemsBPK,
           created_by: authStore.user.user.id,
         });
@@ -108,8 +108,8 @@ export const useMonitoringEksternalStore = defineStore("monitoringEksternal", {
       this.isStoreBPKPLoading = true;
       try {
         const response = await axiosIns.post(`/monitoring-temuan-bpkp`, {
-          tahun: new Date().getFullYear(),
-          bulan: new Date().getMonth() + 1,
+          tahun: this.filter.currentYear,
+          bulan: this.filter.currentMonth,
           detail: this.itemsBPKP,
           created_by: authStore.user.user.id,
         });
@@ -134,8 +134,8 @@ export const useMonitoringEksternalStore = defineStore("monitoringEksternal", {
       this.isStoreORILoading = true;
       try {
         const response = await axiosIns.post(`/monitoring-temuan-ori`, {
-          tahun: new Date().getFullYear(),
-          bulan: new Date().getMonth() + 1,
+          tahun: this.filter.currentYear,
+          bulan: this.filter.currentMonth,
           detail: this.itemsORI,
           created_by: authStore.user.user.id,
         });

@@ -6,6 +6,8 @@ export const useSatuanKerjaStore = defineStore("satuanKerja", {
   state: () => ({
     responses: null,
     isLoading: false,
+    searchName: "",
+    currentLimit: 5,
   }),
   getters: {
     items(state) {
@@ -17,14 +19,21 @@ export const useSatuanKerjaStore = defineStore("satuanKerja", {
     eselon_2(state) {
       return state.items.filter((x) => x.tingkat == "ESELON II");
     },
+    searchQuery(state) {
+      if (state.searchName == "" || state.searchName == null) {
+        return "";
+      }
+      return "&name=" + state.searchName;
+    },
   },
   actions: {
     async getData() {
       this.isLoading = true;
       try {
-        const response = await axiosIns.get(`/satuan-kerja`);
-
-        this.responses = response.data;
+        const response = await axiosIns.get(
+          `/satuan-kerja?limit=${this.currentLimit}${this.searchQuery}`
+        );
+        this.responses = response.data.data;
       } catch (error) {
         alert(error.message);
       } finally {
