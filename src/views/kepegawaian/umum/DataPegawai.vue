@@ -24,6 +24,7 @@ import { useUnitStore } from "@/stores/unit";
 const search = useDebounceFn(() => {
   pegawaiStore.getData();
 }, 500);
+
 const route = useRoute();
 const router = useRouter();
 const pegawaiStore = usePegawaiStore();
@@ -323,4 +324,3 @@ onUnmounted(() => {
     </CardBox>
   </SectionMain>
 </template>
-@/stores/pegawai/pegawai

@@ -10,6 +10,7 @@ import { computed, inject, onMounted, onUnmounted, ref, watch } from "vue";
 import FormField from "@/components/FormField.vue";
 import FormControl from "@/components/FormControl.vue";
 import { useDebounceFn, watchDeep, whenever } from "@vueuse/core";
+import { usePenetapanStore } from "@/stores/risiko/penetapan";
 import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue";
 import {
   EllipsisVerticalIcon,
@@ -20,12 +21,12 @@ import { useMainStore } from "@/stores/main";
 import BaseButton from "@/components/BaseButton.vue";
 
 const search = useDebounceFn(() => {
-  kegiatanStore.getData();
+  penetapanStore.getData();
 }, 500);
 
 const route = useRoute();
 const router = useRouter();
-const kegiatanStore = useKegiatanStore();
+const penetapanStore = usePenetapanStore();
 const mainStore = useMainStore();
 const swal = inject("$swal");
 
@@ -44,15 +45,15 @@ const itemMenu = [
 ];
 
 const previousPage = computed(() => {
-  return "&page=" + (kegiatanStore.currentPage - 1);
+  return "&page=" + (penetapanStore.currentPage - 1);
 });
 
 const nextPage = computed(() => {
-  return "&page=" + (kegiatanStore.currentPage + 1);
+  return "&page=" + (penetapanStore.currentPage + 1);
 });
 
 function toNew() {
-  router.push({ name: "new-kegiatan" });
+  router.push({ name: "new-risiko-penetapan-tujuan" });
 }
 
 function destroy(item) {
@@ -67,44 +68,44 @@ function destroy(item) {
       showLoaderOnConfirm: true,
       reverseButtons: true,
       preConfirm: async () => {
-        await kegiatanStore.destroy(item.id);
+        await penetapanStore.destroy(item.id);
         indexDestroy.value = item.id;
       },
-      allowOutsideClick: () => !kegiatanStore.isDestroyLoading,
+      allowOutsideClick: () => !penetapanStore.isDestroyLoading,
       backdrop: true,
     });
   } else {
-    kegiatanStore.destroy(item.id);
+    penetapanStore.destroy(item.id);
     indexDestroy.value = item.id;
   }
 }
 
-watchDeep(kegiatanStore.filter, (obj) => {
-  kegiatanStore.getData();
+watchDeep(penetapanStore.filter, (obj) => {
+  penetapanStore.getData();
 });
 
 watch(
-  () => kegiatanStore.currentLimit,
+  () => penetapanStore.currentLimit,
   () => {
-    kegiatanStore.getData();
+    penetapanStore.getData();
   }
 );
 
-// kegiatanStore.$subscribe((mutation, state) => {
+// penetapanStore.$subscribe((mutation, state) => {
 //   if (mutation.events?.key == "currentLimit") {
-//     kegiatanStore.getData();
+//     penetapanStore.getData();
 //   }
 //   if (mutation.events?.key == "date") {
-//     kegiatanStore.getData();
+//     penetapanStore.getData();
 //   }
 // });
 
 onMounted(() => {
-  kegiatanStore.getData();
+  penetapanStore.getData();
 });
 
 onUnmounted(() => {
-  kegiatanStore.$reset();
+  penetapanStore.$reset();
 });
 </script>
 
@@ -117,8 +118,8 @@ onUnmounted(() => {
         <div class="w-1/12">
           <FormField label="Show">
             <select
-              :disabled="kegiatanStore.isStoreLoading"
-              v-model="kegiatanStore.currentLimit"
+              :disabled="penetapanStore.isStoreLoading"
+              v-model="penetapanStore.currentLimit"
               class="border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
             >
               <option
@@ -135,7 +136,7 @@ onUnmounted(() => {
           <FormField label="Search">
             <FormControl
               @keyup="search"
-              v-model="kegiatanStore.filter.searchQuery"
+              v-model="penetapanStore.filter.searchQuery"
               type="tel"
               placeholder="Cari berdasarkan kegiatan"
             />
@@ -144,11 +145,11 @@ onUnmounted(() => {
         <div class="w-4/12">
           <FormField label="Tanggal">
             <vue-tailwind-datepicker
-              :disabled="kegiatanStore.isStoreLoading"
+              :disabled="penetapanStore.isStoreLoading"
               required
               separator=" s/d "
               placeholder="Tanggal Data"
-              v-model="kegiatanStore.filter.date"
+              v-model="penetapanStore.filter.date"
               :formatter="formatter"
               input-classes="h-12 border  px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
             />
@@ -170,15 +171,15 @@ onUnmounted(() => {
         <thead>
           <tr>
             <th>No</th>
-            <th>Kegiatan</th>
-            <th>Jenis</th>
-            <th>Waktu Pelaksanaan</th>
-            <th>Tempat</th>
+            <th>Strategi / Program / Kegiatan</th>
+            <th>Tujuan / Sasaran</th>
+            <th>Indikator Kinerja</th>
+            <th>Permasalahan</th>
             <th />
           </tr>
         </thead>
         <tbody>
-          <tr v-if="kegiatanStore.isLoading">
+          <tr v-if="penetapanStore.isLoading">
             <td colspan="6" class="text-center">
               <div
                 class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
@@ -192,26 +193,26 @@ onUnmounted(() => {
             </td>
           </tr>
           <template v-else>
-            <tr v-if="kegiatanStore.items.length == 0">
+            <tr v-if="penetapanStore.items.length == 0">
               <td colspan="6" class="text-center">
                 <span>Tidak ada data</span>
               </td>
             </tr>
             <tr
               v-else
-              v-for="(item, index) in kegiatanStore.items"
+              v-for="(item, index) in penetapanStore.items"
               :key="item.id"
             >
               <td class="text-center">
-                {{ kegiatanStore.from + index }}
+                {{ penetapanStore.from + index }}
               </td>
               <td>
-                {{ item.name }}
+                {{ item.program.name }}
               </td>
-              <td>{{ item.jenis_kegiatan }}</td>
-              <td>{{ item.start_at }} s/d {{ item.end_at }}</td>
+              <td>{{ item.sasaran.name }}</td>
+              <td>{{ item.iku.name }}</td>
               <td>
-                {{ item.tempat }}
+                {{ item.permasalahan }}
               </td>
               <td class="before:hidden lg:w-1 whitespace-nowrap">
                 <div>
@@ -219,11 +220,11 @@ onUnmounted(() => {
                     <div>
                       <MenuButton
                         :disabled="
-                          kegiatanStore.isDestroyLoading &&
+                          penetapanStore.isDestroyLoading &&
                           indexDestroy == item.id
                         "
                         :class="
-                          kegiatanStore.isDestroyLoading &&
+                          penetapanStore.isDestroyLoading &&
                           indexDestroy == item.id
                             ? ''
                             : 'hover:scale-125 ease-in-out duration-300'
@@ -232,7 +233,7 @@ onUnmounted(() => {
                       >
                         <ArrowPathIcon
                           v-if="
-                            kegiatanStore.isDestroyLoading &&
+                            penetapanStore.isDestroyLoading &&
                             indexDestroy == item.id
                           "
                           class="animate-spin h-5 w-5 text-black dark:text-white"
@@ -259,7 +260,8 @@ onUnmounted(() => {
                       >
                         <div class="px-2 py-1">
                           <MenuItem
-                            v-for="menu in itemMenu"
+                            v-for="(menu, index) in itemMenu"
+                            :key="index"
                             v-slot="{ active }"
                           >
                             <button
@@ -292,13 +294,13 @@ onUnmounted(() => {
           <li>
             <a
               @click="
-                kegiatanStore.currentPage == 1
+                penetapanStore.currentPage == 1
                   ? ''
-                  : kegiatanStore.getData(previousPage)
+                  : penetapanStore.getData(previousPage)
               "
-              :disabled="kegiatanStore.currentPage == 1 ? true : false"
+              :disabled="penetapanStore.currentPage == 1 ? true : false"
               :class="
-                kegiatanStore.currentPage == 1
+                penetapanStore.currentPage == 1
                   ? 'cursor-not-allowed'
                   : 'cursor-pointer dark:hover:bg-blue-700 dark:hover:text-white hover:bg-blue-100 hover:text-gray-700'
               "
@@ -310,12 +312,12 @@ onUnmounted(() => {
           <li>
             <a
               @click="
-                kegiatanStore.lastPage == kegiatanStore.currentPage
+                penetapanStore.lastPage == penetapanStore.currentPage
                   ? ''
-                  : kegiatanStore.getData(nextPage)
+                  : penetapanStore.getData(nextPage)
               "
               :class="
-                kegiatanStore.lastPage == kegiatanStore.currentPage
+                penetapanStore.lastPage == penetapanStore.currentPage
                   ? 'cursor-not-allowed'
                   : 'cursor-pointer dark:hover:bg-blue-700 dark:hover:text-white hover:bg-blue-100 hover:text-gray-700'
               "

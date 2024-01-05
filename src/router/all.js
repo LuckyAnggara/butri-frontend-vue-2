@@ -9,6 +9,7 @@ export const all = [
     name: "list-kegiatan",
     component: () => import("@/views/all/kegiatan/DataKegiatan.vue"),
   },
+
   {
     meta: {
       title: "Kegiatan",
@@ -119,6 +120,28 @@ export const all = [
     name: "detail-capaian-ikk",
     component: () => import("@/views/all/capaian/ikk/Detail.vue"),
   },
+
+  {
+    meta: {
+      title: "Risiko - Penetapan Tujuan",
+      layout: "layout-authenticated",
+      requiresAuth: true,
+    },
+    path: "/risiko/penetapan-tujuan/list",
+    name: "list-risiko-penetapan-tujuan",
+    component: () => import("@/views/all/risiko/penetapan/Data.vue"),
+  },
+  {
+    meta: {
+      title: "Risiko - Penetapan Tujuan",
+      layout: "layout-authenticated",
+      requiresAuth: true,
+    },
+    path: "/risiko/penetapan-tujuan/new",
+    name: "new-risiko-penetapan-tujuan",
+    component: () => import("@/views/all/risiko/penetapan/New.vue"),
+  },
+
   // {
   //   meta: {
   //     title: "Capaian Lainnya",

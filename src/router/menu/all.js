@@ -7,6 +7,36 @@ export default [
     icon: mdiBriefcaseOutline,
   },
   {
+    label: "Risiko",
+    icon: mdiBriefcaseOutline,
+    menu: [
+      {
+        to: "/risiko/penetapan-tujuan/list",
+        label: "Penetapan Tujuan",
+      },
+      {
+        to: "/risiko/identifikasi/list",
+        label: "Identifikasi",
+      },
+      {
+        to: "/risiko/identifikasi/list",
+        label: "Analisis",
+      },
+      {
+        to: "/risiko/analisis/list",
+        label: "Evaluasi",
+      },
+      {
+        to: "/risiko/penanganan/list",
+        label: "Penanganan",
+      },
+      {
+        to: "/risiko/pemantauan/list",
+        label: "Pemantauan dan Reviu",
+      },
+    ],
+  },
+  {
     label: "Realisasi Kinerja",
     icon: mdiPoll,
     menu: [
