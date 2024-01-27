@@ -5,7 +5,7 @@ import { useAuthStore } from "../auth";
 import { useToast } from "vue-toastification";
 const toast = useToast();
 const authStore = useAuthStore();
-export const useLaporanWilayahStore = defineStore("laporanwilayah", {
+export const useLaporanWilayahStore = defineStore("laporan", {
   state: () => ({
     responses: null,
     singleResponses: null,
@@ -21,20 +21,19 @@ export const useLaporanWilayahStore = defineStore("laporanwilayah", {
     form: {
       ttd_name: "",
       ttd_nip: "",
+      ttd_jabatan: "",
       ttd_location: "",
+      ttd_tanggal: "",
       parameter: {
         tahun: new Date().getFullYear(),
         bulan: new Date().getMonth() + 1,
         group: authStore.user.user.unit.group_id,
-        unit: authStore.user.user.unit.id,
       },
       created_by: authStore.user.user.id,
     },
     filter: {
       date: new Date().getFullYear(),
       searchQuery: "",
-      group_id: authStore.user.user.unit.group_id,
-      unit_id: authStore.user.user.unit.id,
     },
     currentYear: new Date().getFullYear(),
   }),
@@ -66,25 +65,13 @@ export const useLaporanWilayahStore = defineStore("laporanwilayah", {
       }
       return "&query=" + state.filter.searchQuery;
     },
-    unitQuery(state) {
-      if (state.filter.unit_id == 0) {
-        return "";
-      }
-      return "&unit_id=" + state.filter.unit_id;
-    },
-    groupQuery(state) {
-      if (state.filter.group_id == 0) {
-        return "";
-      }
-      return "&group_id=" + state.filter.group_id;
-    },
   },
   actions: {
     async getData() {
       this.isLoading = true;
       try {
         const response = await axiosIns.get(
-          `/laporan-wilayah?tahun=${this.currentYear}${this.groupQuery}`
+          `/laporan-wilayah?tahun=${this.currentYear}${this.searchQuery}`
         );
         this.responses = response.data.data;
       } catch (error) {
@@ -193,6 +180,8 @@ export const useLaporanWilayahStore = defineStore("laporanwilayah", {
         ttd_name: "",
         ttd_nip: "",
         ttd_location: "",
+        ttd_jabatan: "",
+        ttd_tanggal: "",
         parameter: {
           tahun: new Date().getFullYear(),
           bulan: new Date().getMonth() + 1,
@@ -200,6 +189,11 @@ export const useLaporanWilayahStore = defineStore("laporanwilayah", {
         },
         created_by: authStore.user.user.id,
       };
+    },
+    addFromExisting(payload) {
+      this.form.ttd_jabatan = payload.jabatan?.name ?? "-";
+      this.form.ttd_name = payload.name;
+      this.form.ttd_nip = payload.nip;
     },
     readyEdit(item) {
       this.singleResponses = JSON.parse(JSON.stringify(item));

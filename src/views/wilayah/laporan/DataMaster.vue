@@ -18,8 +18,10 @@ import {
 import { useMainStore } from "@/stores/main";
 import BaseButton from "@/components/BaseButton.vue";
 import { useLaporanWilayahStore } from "@/stores/wilayah/laporanwilayah";
+import { getMonthName } from "@/utilities/formatter";
 import { ref, onMounted, watch } from "vue";
 import NewModal from "./Modal.vue";
+import { usePegawaiStore } from "@/stores/pegawai/pegawai";
 
 const search = useDebounceFn(() => {
   laporanStore.getData();
@@ -27,6 +29,7 @@ const search = useDebounceFn(() => {
 const route = useRoute();
 const laporanStore = useLaporanWilayahStore();
 const mainStore = useMainStore();
+const pegawaiStore = usePegawaiStore();
 
 const showNewModal = ref(false);
 const updateData = ref(false);
@@ -58,9 +61,9 @@ async function update() {
   }
 }
 
-watchDeep(laporanStore.filter, (obj) => {
-  laporanStore.getData();
-});
+// watchDeep(laporanStore.filter, (obj) => {
+//   laporanStore.getData();
+// });
 
 watch(
   () => laporanStore.currentYear,
@@ -76,6 +79,7 @@ watch(
 // });
 
 onMounted(() => {
+  pegawaiStore.getData();
   laporanStore.getData();
 });
 </script>
@@ -104,14 +108,14 @@ onMounted(() => {
           </FormField>
         </div>
         <div class="w-5/12">
-          <FormField label="Search">
+          <!-- <FormField label="Search">
             <FormControl
               @keyup="search"
               v-model="laporanStore.filter.searchQuery"
               type="tel"
-              placeholder="Cari berdasarkan indikator"
+              placeholder="Cari data"
             />
-          </FormField>
+          </FormField> -->
         </div>
         <div class="w-2/12"></div>
 
@@ -130,6 +134,7 @@ onMounted(() => {
         <thead>
           <tr>
             <th>No</th>
+            <th>Bulan</th>
             <th>Name</th>
             <th>Created At</th>
             <th>Action</th>
@@ -163,6 +168,7 @@ onMounted(() => {
               <td class="text-center">
                 {{ ++index }}
               </td>
+              <td>{{ getMonthName(item.bulan) }} {{ item.tahun }}</td>
               <td>
                 {{ item.name }}
               </td>

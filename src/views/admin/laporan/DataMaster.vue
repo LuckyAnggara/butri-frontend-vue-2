@@ -168,9 +168,7 @@ onMounted(() => {
               <td class="text-center">
                 {{ ++index }}
               </td>
-              <td>
-                {{ getMonthName(item.bulan) }}
-              </td>
+              <td>{{ getMonthName(item.bulan) }} {{ item.tahun }}</td>
               <td>
                 {{ item.name }}
               </td>
