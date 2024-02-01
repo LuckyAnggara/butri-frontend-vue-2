@@ -62,7 +62,7 @@ export const useProgramUnggulanStore = defineStore("programunggulan", {
       this.isLoading = true;
       try {
         const response = await axiosIns.get(
-          `/program-unggulan?tahun=${this.currentYear}${this.searchQuery}`
+          `/program-unggulan?date=${this.currentYear}${this.searchQuery}`
         );
         this.responses = response.data.data;
       } catch (error) {

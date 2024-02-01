@@ -119,7 +119,7 @@ onUnmounted(() => {
             <select
               :disabled="kegiatanStore.isStoreLoading"
               v-model="kegiatanStore.currentLimit"
-              class="border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
+              class="h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
             >
               <option
                 v-for="option in mainStore.limitDataOptions"

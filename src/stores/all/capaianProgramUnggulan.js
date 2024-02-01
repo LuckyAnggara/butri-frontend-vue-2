@@ -3,6 +3,8 @@ import { defineStore } from "pinia";
 import axiosIns from "@/services/axios";
 import { useAuthStore } from "../auth";
 import { useToast } from "vue-toastification";
+import moment from "moment";
+
 const toast = useToast();
 const authStore = useAuthStore();
 export const useCapaianProgramUnggulan = defineStore("capaianProgramUnggulan", {
@@ -27,7 +29,10 @@ export const useCapaianProgramUnggulan = defineStore("capaianProgramUnggulan", {
       created_by: authStore.user.user.id,
     },
     filter: {
-      date: [],
+      date: [
+        moment().startOf("year").format("DD MMMM YYYY"),
+        moment().endOf("year").format("DD MMMM YYYY"),
+      ],
       searchQuery: "",
       unit: authStore.user.user.unit_id,
     },
