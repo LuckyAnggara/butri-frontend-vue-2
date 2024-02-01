@@ -3,6 +3,7 @@ import SectionMain from "@/components/SectionMain.vue";
 
 import CardBox from "@/components/CardBox.vue";
 import SectionTitleLineWithButton from "@/components/SectionTitleLineWithButton.vue";
+import NotificationBar from "@/components/NotificationBar.vue";
 
 import { useRoute } from "vue-router";
 import FormField from "@/components/FormField.vue";
@@ -87,7 +88,10 @@ onMounted(() => {
 <template>
   <SectionMain>
     <SectionTitleLineWithButton :title="route.meta.title" main />
-
+    <NotificationBar color="info"
+      >Laporan ini dapat dimodifikasi setelah di download, sesuai
+      kebutuhan</NotificationBar
+    >
     <CardBox class="mb-4 px-4" has-table>
       <div class="w-full my-4 flex flex-row space-x-4">
         <div class="w-3/12">

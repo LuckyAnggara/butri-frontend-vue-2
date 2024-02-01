@@ -129,7 +129,7 @@
               </option>
             </select>
           </FormField>
-          <FormField label="Tahun">
+          <FormField label="Jenis ">
             <select
               :disabled="dipaStore.isStoreLoading"
               v-model="dipaStore.form.jenis"

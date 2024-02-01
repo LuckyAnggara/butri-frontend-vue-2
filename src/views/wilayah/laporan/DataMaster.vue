@@ -22,6 +22,7 @@ import { getMonthName } from "@/utilities/formatter";
 import { ref, onMounted, watch } from "vue";
 import NewModal from "./Modal.vue";
 import { usePegawaiStore } from "@/stores/pegawai/pegawai";
+import NotificationBar from "@/components/NotificationBar.vue";
 
 const search = useDebounceFn(() => {
   laporanStore.getData();
@@ -87,7 +88,10 @@ onMounted(() => {
 <template>
   <SectionMain>
     <SectionTitleLineWithButton :title="route.meta.title" main />
-
+    <NotificationBar color="info"
+      >Laporan ini dapat dimodifikasi setelah di download, sesuai
+      kebutuhan</NotificationBar
+    >
     <CardBox class="mb-4 px-4" has-table>
       <div class="w-full my-4 flex flex-row space-x-4">
         <div class="w-3/12">
