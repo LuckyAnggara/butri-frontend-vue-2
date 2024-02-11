@@ -41,6 +41,7 @@ export const useMainStore = defineStore("main", {
       "SOSIALISASI",
       "FASILITASI KEGIATAN",
       "HELPDESK TI",
+      "PELATIHAN KANTOR SENDIRI",
     ],
     jenisMediaOptions: ["SOSIAL MEDIA", "WEBSITE"],
     jenisKegiatanArsipOptions: ["PENGARSIPAN", "PEMUSNAHAN"],

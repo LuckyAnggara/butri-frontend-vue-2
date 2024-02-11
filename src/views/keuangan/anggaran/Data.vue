@@ -127,7 +127,7 @@ onMounted(() => {
       </div>
     </CardBox>
     <CardBox class="mb-6" has-table>
-      <h1 class="text-2xl p-4 font-semibold">Per Jenis Belanja</h1>
+      <h1 class="text-2xl p-4 font-semibold">Per Jenis Kegiatan</h1>
       <table>
         <thead>
           <tr>

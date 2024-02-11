@@ -178,7 +178,7 @@ onMounted(() => {
               </td>
               <td>{{ item.pegawai.name.toUpperCase() ?? "-" }}</td>
               <td>
-                {{ item.pegawai.jabatan.name.toUpperCase() ?? "-" }}
+                {{ item.pegawai.jabatan?.name.toUpperCase() ?? "-" }}
               </td>
               <td>
                 {{ item.tmt_gaji ?? "-" }}
