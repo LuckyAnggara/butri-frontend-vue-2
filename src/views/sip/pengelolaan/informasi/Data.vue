@@ -135,7 +135,23 @@ onMounted(() => {
             </select>
           </FormField>
         </div>
-        <div class="w-6/12"></div>
+        <div class="w-6/12">
+          <FormField label="Jenis Fasilitasi">
+            <select
+              v-model="pengelolaanTiStore.filter.jenisLayanan"
+              class="h-12 border px-3 py-2 max-w-full focus:ring focus:outline-none border-gray-700 rounded w-full dark:placeholder-gray-400 bg-white dark:bg-slate-800"
+            >
+              <option value="SEMUA">SEMUA</option>
+              <option
+                v-for="(option, index) in mainStore.jenisPengelolaanTiOptions"
+                :key="index"
+                :value="option"
+              >
+                {{ option }}
+              </option>
+            </select>
+          </FormField>
+        </div>
         <div class="w-2/12 flex justify-end">
           <BaseButton @click="open()" class="mt-8" color="info" label="Input" />
         </div>
@@ -146,6 +162,7 @@ onMounted(() => {
         <thead>
           <tr>
             <td class="text-center">No</td>
+            <td class="text-center">Jenis</td>
             <td class="text-center">Keterangan</td>
             <td class="text-center"></td>
           </tr>
@@ -177,6 +194,10 @@ onMounted(() => {
             >
               <td>
                 {{ ++index }}
+              </td>
+
+              <td>
+                {{ item.jenis }}
               </td>
 
               <td>

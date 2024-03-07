@@ -23,11 +23,13 @@ export const usePengelolaanInformasiStore = defineStore(
         tahun: new Date().getFullYear(),
         bulan: new Date().getMonth() + 1,
         keterangan: null,
+        jenis: null,
         created_by: authStore.user.user.id,
       },
       filter: {
         currentMonth: new Date().getMonth() + 1,
         currentYear: new Date().getFullYear(),
+        jenisLayanan: "SEMUA",
       },
       currentLimit: 5,
     }),
@@ -42,13 +44,22 @@ export const usePengelolaanInformasiStore = defineStore(
         }
         return false;
       },
+      jenisQuery(state) {
+        if (
+          state.filter.jenisLayanan == "SEMUA" ||
+          state.filter.searchQuery == null
+        ) {
+          return "";
+        }
+        return "&jenis=" + state.filter.jenisLayanan;
+      },
     },
     actions: {
       async getData(page = "") {
         this.isLoading = true;
         try {
           const response = await axiosIns.get(
-            `/pengelolaan-ti?tahun=${this.filter.currentYear}&bulan=${this.filter.currentMonth}`
+            `/pengelolaan-ti?tahun=${this.filter.currentYear}&bulan=${this.filter.currentMonth}${this.jenisQuery}`
           );
           this.responses = response.data;
         } catch (error) {

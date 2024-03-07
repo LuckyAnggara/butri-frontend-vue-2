@@ -53,6 +53,13 @@ export const useMainStore = defineStore("main", {
       "EVALUASI",
       "PENGAWASAN LAINNYA",
     ],
+    jenisPengelolaanTiOptions: [
+      "JARINGAN KOMPUTER",
+      "DATA DAN APLIKASI",
+      "VIDEO CONFERENCE",
+      "KEAMANAN TEKNOLOGI INFORMASI",
+      "LAYANAN TI LAINNYA",
+    ],
     eselonOptions: ["ESELON I", "ESELON II"],
   }),
   actions: {
